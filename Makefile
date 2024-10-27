@@ -6,7 +6,7 @@
 #    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/10/24 20:11:51 by vsanin           ###   ########.fr        #
+#    Updated: 2024/10/27 14:02:59 by vsanin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ RM = rm -f
 
 LIBFTDIR = libft
 LIBFT = $(LIBFTDIR)/libft.a
+READLINE = -lreadline
 
 HEADER = includes/minishell.h
 
@@ -31,7 +32,7 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFTDIR)
 
 $(NAME): $(OBJ) $(HEADER)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT) $(READLINE)
 
 %.o: %.c $(HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
