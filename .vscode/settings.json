@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.keepme": "c",
+        "libft.h": "c",
+        "histedit.h": "c",
+        "readline.h": "c"
+    }
+}
