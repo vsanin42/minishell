@@ -6,35 +6,20 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/10/28 13:34:08 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/10/29 17:11:48 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	g_sig_received = 0; // not really useful now but keep it
-
-// default handler function definition in sigaction struct, must return void.
-// if it doesn't work for some reason, use global variable
-// it gets set in the if statements, indicating the type of signal received
-// everything else (everything inside the ifs) happens outside. for now keep this
-void	sighandle(int sig)
+t_list	*process_input(char *input) // should be void
 {
-	if (sig == SIGINT) // if ctrl c was pressed
-	{
-		write(1, "\n", 1); // printf is not async-signal-safe, better use write
-		rl_on_new_line(); // tell readline that the input has moved onto \n
-		rl_replace_line("", 0); // make the input empty (removes whatever has been written so far)
-		rl_redisplay(); // display the line again
-		g_sig_received = 0; // reset
-	}
-	else if (sig == SIGQUIT) // ctrl '\' - same here but no newline
-	{
-		rl_on_new_line();
-		rl_replace_line(rl_line_buffer, 0); // same but keeps what has been written so far
-		rl_redisplay();
-		g_sig_received = 0; // reset
-	}
+	t_list	*token_list;
+	
+	token_list = NULL;
+	token_list = lexer(input);
+
+	return (token_list); // testing 
 }
 
 // called on loop to show a prompt
@@ -52,16 +37,18 @@ int	show_prompt()
 	}
 	printf("%s\n", input); // for now just print
 	add_history(input);
+
+	/* testing lexer */
+	// t_list *token_list = process_input(input);
+	// printf("tokens from input:\n");
+	// while (token_list)
+	// {
+	// 	printf("%s\n", token_list->content); // attention content
+	// 	token_list = token_list->next;
+	// }	
+		
 	free(input);
 	return (1);
-}
-
-// might need a better way to exit later because this doesn't free anything
-int	error_msg(char *msg)
-{
-	write(2, msg, ft_strlen(msg));
-	write(2, "\n", 1);
-	exit(1);
 }
 
 void	set_termios() // terminal config editing to prevent '^\' from being printed 
@@ -77,8 +64,8 @@ void	set_termios() // terminal config editing to prevent '^\' from being printed
 
 int main(int argc, char *argv[], char *env[])
 {
-	signal(SIGINT, sighandle); // ctrl c
-	signal(SIGQUIT, sighandle); // ctrl '\'
+	signal(SIGINT, sig_handler); // ctrl c
+	signal(SIGQUIT, sig_handler); // ctrl '\'
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
