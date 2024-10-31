@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/10/29 17:12:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/10/29 19:56:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_token(char *str, int *i, t_list **token_list)
-{
-	if (check_if_pipe(str, i, token_list))
-		return (ERROR);
-	return (0);
-}
+// int	check_token(char *str, int *i, t_list **token_list)
+// {
+// 	if (check_if_pipe(str, i, token_list))
+// 		return (ERROR);
+// 	return (0);
+// }
 
 t_list	*get_token_list(char *input)
 {
@@ -33,8 +33,8 @@ t_list	*get_token_list(char *input)
 			i++;
 			continue ;
 		}
-		if (check_token(input, &i, &token_list) == ERROR)
-			break;
+		// if (check_token(input, &i, &token_list) == ERROR)
+		// 	break;
 		i++;
 	}
 	return (token_list);
@@ -42,13 +42,13 @@ t_list	*get_token_list(char *input)
 
 // t_token_type	get_token_type()
 // {
-	
+
 // }
 
 t_list	*lexer(char *input)
 {
 	t_list	*token_list;
-	
+
 	token_list = get_token_list(input);
 	if (!token_list)
 		return (NULL);
