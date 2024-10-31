@@ -6,11 +6,13 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:40:14 by vsanin            #+#    #+#             */
-/*   Updated: 2024/10/29 14:41:22 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/10/31 16:17:02 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	g_sig_received = 0; // not really useful now but keep it
 
 // default handler function definition in sigaction struct, must return void.
 // if it doesn't work for some reason, use global variable
