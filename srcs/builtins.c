@@ -6,20 +6,27 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/02 22:18:46 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/03 16:16:54 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+// all builtins return 0 on success and 1 on error
+// they do not quit the program in error, mut be handled by caller function
+// TODO: must update exit status at end of each of these functions
 
 // changes directory, handles absolute, relative, no path
 // call for type EXECUTABLE
 // @returns 0 on successful change of directory, 1 on error
 int	cd_builtin(char *path)
 {
+	char	*home;
 	if (path == NULL || !ft_strncmp(path, "~", 1))
 	{
-		char *home = getenv("HOME");
+		home = getenv("HOME");
+		if (!home)
+			return (ERROR);
 		chdir(home);
 		free(path); // maybe will be done in caller function
 		return (0);
@@ -32,8 +39,7 @@ int	cd_builtin(char *path)
 		free(path); // maybe will be done in caller function
 		return (0);
 	}
-	else
-		return (ERROR);
+	return (ERROR);
 }
 
 // duplicates pwd - WORKS
@@ -41,15 +47,12 @@ int	cd_builtin(char *path)
 // @returns 0 on success, 1 on error
 int	pwd_builtin()
 {
-	char *cwd;
-	int cwdlen;
+	char	*cwd;
+	int		cwdlen;
 
 	cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	if (!cwd)
-	{
-		error_msg("error getting current directory");
 		return (ERROR);
-	}
 	cwdlen = ft_strlen(cwd);
 	write(1, cwd, cwdlen);
 	write(1, "\n", 1);
@@ -57,13 +60,43 @@ int	pwd_builtin()
 	return (0);
 }
 
-// removes file from the system - if it is link removes the link, if it is unlinked, completely removes file from the filesystem - WORKS
-// call for type EXECUTABLE
-// @returns 0 on success, 1 on error (but somehow returns -1 always, no matter the return on error number)
-int	unlink_builtin(char *path)
+// exits the program, optional argument status that indicates success/failure status of the shell session or script
+// exit status 0 indicates success, other indicate error or abnormal termination
+// if no argument is provided to exit, the default exit status is that of the last executed command.
+// WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
+void	exit_builtin(char *status)
 {
-    if (unlink(path) == 0)
-        return (0);
-    else
-        return (ERROR);
+	int	exit_status;
+
+	if (status == NULL) // if status is not specified, exit with the most recent status code of the program  - CHANGE 0
+		exit(0);
+	exit_status = atoi(status);
+	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255, else exit as error
+		exit(ERROR);
+	exit(exit_status);
 }
+
+// prints all env variables to terminal as strings each in new line
+int env_builtin()
+{
+	return (0);
+}
+
+// returns value of $ENV, check if it really is ENV happens before it is called
+// when calling if we are calling echo $non-existent-env, it prints newline if it is alone, and nothing if there is anything else
+char	*handle_env(char *name) // handles $NAME and prints its value eg. "Zuzka"
+{
+	char	*value;
+
+	value = getenv(name);
+	if (!value)
+		return ("");
+	return (value);
+}
+
+// prints all arguments after it,
+// int	echo_builtin(char *value)
+// {
+
+
+// }

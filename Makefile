@@ -6,7 +6,7 @@
 #    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/02 21:25:39 by zuzanapiaro      ###   ########.fr        #
+#    Updated: 2024/11/03 16:06:27 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ SRC  =  srcs/minishell.c \
 		srcs/exit.c \
 		srcs/lexer.c \
 		srcs/paths.c \
+		srcs/redirections.c \
 		srcs/signal.c \
 		srcs/utils.c \
 

@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/02 22:11:55 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/03 15:15:20 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ int	is_directory(const char *path)
 	return (S_ISDIR(sb.st_mode));
 }
 
-// checks if file is a file - maybe won't need
-int is_regular_file(const char *path)
+// checks if file is a regular file and if it is executable file
+int is_executable_file(const char *path)
 {
 	struct stat	sb;
 
@@ -57,7 +57,20 @@ int is_regular_file(const char *path)
 		error_msg("lstat failed");
 		return (-1);
 	}
-	return (S_ISREG(sb.st_mode)); // returns non-zero if it's regular file, 0 if not
+	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))); // returns non-zero if it's regular file, 0 if not
+}
+
+// checks if file is a regular file and if it is readable
+int is_readable_file(const char *path)
+{
+	struct stat	sb;
+
+	if (lstat(path, &sb) == -1)
+	{
+		error_msg("lstat failed");
+		return (-1);
+	}
+	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IRUSR | S_IRGRP | S_IROTH))); // returns non-zero if it's regular file, 0 if not
 }
 
 // env PATH: for commands/programs - searches for executable in each path from PATH env
@@ -81,10 +94,10 @@ char	*get_path_env(char *cmd)
 	i = 0;
 	env_path = getenv("PATH");
 	if (!env_path)
-		error_msg("PATH env not found");
+		return (NULL);
 	paths = ft_split(env_path + 5, ':');
 	if (!paths)
-		error_msg("problem splitting paths from PATH");
+		return (NULL);
 	free(env_path);
 	i = 0;
 	while (paths[i])
@@ -92,6 +105,8 @@ char	*get_path_env(char *cmd)
 		path_without_cmd = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(path_without_cmd, cmd);
 		free(path_without_cmd);
+		if (!path)
+			return (NULL);
 		if (access(path, F_OK) == 0)
 			return (path);
 		free(path);
@@ -103,16 +118,3 @@ char	*get_path_env(char *cmd)
 	free(paths);
 	return (NULL);
 }
-
-// // 1. relative path - eg. cd src/usr/ or cd src/usr or ./src/usr/programname
-// char *get_path_relative(char *str)
-// {
-// 	return (str);
-
-// }
-
-// // 2. absolute path - eg. cd /local/src/usr/... - starts from root so starts with /
-// char *get_path_absolute(char *str)
-// {
-// 	return (str);
-// }
