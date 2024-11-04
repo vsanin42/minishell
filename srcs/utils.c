@@ -6,9 +6,11 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/04 19:01:56 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/04 20:22:29 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 #include "../includes/minishell.h"
 

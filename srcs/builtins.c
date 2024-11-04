@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/03 16:16:54 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/04 20:04:16 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,18 @@
 
 // changes directory, handles absolute, relative, no path
 // call for type EXECUTABLE
+// FREE is done in caller function 
 // @returns 0 on successful change of directory, 1 on error
 int	cd_builtin(char *path)
 {
 	char	*home;
+	
 	if (path == NULL || !ft_strncmp(path, "~", 1))
 	{
 		home = getenv("HOME");
 		if (!home)
 			return (ERROR);
 		chdir(home);
-		free(path); // maybe will be done in caller function
 		return (0);
 	}
 	// check if what we want to access is actually a directory and exists
@@ -36,7 +37,6 @@ int	cd_builtin(char *path)
 	if (is_directory(path))
 	{
 		chdir(path);
-		free(path); // maybe will be done in caller function
 		return (0);
 	}
 	return (ERROR);
@@ -56,7 +56,7 @@ int	pwd_builtin()
 	cwdlen = ft_strlen(cwd);
 	write(1, cwd, cwdlen);
 	write(1, "\n", 1);
-	free(cwd);
+	// free(cwd); // maybe will be don ein calling function 
 	return (0);
 }
 
@@ -72,7 +72,7 @@ void	exit_builtin(char *status)
 		exit(0);
 	exit_status = atoi(status);
 	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255, else exit as error
-		exit(ERROR);
+		exit(exit_status % 256);
 	exit(exit_status);
 }
 

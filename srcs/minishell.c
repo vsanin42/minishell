@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/04 19:01:29 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/04 20:29:08 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,51 +38,51 @@ int	show_prompt(t_mini *mini)
 /* 	testing current directory - WORKS */
 /* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	printf("cwd: %s\n", cwd);
-	free(cwd);
- */
+	free(cwd); */
 
-/*	testing getting command paths - WORKS
-	char *path = get_path_env(input);
+
+/*	testing getting command paths - WORKS */
+/* 	char *path = get_path_env(input);
 	if (path)
 		printf("path: %s\n", path);
 	else
-		printf("Path does not exist");
-*/
+		printf("Path does not exist"); */
 
-/* testing cd_builtin - WORKS
-	printf("cd: %d\n", cd_builtin(input));
+
+/* testing cd_builtin - WORKS  */
+/* 	printf("cd: %d\n", cd_builtin(input));
 	char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	printf("cwd: %s\n", cwd);
-	free(cwd);
- */
+	free(cwd); */
+
 
 /* 	testing builtin pwd with no options - WORKS
 	pwd_builtin();
  */
 
-/* 	testing exit  - WORKS
-	if (input)
-		exit_builtin(input);
-*/
+/* 	testing exit  - WORKS */
+/* 	if (input)
+		exit_builtin(input); */
+
 
 /* testing is_executable/is_readable - WORKS
 	printf("exec: %d\n", is_readable_file(input)); */
 
 /* testing if input is being redirected properly - WORKS  */
-	// if (redirect_input(input) == -1)
-	// {
-	// 	perror("Error redirecting input");
-	// 	return 1;  // Exit or handle error appropriately
-	// }
-	// char buff[50];
-	// ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
-	// if (bytesRead == -1) {
-	// 	perror("Error reading from redirected input");
-	// 	return 1;  // Handle the read error appropriately
-	// }
-	// buff[bytesRead] = '\0';  // Null-terminate the string to safely print
-	// printf("buff: %s\n", buff);
-
+/* 	if (redirect_input(input) == -1)
+	{
+		perror("Error redirecting input hh");
+		return 1;  // Exit or handle error appropriately
+	}
+	char buff[50];
+	ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
+	if (bytesRead == -1) {
+		perror("Error reading from redirected input");
+		return 1;  // Handle the read error appropriately
+	}
+	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
+	printf("buff: %s\n", buff);
+ */
 
 	/* testing lexer */
 	// t_token **head = NULL;

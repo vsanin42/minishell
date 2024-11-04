@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/03 15:15:20 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/04 20:22:20 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,9 @@ char	*get_path_env(char *cmd)
 	env_path = getenv("PATH");
 	if (!env_path)
 		return (NULL);
-	paths = ft_split(env_path + 5, ':');
+	paths = ft_split(env_path, ':');
 	if (!paths)
 		return (NULL);
-	free(env_path);
 	i = 0;
 	while (paths[i])
 	{
