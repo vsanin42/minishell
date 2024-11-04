@@ -3,27 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/03 16:41:13 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/04 19:01:29 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_list	*process_input(char *input) // should be void
+t_token	*process_input(char *input, t_mini *mini) // should be void
 {
-	t_list	*token_list;
+	mini->token_list = lexer(input);
 
-	token_list = NULL;
-	token_list = lexer(input);
-
-	return (token_list); // testing
+	return (mini->token_list); // testing
 }
 
 // called on loop to show a prompt
-int	show_prompt()
+int	show_prompt(t_mini *mini)
 {
 	char	*input;
 
@@ -72,30 +69,38 @@ int	show_prompt()
 	printf("exec: %d\n", is_readable_file(input)); */
 
 /* testing if input is being redirected properly - WORKS  */
-	if (redirect_input(input) == -1)
-	{
-		perror("Error redirecting input");
-		return 1;  // Exit or handle error appropriately
-	}
-	char buff[50];
-	ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
-	if (bytesRead == -1) {
-		perror("Error reading from redirected input");
-		return 1;  // Handle the read error appropriately
-	}
-	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
-	printf("buff: %s\n", buff);
+	// if (redirect_input(input) == -1)
+	// {
+	// 	perror("Error redirecting input");
+	// 	return 1;  // Exit or handle error appropriately
+	// }
+	// char buff[50];
+	// ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
+	// if (bytesRead == -1) {
+	// 	perror("Error reading from redirected input");
+	// 	return 1;  // Handle the read error appropriately
+	// }
+	// buff[bytesRead] = '\0';  // Null-terminate the string to safely print
+	// printf("buff: %s\n", buff);
 
 
 	/* testing lexer */
-	// t_list *token_list = process_input(input);
-	// printf("tokens from input:\n");	// while (token_list)
-	// {
-	// 	printf("%s\n", token_list->content); // attention content
-	// 	token_list = token_list->next;
-	// }
+	// t_token **head = NULL;
+	// t_token *token_list = process_input(input, mini);
+	// *head = token_list;
+	t_token *head = NULL;
+	t_token *token_list = process_input(input, mini);
+	head = token_list;
+	printf("tokens from input:\n");
+	while (token_list)
+	{
+		printf("%s\t", token_list->value); // attention content
+		printf("type: %d\n", token_list->type);
+		token_list = token_list->next;
+	}
+	clear_token_list(head);
 	free(input);
-	return (STDIN_FILENO);
+	return (1);
 }
 
 void	set_termios() // terminal config editing to revent '^\' from being printed
@@ -109,8 +114,18 @@ void	set_termios() // terminal config editing to revent '^\' from being printed
 		exit(1);
 }
 
+// init_mini(t_mini *mini)
+// {
+// 	mini->env = 
+// }
+
 int main(int argc, char *argv[], char *env[])
 {
+	t_mini	mini;
+	
+	mini.env = env;
+	mini.token_list = NULL;
+	//init_mini(&mini);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
 	(void)argv; (void)env;
@@ -118,7 +133,7 @@ int main(int argc, char *argv[], char *env[])
 	if (argc != 1)
 		error_msg("Too many arguments. Use: ./minishell");
 	while (1)
-		if (show_prompt() == 0) // if ctrl d, break the loop, clear history and return
+		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 			break ;
 	rl_clear_history();
 	return (0);

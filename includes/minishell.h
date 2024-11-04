@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/03 16:15:39 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/04 19:01:42 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,27 @@ typedef enum	e_token_type
 	TOKEN_REDIRIN, // <
 	TOKEN_REDIROUT, // >
 	TOKEN_REDIR_APPEND, // >>
-	TOKEN_HEREDOC // <<
-}				t_token_type;
+	TOKEN_HEREDOC, // <<
+	TOKEN_ENV
+}	t_token_type;
 
 typedef struct	s_token
 {
 	char			*value;
 	t_token_type	type;
-}				t_token;
+	struct s_token	*next;
+}					t_token;
 
+typedef struct	s_mini
+{
+	char	**env;
+	t_token	*token_list;
+	
+}	t_mini;
 
 /* minishell.c */
-t_list	*process_input(char *input); // should be void, testing
-int		show_prompt(void);
+t_token	*process_input(char *input, t_mini *mini); // should be void, testing
+int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
 /* builtins.c */
@@ -64,9 +72,9 @@ char	*handle_env(char *name);
 int		error_msg(char *msg);
 
 /* lexer.c */
-int		check_token(char *str, int *i, t_list **token_list);
-t_list	*get_token_list(char *input);
-t_list	*lexer(char *input);
+int		check_token(char *input, int i, t_token **token_list);
+t_token	*get_token_list(char *input);
+t_token	*lexer(char *input);
 
 /* paths.c */
 char	*get_current_directory(void);
@@ -81,7 +89,10 @@ int	redirect_input(char *file);
 /* signal.c */
 void	sig_handler(int sig);
 
-/* utils */
+/* utils.c */
 int		iswhitespace(char c);
+t_token	*new_token(char *value, t_token_type type);
+void	add_back_token(t_token **lst, t_token *new);
+void	clear_token_list(t_token *token);
 
 #endif
