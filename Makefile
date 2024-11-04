@@ -6,14 +6,14 @@
 #    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/10/29 19:56:30 by zuzanapiaro      ###   ########.fr        #
+#    Updated: 2024/11/03 16:06:27 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 RM = rm -f
 
 LIBFTDIR = libft
@@ -25,8 +25,11 @@ UNAME := $(shell uname)
 READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
+		srcs/builtins.c \
 		srcs/exit.c \
 		srcs/lexer.c \
+		srcs/paths.c \
+		srcs/redirections.c \
 		srcs/signal.c \
 		srcs/utils.c \
 

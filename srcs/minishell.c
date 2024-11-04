@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/10/29 17:11:48 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/03 16:41:13 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 t_list	*process_input(char *input) // should be void
 {
 	t_list	*token_list;
-	
+
 	token_list = NULL;
 	token_list = lexer(input);
 
-	return (token_list); // testing 
+	return (token_list); // testing
 }
 
 // called on loop to show a prompt
 int	show_prompt()
 {
 	char	*input;
-	
+
 	input = readline("\033[32mminishell \033[37m> "); // colors optional but looks nicer
 	if (!input) // if ctrl d was pressed, exit the process
 		return (0); // needs proper exit in the future
@@ -35,23 +35,70 @@ int	show_prompt()
 		free(input);
 		return (1); // if enter (empty input) was pressed, continue to the next iteration
 	}
-	printf("%s\n", input); // for now just print
+	//printf("%s\n", input); // for now just print
 	add_history(input);
+
+/* 	testing current directory - WORKS */
+/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+	printf("cwd: %s\n", cwd);
+	free(cwd);
+ */
+
+/*	testing getting command paths - WORKS
+	char *path = get_path_env(input);
+	if (path)
+		printf("path: %s\n", path);
+	else
+		printf("Path does not exist");
+*/
+
+/* testing cd_builtin - WORKS
+	printf("cd: %d\n", cd_builtin(input));
+	char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+	printf("cwd: %s\n", cwd);
+	free(cwd);
+ */
+
+/* 	testing builtin pwd with no options - WORKS
+	pwd_builtin();
+ */
+
+/* 	testing exit  - WORKS
+	if (input)
+		exit_builtin(input);
+*/
+
+/* testing is_executable/is_readable - WORKS
+	printf("exec: %d\n", is_readable_file(input)); */
+
+/* testing if input is being redirected properly - WORKS  */
+	if (redirect_input(input) == -1)
+	{
+		perror("Error redirecting input");
+		return 1;  // Exit or handle error appropriately
+	}
+	char buff[50];
+	ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
+	if (bytesRead == -1) {
+		perror("Error reading from redirected input");
+		return 1;  // Handle the read error appropriately
+	}
+	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
+	printf("buff: %s\n", buff);
+
 
 	/* testing lexer */
 	// t_list *token_list = process_input(input);
-	// printf("tokens from input:\n");
-	// while (token_list)
+	// printf("tokens from input:\n");	// while (token_list)
 	// {
 	// 	printf("%s\n", token_list->content); // attention content
 	// 	token_list = token_list->next;
-	// }	
-		
+	// }
 	free(input);
-	return (1);
+	return (STDIN_FILENO);
 }
 
-void	set_termios() // terminal config editing to prevent '^\' from being printed 
+void	set_termios() // terminal config editing to revent '^\' from being printed
 {
 	struct termios	termios;
 
