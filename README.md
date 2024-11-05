@@ -3,6 +3,7 @@
 42 project by vsanin & zpiarova - work in progress
 
 # edge test cases
-handle wrapping evn variables in single AND double  quotes (or the other way around -eg. echo "'$HOME'")
-handle {} for environment variables - can be but doesnt have to be
-how to handle unclosed brackets or unclosed quotes 
+how to handle unclosed brackets or unclosed quotes - HEREDOC ???   
+
+# TODO
+set stdin back to 0 when redirecting from files - maybe not if we use a different process

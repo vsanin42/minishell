@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 20:22:17 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 22:38:08 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,8 @@ int	get_ttokens_len(t_token	*token)
 int	set_to_text_sq(t_token	*token)
 {
 	t_token *temp;
-	int	i;
 
 	temp = token;
-	i = 0;
 	while (temp && temp->type != TOKEN_SQUOTE)
 	{
 		temp->type = TOKEN_TEXT;
@@ -45,10 +43,8 @@ int	set_to_text_sq(t_token	*token)
 int	set_to_text_dq(t_token	*token)
 {
 	t_token *temp;
-	int	i;
 
 	temp = token;
-	i = 0;
 	while (temp && temp->type != TOKEN_DQUOTE)
 	{
 		temp->type = TOKEN_TEXT;
@@ -64,15 +60,15 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 	t_token *temp;
 	char	**args;
 	//char	*cmd;
-	int		flag;
+	//int		flag;
 
 	parsed_list = NULL;
 	temp = token_list;
-	flag = 0;
+	//flag = 0;
 	while (temp)
 	{
 		// keep the order ' --> $ --> " --> ... :
-		// because first we evaluate everything inside '' as text because it does not expand environment variables, 
+		// because first we evaluate everything inside '' as text because it does not expand environment variables,
 		// then we expand envs before "" because within "" envs should be expanded
 		// then evaluate everything between "" as text as now the envs have the correct value
 		if (temp->type == TOKEN_SQUOTE)
@@ -85,11 +81,11 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 		{
 			set_to_text_dq(temp->next);
 		}
-		
+
 		if (temp->next && (temp->type == TOKEN_REDIRIN
 			|| temp->type == TOKEN_REDIROUT || temp->type == TOKEN_APPEND))
 			temp->next->type = TOKEN_FILE;
-		
+
 
 
 
@@ -105,8 +101,6 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 				temp = temp->next;
 				atemp++;
 			}
-			// if (!temp)
-			// 	break ;
 			*atemp = NULL;
 			//new_node = make_node();
 			//cmd_add_back(&parsed_list, new_node);
@@ -119,7 +113,7 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 			}
 			else
 			{
-				args = malloc(sizeof(char *) * (get_ttokens_len(temp) + 1));	
+				args = malloc(sizeof(char *) * (get_ttokens_len(temp) + 1));
 				while (temp && temp->type == TOKEN_TEXT)
 				{
 					*args++ = temp->value;
