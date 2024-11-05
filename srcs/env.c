@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/05 13:28:28 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/05 14:32:54 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,12 @@ char	*expand_env(t_mini *mini, t_token *token)
 						rest = (temp + i + 1);
 						res = ft_strjoin(env, rest);
 					}
+					else 
+						res = "\n";
 					free(str_to_check);
 				}
 				else
-					return ("Unclosed bracket: }");
+					res = ("Unclosed bracket: }");
 			}
 			else
 				res = getenv(temp); // returns value of env or NULL if not found

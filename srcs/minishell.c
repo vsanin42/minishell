@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/05 14:11:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/05 14:31:19 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int	show_prompt(t_mini *mini)
 	t_token *head = NULL;
 	t_token *token_list = process_input(input, mini);
 	head = token_list;
+/* 
 	printf("tokens from input:\n");
 	while (token_list)
 	{
@@ -95,17 +96,21 @@ int	show_prompt(t_mini *mini)
 		printf("type: %d\n", token_list->type);
 		token_list = token_list->next;
 	}
-
+ */
 /* testing export_env - WORKS*/
-	// while (token_list)
-	// {
-	// 	if (token_list->type == 9) // this could be in the parsing function and call this function if this condition is true
-	// 	{
-	// 		char *expanded_env = expand_env(mini, token_list);
-	// 		printf("env: %s\n", expanded_env);
-	// 	}
-	// 	token_list = token_list->next;
-	// }
+	while (token_list)
+	{
+		if (token_list->type == 9) // this could be in the parsing function and call this function if this condition is true
+		{
+			char *expanded_env = expand_env(mini, token_list);
+			if (expanded_env)
+				printf("env: %s\n", expanded_env);
+			token_list = token_list->next;
+		}
+		else 
+			printf("could not expand %s\n", token_list->value);
+		token_list = token_list->next;
+	}
 
 	clear_token_list(head);
 	free(input);
