@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/04 19:01:42 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 13:20:14 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@
 
 typedef enum	e_token_type
 {
-	TOKEN_TEXT, // maybe in parser we separate text types into files, paths, commands/executables, ...
-	TOKEN_ARG, // idk if will be used - later we could create array of arguments because it is needed as input for execve
-	TOKEN_PIPE, // |
-	TOKEN_SQUOTE, // '
-	TOKEN_DQUOTE, // "
-	TOKEN_REDIRIN, // <
-	TOKEN_REDIROUT, // >
-	TOKEN_REDIR_APPEND, // >>
-	TOKEN_HEREDOC, // <<
-	TOKEN_ENV
+	/* 0 */ TOKEN_TEXT, // maybe in parser we separate text types into files, paths, commands/executables, ...
+	/* 1 */ TOKEN_ARG, // idk if will be used - later we could create array of arguments because it is needed as input for execve
+	/* 2 */ TOKEN_PIPE, // |
+	/* 3 */ TOKEN_SQUOTE, // '
+	/* 4 */ TOKEN_DQUOTE, // "
+	/* 5 */ TOKEN_REDIRIN, // <
+	/* 6 */ TOKEN_REDIROUT, // >
+	/* 7 */ TOKEN_REDIR_APPEND, // >>
+	/* 8 */ TOKEN_HEREDOC, // <<
+	/* 9 */ TOKEN_ENV // $
 }	t_token_type;
 
 typedef struct	s_token
@@ -54,7 +54,7 @@ typedef struct	s_mini
 {
 	char	**env;
 	t_token	*token_list;
-	
+
 }	t_mini;
 
 /* minishell.c */
@@ -67,6 +67,9 @@ int		cd_builtin(char *path);
 int		pwd_builtin();
 void	exit_builtin(char *status);
 char	*handle_env(char *name);
+
+/* env.c */
+char	*expand_env(t_mini *mini, t_token *token);
 
 /* exit.c */
 int		error_msg(char *msg);

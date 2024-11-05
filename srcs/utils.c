@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/04 20:22:29 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 12:23:37 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 #include "../includes/minishell.h"
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/04 20:29:08 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 14:11:53 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,6 @@ int	show_prompt(t_mini *mini)
  */
 
 	/* testing lexer */
-	// t_token **head = NULL;
-	// t_token *token_list = process_input(input, mini);
-	// *head = token_list;
 	t_token *head = NULL;
 	t_token *token_list = process_input(input, mini);
 	head = token_list;
@@ -98,6 +95,18 @@ int	show_prompt(t_mini *mini)
 		printf("type: %d\n", token_list->type);
 		token_list = token_list->next;
 	}
+
+/* testing export_env - WORKS*/
+	// while (token_list)
+	// {
+	// 	if (token_list->type == 9) // this could be in the parsing function and call this function if this condition is true
+	// 	{
+	// 		char *expanded_env = expand_env(mini, token_list);
+	// 		printf("env: %s\n", expanded_env);
+	// 	}
+	// 	token_list = token_list->next;
+	// }
+
 	clear_token_list(head);
 	free(input);
 	return (1);
@@ -116,13 +125,13 @@ void	set_termios() // terminal config editing to revent '^\' from being printed
 
 // init_mini(t_mini *mini)
 // {
-// 	mini->env = 
+// 	mini->env =
 // }
 
 int main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
-	
+
 	mini.env = env;
 	mini.token_list = NULL;
 	//init_mini(&mini);

@@ -4,3 +4,6 @@
 
 # edge test cases
 handle wrapping evn variables in single AND double  quotes (or the other way around -eg. echo "'$HOME'")
+handle {} for environment variables - can be but doesnt have to be
+handle only uppercase chars and in {} as environment variable
+how to handle unclosed brackets or unclosed quotes 
