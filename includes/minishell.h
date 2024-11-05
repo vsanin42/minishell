@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 13:20:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/05 19:15:44 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,23 @@ typedef enum	e_token_type
 	/* 4 */ TOKEN_DQUOTE, // "
 	/* 5 */ TOKEN_REDIRIN, // <
 	/* 6 */ TOKEN_REDIROUT, // >
-	/* 7 */ TOKEN_REDIR_APPEND, // >>
+	/* 7 */ TOKEN_APPEND, // >>
 	/* 8 */ TOKEN_HEREDOC, // <<
-	/* 9 */ TOKEN_ENV // $
+	/* 9 */ TOKEN_ENV, // $
+	/* 10 */TOKEN_FILE
 }	t_token_type;
+
+typedef struct s_cmd
+{
+	char			*cmd;
+	char			**args;
+	char			*outfile;
+	char			*infile;
+	int				heredoc; // 0 default, 1 if followed by <<
+	int				append;
+	struct s_cmd	*next;
+}			t_cmd;
+
 
 typedef struct	s_token
 {
@@ -54,6 +67,7 @@ typedef struct	s_mini
 {
 	char	**env;
 	t_token	*token_list;
+	t_cmd	*cmd_list;
 
 }	t_mini;
 
@@ -69,7 +83,8 @@ void	exit_builtin(char *status);
 char	*handle_env(char *name);
 
 /* env.c */
-char	*expand_env(t_mini *mini, t_token *token);
+void	expand_env(t_mini *mini, t_token *token);
+void	expand_envs(t_mini *mini, t_token **token);
 
 /* exit.c */
 int		error_msg(char *msg);
@@ -78,6 +93,9 @@ int		error_msg(char *msg);
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
+
+/* parcer.c */
+t_cmd   *parser(t_mini *mini, t_token *token_list);
 
 /* paths.c */
 char	*get_current_directory(void);

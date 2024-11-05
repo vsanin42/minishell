@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/04 18:21:50 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 17:16:21 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_token_type	get_token_type(char *value)
 	if (ft_strlen(value) == 2)
 	{
 		if (!ft_strncmp(value, ">>", 2))
-			return (TOKEN_REDIR_APPEND);
+			return (TOKEN_APPEND);
 		if (!ft_strncmp(value, "<<", 2))
 			return (TOKEN_HEREDOC);
 	}
@@ -111,5 +111,7 @@ t_token	*lexer(char *input)
 	token_list = get_token_list(input);
 	if (!token_list)
 		return (NULL);
+	free(input);
+	input = NULL;
 	return (token_list);
 }
