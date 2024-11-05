@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/05 14:31:19 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 19:18:43 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 t_token	*process_input(char *input, t_mini *mini) // should be void
 {
-	mini->token_list = lexer(input);
-
-	return (mini->token_list); // testing
+	(void)mini;
+	t_token *token_list = lexer(input);
+	if (token_list)
+		/* mini->cmd_list =  */parser(mini, token_list);
+	return (token_list); // testing
 }
 
 // called on loop to show a prompt
@@ -88,32 +90,28 @@ int	show_prompt(t_mini *mini)
 	t_token *head = NULL;
 	t_token *token_list = process_input(input, mini);
 	head = token_list;
-/* 
-	printf("tokens from input:\n");
-	while (token_list)
-	{
-		printf("%s\t", token_list->value); // attention content
-		printf("type: %d\n", token_list->type);
-		token_list = token_list->next;
-	}
- */
-/* testing export_env - WORKS*/
-	while (token_list)
-	{
-		if (token_list->type == 9) // this could be in the parsing function and call this function if this condition is true
-		{
-			char *expanded_env = expand_env(mini, token_list);
-			if (expanded_env)
-				printf("env: %s\n", expanded_env);
-			token_list = token_list->next;
-		}
-		else 
-			printf("could not expand %s\n", token_list->value);
-		token_list = token_list->next;
-	}
+	
 
+	// printf("tokens from input:\n");
+	// while (token_list)
+	// {
+	// 	printf("%s\t", token_list->value); // attention content
+	// 	printf("type: %d\n", token_list->type);
+	// 	token_list = token_list->next;
+	// }
+
+/* testing export_env - WORKS*/
+	expand_envs(mini, &token_list);
+	head = token_list;
+	printf("tokens after expanding envs:\n");
+	t_token *temp = token_list;
+	while (temp)
+	{
+		printf("%s\t", temp->value); // attention content
+		printf("type: %d\n", temp->type);
+		temp = temp->next;
+	}
 	clear_token_list(head);
-	free(input);
 	return (1);
 }
 
@@ -130,7 +128,7 @@ void	set_termios() // terminal config editing to revent '^\' from being printed
 
 // init_mini(t_mini *mini)
 // {
-// 	mini->env =
+// 	env =
 // }
 
 int main(int argc, char *argv[], char *env[])
