@@ -12,3 +12,4 @@
 - ! when there is text type before "" or '', then what si between quotes is not set to text type but keeps its type
 - this should be the correct behaviour: echo $'HOME' --> HOME
 -  $'HOME' input segfaults - attempting free on address which was not malloced
+- double redirout - > a.txt > b.txt - a is empty, b is filled with the result

@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/05 23:02:50 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/06 19:57:58 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_token	*process_input(char *input, t_mini *mini) // should be void
+t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	(void)mini;
 	t_token *token_list = lexer(input);
 	if (token_list)
-		/* mini->cmd_list =  */parser(mini, token_list);
-	return (token_list); // testing
+		mini->cmd_list =  parser(mini, token_list);
+	return (mini->cmd_list); // testing
 }
 
 // called on loop to show a prompt
@@ -87,10 +87,14 @@ int	show_prompt(t_mini *mini)
  */
 
 	/* testing lexer */
-	t_token *head = NULL;
-	t_token *token_list = process_input(input, mini);
-	head = token_list;
+	// t_token *head = NULL;
+	// t_token *token_list = process_input(input, mini);
+	// head = token_list;
 
+	/* testing parser */
+	t_cmd *head = NULL;
+	t_cmd *cmd_list = process_input(input, mini);
+	head = cmd_list;
 
 	// printf("tokens from input:\n");
 	// while (token_list)
@@ -103,15 +107,44 @@ int	show_prompt(t_mini *mini)
 /* testing export_env - WORKS*/
 	// expand_envs(mini, &token_list);
 	// head = token_list;
-	printf("tokens:\n");
-	t_token *temp = token_list;
+
+
+	/* testing parser */
+	printf("commands:\n\n");
+	t_cmd *temp = cmd_list;
+	char **atemp2;
+	t_redir *aredir;
 	while (temp)
 	{
-		printf("%s\t", temp->value); // attention content
-		printf("type: %d\n", temp->type);
+		printf("cmd name:\t%s\n", temp->cmd);
+		atemp2 = temp->args;
+		aredir = temp->redir;
+		while (atemp2 && *atemp2)
+		{
+			printf("argument:\t%s\n", *atemp2);
+			atemp2++;
+		}
+		while (aredir && aredir->next)
+		{
+			printf("redir file:\t%s\n", aredir->file);
+			printf("redir type:\t%d\n", aredir->type);
+			aredir = aredir->next;
+		}
 		temp = temp->next;
+		printf("\n");
 	}
-	clear_token_list(head);
+	//clear_cmd_list(head);
+	/* testing lexer */
+	// printf("tokens:\n");
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	printf("%s\t", temp->value);
+	// 	printf("type: %d\n", temp->type);
+	// 	temp = temp->next;
+	// }
+	//clear_token_list(head);
+	
 	return (1);
 }
 
