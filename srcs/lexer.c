@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 17:16:21 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 22:41:15 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,9 @@ int	get_token_len(char *input, int i)
 
 	j = 0;
 	while (input[i] != '|' && input[i] != '>' && input[i] != '<'
-		&& input[i] != '$' && input[i] != '"' && input[i] != '\'' //ft_strncmp(input, "'", 1)
+		&& input[i] != '$' && input[i] != '"' && input[i] != '\''
 		&& !iswhitespace(input[i]) && input[i] != '\0')
 	{
-		
 		j++;
 		i++;
 	}
@@ -58,7 +57,7 @@ int	get_token_len(char *input, int i)
 char	*get_node_value(char *input, int *i)
 {
 	char	*node_value;
-	
+
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 		&& input[*i + 1] == '<'))
 		node_value = ft_substr(input, (*i)++, 2);
@@ -81,7 +80,7 @@ t_token	*get_token_list(char *input)
 	int		i;
 	char	*node_value;
 	t_token	*new_tok;
-	
+
 	new_tok = NULL;
 	token_list = NULL;
 	i = -1;
@@ -107,7 +106,7 @@ t_token	*get_token_list(char *input)
 t_token	*lexer(char *input)
 {
 	t_token	*token_list;
-	
+
 	token_list = get_token_list(input);
 	if (!token_list)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 22:38:08 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/05 23:16:40 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,10 @@ int	set_to_text_dq(t_token	*token)
 	return (0);
 }
 
+// 1. ' : first change everything inside '' to plain text because it does not expand environment variables and treats all special characters as text as well
+// 2. $ : expand envs to their true value and remove $ char (do it before checking for "" because within "" env value should be already expanded)
+// 3. " : change everything between "" to plain text as now the envs have correct value and special characters are also treated as text
+// 4. < > >> << : argument after redir operator is always a file, so set the type of following node to file (? and also check if it actually exists and the input is valid ?)
 t_cmd	*parser(t_mini *mini, t_token *token_list)
 {
 	t_cmd	*parsed_list;
@@ -67,10 +71,6 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 	//flag = 0;
 	while (temp)
 	{
-		// keep the order ' --> $ --> " --> ... :
-		// because first we evaluate everything inside '' as text because it does not expand environment variables,
-		// then we expand envs before "" because within "" envs should be expanded
-		// then evaluate everything between "" as text as now the envs have the correct value
 		if (temp->type == TOKEN_SQUOTE)
 		{
 			set_to_text_sq(temp->next);
@@ -81,8 +81,7 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 		{
 			set_to_text_dq(temp->next);
 		}
-
-		if (temp->next && (temp->type == TOKEN_REDIRIN
+		if (temp->next && temp->next->type == TOKEN_TEXT && (temp->type == TOKEN_REDIRIN
 			|| temp->type == TOKEN_REDIROUT || temp->type == TOKEN_APPEND))
 			temp->next->type = TOKEN_FILE;
 
@@ -125,13 +124,13 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 				flag = 0;
 			} */
 		}
-		char **atemp2 = args;
-		printf("args collected from a text block:\n");
-		while (atemp2 && *atemp2)
-		{
-			printf("%s\n", *atemp2);
-			atemp2++;
-		}
+		// char **atemp2 = args;
+		// printf("args collected from a text block:\n");
+		// while (atemp2 && *atemp2)
+		// {
+		// 	printf("%s\n", *atemp2);
+		// 	atemp2++;
+		// }
 		if (temp)
 			temp = temp->next;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/05 19:18:43 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 23:02:50 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	show_prompt(t_mini *mini)
 	t_token *head = NULL;
 	t_token *token_list = process_input(input, mini);
 	head = token_list;
-	
+
 
 	// printf("tokens from input:\n");
 	// while (token_list)
@@ -101,9 +101,9 @@ int	show_prompt(t_mini *mini)
 	// }
 
 /* testing export_env - WORKS*/
-	expand_envs(mini, &token_list);
-	head = token_list;
-	printf("tokens after expanding envs:\n");
+	// expand_envs(mini, &token_list);
+	// head = token_list;
+	printf("tokens:\n");
 	t_token *temp = token_list;
 	while (temp)
 	{
