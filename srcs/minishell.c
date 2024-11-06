@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/05 23:02:50 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/06 14:07:45 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ t_token	*process_input(char *input, t_mini *mini) // should be void
 {
 	(void)mini;
 	t_token *token_list = lexer(input);
-	if (token_list)
-		/* mini->cmd_list =  */parser(mini, token_list);
+	//if (token_list)
+		/* mini->cmd_list = parser(mini, token_list); */
 	return (token_list); // testing
 }
 
