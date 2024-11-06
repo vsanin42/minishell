@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 19:15:44 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/06 18:39:53 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ int		error_msg(char *msg);
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
+void	parse_envs_and_quotes(t_token *token);
 
 /* parcer.c */
 t_cmd   *parser(t_mini *mini, t_token *token_list);

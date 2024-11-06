@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/06 14:07:45 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/06 19:23:20 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,22 @@ int	show_prompt(t_mini *mini)
 /* testing export_env - WORKS*/
 	// expand_envs(mini, &token_list);
 	// head = token_list;
-	printf("tokens:\n");
-	t_token *temp = token_list;
-	while (temp)
+
+/* testing paring envs and quotes to true text values */
+	// printf("parsing:\n");
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	//parse_envs_and_quotes(temp);
+	// 	temp = temp->next;
+	// }
+	/* printing token list */
+	t_token *temp2 = token_list;
+	while (temp2)
 	{
-		printf("%s\t", temp->value); // attention content
-		printf("type: %d\n", temp->type);
-		temp = temp->next;
+		printf("%s\t", temp2->value); // attention content
+		printf("type: %d\n", temp2->type);
+		temp2 = temp2->next;
 	}
 	clear_token_list(head);
 	return (1);

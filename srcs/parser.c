@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/05 23:16:40 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/06 18:44:47 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 	char	**args;
 	//char	*cmd;
 	//int		flag;
-
+	(void)mini;
 	parsed_list = NULL;
 	temp = token_list;
 	//flag = 0;
@@ -75,7 +75,7 @@ t_cmd	*parser(t_mini *mini, t_token *token_list)
 		{
 			set_to_text_sq(temp->next);
 		}
-		expand_envs(mini, &temp);
+		//parse_envs_and_quotes(mini, temp); // !!! ONLY DOES IT ONCE FOR THE FIRST TOKEN, WE HAVE TO DO IT IN A LOOP OR CHANGE THE FUNCTION TO DO IT IN A LOOP
 		token_list = temp;
 		if (temp->type == TOKEN_DQUOTE)
 		{
