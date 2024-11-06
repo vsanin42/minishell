@@ -1,6 +1,8 @@
 # minishell
 
 42 project by vsanin & zpiarova - work in progress
+NUMBER OF TIMES WE CHANGED LEXER: II
+NUMBER OF TIMES WE CHANGED PARSER: I	
 
 # edge test cases
 - how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
