@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/06 15:25:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/06 19:32:30 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,21 @@ char	*process_text(char *input, int *i)
 {
 	char	*node_value;
 	int		start;
-	int		treat_specials_as_text;
+	int		treat_specials_as_text_sq;
+	int		treat_specials_as_text_dq;
 
-	treat_specials_as_text = 0;
+	treat_specials_as_text_sq = 0;
+	treat_specials_as_text_dq = 0;
 	start = *i;
 	node_value = NULL;
 	while (input[*i])
 	{
-		if (input[*i] == '"' || input[*i] == '\'') // when encounter "/', start/stop treating specials as text
-			treat_specials_as_text = !treat_specials_as_text;
+		if (input[*i] == '"') // when encounter "/', start/stop treating specials as text
+			treat_specials_as_text_dq = !treat_specials_as_text_dq;
+		else if (input[*i] == '\'')
+			treat_specials_as_text_sq = !treat_specials_as_text_sq;
 		// if it is one of the delimeters and it has its powers we are at the end of text input, i is now at that delimeter and we break out to the main loop
-		else if (treat_specials_as_text == 0 && (input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i])))
+		else if (treat_specials_as_text_sq == 0 && treat_specials_as_text_dq == 0 && (input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i])))
 		{
 			node_value = ft_substr(input, start, *i - start);
 			(*i)--;
