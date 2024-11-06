@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/05 19:57:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/05 22:54:57 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ void expand_env(t_mini *mini, t_token *token)
 						rest = (temp + i + 1);
 						res = ft_strjoin(env, rest);
 					}
-					else 
+					else
 						res = "\n";
 					free(str_to_check);
 				}
 				else
-					res = ft_strdup("Unclosed bracket: }");
+					res = ft_strdup("minishell: bad substitution}");
 			}
 			else
 			{
