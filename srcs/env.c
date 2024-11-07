@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/06 18:42:07 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 10:51:42 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,19 @@ void	parse_envs_and_quotes(t_token *token)
 	i = 0;
 	text = token->value;
 	if (token->type != TOKEN_TEXT)
-		return ; // if it was not text our work is done and we can succesfully go out of this node
+		return ; // if it was not text our work is done and we can successfully go out of this node
+
+	// go over the text until we encounter ' or "
+	// when we encounter one of them, we create a "first string" variable that stores string up to here
+	// when encounter dq, do function handle_between_dq
+	// this will have a while loop and will run until it encounters ", properly updating the index
+	// it will expand the variables with expand_envs function
+	// it will return a string that will be malloced and will not contain the last character, the i will stay on " or out of bounds
+	// then we check if the current i is on " - we know the quote was ended
+	// if the i is on NULL that means that the quote was not finished and we can throw error Unclosed quote 
+	// in this outer function we check
+	// if we encounter ', call function handle_between_sq
+
 	while (text[i])
 	{
 		if (!in_dq && text[i] == '\'')
@@ -203,4 +215,5 @@ void	parse_envs_and_quotes(t_token *token)
 		error_msg("minishell: squote missing");
 	if (in_dq)
 		error_msg("minishell: dquote missing");
+	token->value = res;
 }

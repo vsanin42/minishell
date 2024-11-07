@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/06 19:23:20 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 10:29:19 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,13 +105,13 @@ int	show_prompt(t_mini *mini)
 	// head = token_list;
 
 /* testing paring envs and quotes to true text values */
-	// printf("parsing:\n");
-	// t_token *temp = token_list;
-	// while (temp)
-	// {
-	// 	//parse_envs_and_quotes(temp);
-	// 	temp = temp->next;
-	// }
+	printf("parsing:\n");
+	t_token *temp = token_list;
+	while (temp)
+	{
+		parse_envs_and_quotes(temp);
+		temp = temp->next;
+	}
 	/* printing token list */
 	t_token *temp2 = token_list;
 	while (temp2)
