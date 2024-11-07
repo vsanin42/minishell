@@ -6,19 +6,19 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 12:00:25 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 17:07:30 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_cmd	*process_input(char *input, t_mini *mini) // should be void
+t_token	*process_input(char *input, t_mini *mini) // should be void
 {
 	(void)mini;
 	t_token *token_list = lexer(input);
 	if (token_list)
 		mini->cmd_list =  parser(mini, token_list);
-	return (mini->cmd_list); // testing
+	return (token_list); // testing
 }
 
 // called on loop to show a prompt
@@ -85,14 +85,14 @@ int	show_prompt(t_mini *mini)
 	printf("buff: %s\n", buff); */
 
 	/* testing lexer */
-	// t_token *head = NULL;
-	// t_token *token_list = process_input(input, mini);
-	// head = token_list;
+	t_token *head = NULL;
+	t_token *token_list = process_input(input, mini);
+	head = token_list;
 
 	/* testing parser */
-	t_cmd *head = NULL;
-	t_cmd *cmd_list = process_input(input, mini);
-	head = cmd_list;
+	// t_cmd *head = NULL;
+	// t_cmd *cmd_list = process_input(input, mini);
+	// head = cmd_list;
 
 	// printf("tokens from input:\n");
 	// while (token_list)
@@ -107,27 +107,27 @@ int	show_prompt(t_mini *mini)
 	// head = token_list;
 	
 	/* testing parser */
-	printf("commands:\n\n");
-	t_cmd *temp = cmd_list;
-	char **atemp2;
-	t_redir *aredir;
-	while (temp)
-	{
-		printf("cmd name:\t%s\n", temp->cmd);
-		atemp2 = temp->args;
-		aredir = temp->redir;
-		while (atemp2 && *atemp2)
-		{
-			printf("argument:\t%s\n", *atemp2);
-			atemp2++;
-		}
-		while (aredir && aredir->next)
-		{
-			printf("redir file:\t%s\n", aredir->file);
-			printf("redir type:\t%d\n", aredir->type);
-			aredir = aredir->next;
-		}
-	}
+	// printf("commands:\n\n");
+	// t_cmd *temp = cmd_list;
+	// char **atemp2;
+	// t_redir *aredir;
+	// while (temp)
+	// {
+	// 	printf("cmd name:\t%s\n", temp->cmd);
+	// 	atemp2 = temp->args;
+	// 	aredir = temp->redir;
+	// 	while (atemp2 && *atemp2)
+	// 	{
+	// 		printf("argument:\t%s\n", *atemp2);
+	// 		atemp2++;
+	// 	}
+	// 	while (aredir && aredir->next)
+	// 	{
+	// 		printf("redir file:\t%s\n", aredir->file);
+	// 		printf("redir type:\t%d\n", aredir->type);
+	// 		aredir = aredir->next;
+	// 	}
+	// }
 	/* testing paring envs and quotes to true text values */
 	// printf("parsing:\n");
 	// t_token *temp = token_list;
@@ -140,13 +140,19 @@ int	show_prompt(t_mini *mini)
 	//clear_cmd_list(head);
 	/* testing lexer */
 	// printf("tokens:\n");
-	// t_token *temp = token_list;
-	// while (temp)
-	// {
-	// 	printf("%s\t", temp->value);
-	// 	printf("type: %d\n", temp->type);
-	// 	temp = temp->next;
-	// }
+	t_token *temp = token_list;
+	char	*new_str;
+	while (temp)
+	{
+		printf("\n");
+		printf("old value:\t%s\n", temp->value);
+		new_str = parse_eq(temp);
+		free(temp->value);
+		temp->value = new_str;
+		printf("new value:\t%s\n", temp->value);
+		temp = temp->next;
+	}
+	clear_token_list(head);
 	//clear_token_list(head);
 	
 	/* printing token list */

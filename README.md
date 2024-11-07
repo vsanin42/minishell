@@ -16,3 +16,4 @@ set stdin back to 0 when redirecting from files - maybe not if we use a differen
 - this should be the correct behaviour: echo $'HOME' --> HOME
 - $'HOME' input segfaults - attempting free on address which was not malloced
 - nested envs give error zsh: bad substitution
+- error handling when unclosed quotes

@@ -6,7 +6,7 @@
 #    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/05 18:14:12 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/07 17:17:21 by vsanin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
 		srcs/builtins.c \
+		srcs/env_quotes.c \
 		srcs/env.c \
 		srcs/exit.c \
 		srcs/lexer.c \

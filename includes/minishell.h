@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 11:53:57 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 17:03:27 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct	s_mini
 }	t_mini;
 
 /* minishell.c */
-t_cmd	*process_input(char *input, t_mini *mini); // should be void, testing
+t_token	*process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
@@ -92,6 +92,7 @@ char	*handle_env(char *name);
 /* env.c */
 void	expand_env(t_mini *mini, t_token *token);
 void	expand_envs(t_mini *mini, t_token **token);
+char 	*parse_eq(t_token *token);
 
 /* exit.c */
 int		error_msg(char *msg);
