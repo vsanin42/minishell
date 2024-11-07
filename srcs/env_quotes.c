@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   env_quotes.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/07 16:57:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 17:53:52 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,12 +275,17 @@ char	**trim_quotes_in_array(char **head)
 	oldstr = NULL;
 	while (temp && *temp)
 	{
-		if (*temp[0] == '\'' || *temp[0] == '"')
+		if (*temp[0] == '\'')
 		{
 			oldstr = *temp;
-			*temp = ft_strtrim(*temp, "\'\"");;
-			free(oldstr);
+			*temp = ft_strtrim(*temp, "'");
 		}
+		else if (*temp[0] == '"')
+		{
+			oldstr = *temp;
+			*temp = ft_strtrim(*temp, "\"");
+		}
+		free(oldstr);
 		temp++;
 	}
 	return (head);
@@ -341,7 +346,11 @@ char 	*parse_eq(t_token *token)
 	{
 		if (text[i] != '\'' && text[i] != '"')
 		{
-			*text_array_in = ft_substr(text, i, find_q_or_end(text + i)); // expand envs
+			char *separated = ft_substr(text, i, find_q_or_end(text + i));
+			char *expanded = get_env_value_to_process(separated);
+			*text_array_in = expanded; /// expand envs
+			free(separated);
+			separated = NULL;
 			printf("word added: %s\n", *text_array_in);
 			text_array_in++;
 			i += find_q_or_end(text + i);
@@ -377,7 +386,11 @@ char 	*parse_eq(t_token *token)
 				{
 					error_msg("\nError: unclosed quote"); // proper exit
 				}
-				*text_array_in = ft_substr(text, i, find_q_or_end(text + i)); /// expand envs
+				char *separated = ft_substr(text, i, find_q_or_end(text + i));
+				char *expanded = get_env_value_to_process(separated);
+				*text_array_in = expanded; /// expand envs
+				free(separated);
+				separated = NULL;
 				printf("word added: %s\n", *text_array_in);
 				text_array_in++;
 				i += find_q_or_end(text + i);

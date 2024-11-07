@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 17:25:39 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 17:40:14 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*handle_env(char *name);
 
 /* env.c */
 void	expand_env(t_mini *mini, t_token *token);
-void	expand_envs(t_mini *mini, t_token **token);
+char	*expand_envs(char *str_to_expand);
 char 	*parse_eq(t_token *token);
 char	*process_env(char *env_to_process);
 char *get_env_value_to_process(char *text);
