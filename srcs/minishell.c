@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 10:29:19 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/07 16:46:19 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,22 +104,40 @@ int	show_prompt(t_mini *mini)
 	// expand_envs(mini, &token_list);
 	// head = token_list;
 
+
+/* printing tokens after collecting before expanding */
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	printf("%s\t", temp->value); // attention content
+	// 	printf("type: %d\n", temp->type);
+	// 	temp = temp->next;
+	// }
+
 /* testing paring envs and quotes to true text values */
-	printf("parsing:\n");
+	// printf("parsing:\n");
+	// t_token *temp1 = token_list;
+	// while (temp1)
+	// {
+	// 	printf("hi");
+	// 	char *env = process_env(temp1->value);
+	// 	free(temp1->value);
+	// 	temp1->value = env;
+	// 	temp1 = temp1->next;
+	// }
+/* printing tokens after expanding */
+	// t_token *temp2 = token_list;
+	// while (temp2)
+	// {
+	// 	char *env = process_env(temp2->value);
+	// 	printf("%s\t", env); // attention content
+	// 	printf("type: %d\n", temp2->type);
+	// 	temp2 = temp2->next;
+	// }
 	t_token *temp = token_list;
-	while (temp)
-	{
-		parse_envs_and_quotes(temp);
-		temp = temp->next;
-	}
-	/* printing token list */
-	t_token *temp2 = token_list;
-	while (temp2)
-	{
-		printf("%s\t", temp2->value); // attention content
-		printf("type: %d\n", temp2->type);
-		temp2 = temp2->next;
-	}
+
+	char *test = get_env_value_to_process(temp->value);
+	printf("test: %s\n", test);
 	clear_token_list(head);
 	return (1);
 }
