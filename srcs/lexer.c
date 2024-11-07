@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/06 22:44:59 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/07 10:17:14 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ t_token_type	get_token_type(char *value)
 	return (TOKEN_TEXT);
 }
 
+// as soon as we encounter first text char that is not operator or whitespace we call this function
+// @returns created text node and moves the iteration pointer to the correct element pointing index to the correct position where it moved it
 char	*process_text(char *input, int *i)
 {
 	char	*node_value;
@@ -49,7 +51,6 @@ char	*process_text(char *input, int *i)
 	treat_specials_as_text_sq = 0;
 	treat_specials_as_text_dq = 0;
 	start = *i;
-	printf("start: %d\n", start);
 	node_value = NULL;
 	while (input && input[*i])
 	{
@@ -67,13 +68,11 @@ char	*process_text(char *input, int *i)
 		else if (treat_specials_as_text_sq == 0 && treat_specials_as_text_dq == 1 && (input[*i]  == '"' /*|| input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i]) */))
 		{
 			node_value = ft_substr(input, start, *i - start + 1);
-			//(*i)++;
 			return (node_value);
 		}
 		else if (treat_specials_as_text_sq == 1 && treat_specials_as_text_dq == 0 && (input[*i] == '\''/*  || input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i]) */))
 		{
 			node_value = ft_substr(input, start, *i - start + 1);
-			//(*i)++;
 			return (node_value);
 		}
 		(*i)++; // else the character we are on is a basic printable character so we add it to the string
@@ -83,19 +82,6 @@ char	*process_text(char *input, int *i)
 	(*i)--; // decrease value to the last element of the collected string, because in outer funciton it will be increased again
 	return (node_value);
 }
-
-// as soon as we encounter first etxt = char that is not operator or whitespace we call this function
-// @returns created text node and moves the iteration pointer to the correct element pointing to the //
-//char	*process_text(char *input, int *i)
-
-
-
-
-
-
-
-
-
 
 t_token	*get_token_list(char *input)
 {
@@ -118,7 +104,6 @@ t_token	*get_token_list(char *input)
 			node_value = ft_substr(input, i, 1);
 		else // store text
 			node_value = process_text(input, &i);
-		printf("i after token: %d(%c)\n", i, input[i]);
 		if (node_value)
 		{
 			new_tok = new_token(ft_strdup(node_value),
