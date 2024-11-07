@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/06 19:57:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 12:00:25 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,41 +37,40 @@ int	show_prompt(t_mini *mini)
 	//printf("%s\n", input); // for now just print
 	add_history(input);
 
-/* 	testing current directory - WORKS */
-/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
-	printf("cwd: %s\n", cwd);
-	free(cwd); */
+	/* 	testing current directory - WORKS */
+	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+		printf("cwd: %s\n", cwd);
+		free(cwd); */
 
 
-/*	testing getting command paths - WORKS */
-/* 	char *path = get_path_env(input);
+	/*	testing getting command paths - WORKS */
+	/* 	char *path = get_path_env(input);
 	if (path)
 		printf("path: %s\n", path);
 	else
 		printf("Path does not exist"); */
 
 
-/* testing cd_builtin - WORKS  */
-/* 	printf("cd: %d\n", cd_builtin(input));
+	/* testing cd_builtin - WORKS  */
+	/* 	printf("cd: %d\n", cd_builtin(input));
 	char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	printf("cwd: %s\n", cwd);
 	free(cwd); */
 
 
-/* 	testing builtin pwd with no options - WORKS
-	pwd_builtin();
- */
+	/* 	testing builtin pwd with no options - WORKS
+	pwd_builtin(); */
 
-/* 	testing exit  - WORKS */
-/* 	if (input)
+	/* 	testing exit  - WORKS */
+	/* 	if (input)
 		exit_builtin(input); */
 
 
-/* testing is_executable/is_readable - WORKS
+	/* testing is_executable/is_readable - WORKS
 	printf("exec: %d\n", is_readable_file(input)); */
 
-/* testing if input is being redirected properly - WORKS  */
-/* 	if (redirect_input(input) == -1)
+	/* testing if input is being redirected properly - WORKS  */
+	/* 	if (redirect_input(input) == -1)
 	{
 		perror("Error redirecting input hh");
 		return 1;  // Exit or handle error appropriately
@@ -83,8 +82,7 @@ int	show_prompt(t_mini *mini)
 		return 1;  // Handle the read error appropriately
 	}
 	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
-	printf("buff: %s\n", buff);
- */
+	printf("buff: %s\n", buff); */
 
 	/* testing lexer */
 	// t_token *head = NULL;
@@ -104,11 +102,10 @@ int	show_prompt(t_mini *mini)
 	// 	token_list = token_list->next;
 	// }
 
-/* testing export_env - WORKS*/
+	/* testing export_env - WORKS*/
 	// expand_envs(mini, &token_list);
 	// head = token_list;
-
-
+	
 	/* testing parser */
 	printf("commands:\n\n");
 	t_cmd *temp = cmd_list;
@@ -130,9 +127,16 @@ int	show_prompt(t_mini *mini)
 			printf("redir type:\t%d\n", aredir->type);
 			aredir = aredir->next;
 		}
-		temp = temp->next;
-		printf("\n");
 	}
+	/* testing paring envs and quotes to true text values */
+	// printf("parsing:\n");
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	parse_envs_and_quotes(temp);
+	// 	temp = temp->next;
+	// 	printf("\n");
+	// }
 	//clear_cmd_list(head);
 	/* testing lexer */
 	// printf("tokens:\n");
@@ -145,6 +149,15 @@ int	show_prompt(t_mini *mini)
 	// }
 	//clear_token_list(head);
 	
+	/* printing token list */
+	// t_token *temp2 = token_list;
+	// while (temp2)
+	// {
+	// 	printf("%s\t", temp2->value); // attention content
+	// 	printf("type: %d\n", temp2->type);
+	// 	temp2 = temp2->next;
+	// }
+	// clear_token_list(head);
 	return (1);
 }
 
