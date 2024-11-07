@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 10:29:19 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/07 12:00:25 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_token	*process_input(char *input, t_mini *mini) // should be void
+t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	(void)mini;
 	t_token *token_list = lexer(input);
-	//if (token_list)
-		/* mini->cmd_list = parser(mini, token_list); */
-	return (token_list); // testing
+	if (token_list)
+		mini->cmd_list =  parser(mini, token_list);
+	return (mini->cmd_list); // testing
 }
 
 // called on loop to show a prompt
@@ -37,41 +37,40 @@ int	show_prompt(t_mini *mini)
 	//printf("%s\n", input); // for now just print
 	add_history(input);
 
-/* 	testing current directory - WORKS */
-/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
-	printf("cwd: %s\n", cwd);
-	free(cwd); */
+	/* 	testing current directory - WORKS */
+	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+		printf("cwd: %s\n", cwd);
+		free(cwd); */
 
 
-/*	testing getting command paths - WORKS */
-/* 	char *path = get_path_env(input);
+	/*	testing getting command paths - WORKS */
+	/* 	char *path = get_path_env(input);
 	if (path)
 		printf("path: %s\n", path);
 	else
 		printf("Path does not exist"); */
 
 
-/* testing cd_builtin - WORKS  */
-/* 	printf("cd: %d\n", cd_builtin(input));
+	/* testing cd_builtin - WORKS  */
+	/* 	printf("cd: %d\n", cd_builtin(input));
 	char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	printf("cwd: %s\n", cwd);
 	free(cwd); */
 
 
-/* 	testing builtin pwd with no options - WORKS
-	pwd_builtin();
- */
+	/* 	testing builtin pwd with no options - WORKS
+	pwd_builtin(); */
 
-/* 	testing exit  - WORKS */
-/* 	if (input)
+	/* 	testing exit  - WORKS */
+	/* 	if (input)
 		exit_builtin(input); */
 
 
-/* testing is_executable/is_readable - WORKS
+	/* testing is_executable/is_readable - WORKS
 	printf("exec: %d\n", is_readable_file(input)); */
 
-/* testing if input is being redirected properly - WORKS  */
-/* 	if (redirect_input(input) == -1)
+	/* testing if input is being redirected properly - WORKS  */
+	/* 	if (redirect_input(input) == -1)
 	{
 		perror("Error redirecting input hh");
 		return 1;  // Exit or handle error appropriately
@@ -83,14 +82,17 @@ int	show_prompt(t_mini *mini)
 		return 1;  // Handle the read error appropriately
 	}
 	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
-	printf("buff: %s\n", buff);
- */
+	printf("buff: %s\n", buff); */
 
 	/* testing lexer */
-	t_token *head = NULL;
-	t_token *token_list = process_input(input, mini);
-	head = token_list;
+	// t_token *head = NULL;
+	// t_token *token_list = process_input(input, mini);
+	// head = token_list;
 
+	/* testing parser */
+	t_cmd *head = NULL;
+	t_cmd *cmd_list = process_input(input, mini);
+	head = cmd_list;
 
 	// printf("tokens from input:\n");
 	// while (token_list)
@@ -100,27 +102,62 @@ int	show_prompt(t_mini *mini)
 	// 	token_list = token_list->next;
 	// }
 
-/* testing export_env - WORKS*/
+	/* testing export_env - WORKS*/
 	// expand_envs(mini, &token_list);
 	// head = token_list;
-
-/* testing paring envs and quotes to true text values */
-	printf("parsing:\n");
-	t_token *temp = token_list;
+	
+	/* testing parser */
+	printf("commands:\n\n");
+	t_cmd *temp = cmd_list;
+	char **atemp2;
+	t_redir *aredir;
 	while (temp)
 	{
-		parse_envs_and_quotes(temp);
-		temp = temp->next;
+		printf("cmd name:\t%s\n", temp->cmd);
+		atemp2 = temp->args;
+		aredir = temp->redir;
+		while (atemp2 && *atemp2)
+		{
+			printf("argument:\t%s\n", *atemp2);
+			atemp2++;
+		}
+		while (aredir && aredir->next)
+		{
+			printf("redir file:\t%s\n", aredir->file);
+			printf("redir type:\t%d\n", aredir->type);
+			aredir = aredir->next;
+		}
 	}
+	/* testing paring envs and quotes to true text values */
+	// printf("parsing:\n");
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	parse_envs_and_quotes(temp);
+	// 	temp = temp->next;
+	// 	printf("\n");
+	// }
+	//clear_cmd_list(head);
+	/* testing lexer */
+	// printf("tokens:\n");
+	// t_token *temp = token_list;
+	// while (temp)
+	// {
+	// 	printf("%s\t", temp->value);
+	// 	printf("type: %d\n", temp->type);
+	// 	temp = temp->next;
+	// }
+	//clear_token_list(head);
+	
 	/* printing token list */
-	t_token *temp2 = token_list;
-	while (temp2)
-	{
-		printf("%s\t", temp2->value); // attention content
-		printf("type: %d\n", temp2->type);
-		temp2 = temp2->next;
-	}
-	clear_token_list(head);
+	// t_token *temp2 = token_list;
+	// while (temp2)
+	// {
+	// 	printf("%s\t", temp2->value); // attention content
+	// 	printf("type: %d\n", temp2->type);
+	// 	temp2 = temp2->next;
+	// }
+	// clear_token_list(head);
 	return (1);
 }
 

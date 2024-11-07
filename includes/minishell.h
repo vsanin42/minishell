@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/06 18:39:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:53:57 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,21 @@ typedef enum	e_token_type
 	/* 10 */TOKEN_FILE
 }	t_token_type;
 
+typedef struct s_redir
+{
+	t_token_type	type;
+	char			*file;
+	struct s_redir	*next;
+}	t_redir;
+
+
 typedef struct s_cmd
 {
 	char			*cmd;
 	char			**args;
-	char			*outfile;
-	char			*infile;
-	int				heredoc; // 0 default, 1 if followed by <<
-	int				append;
+	t_redir			*redir;
+	// int				heredoc; // 0 default, 1 if followed by <<
+	// int				append;
 	struct s_cmd	*next;
 }			t_cmd;
 
@@ -72,7 +79,7 @@ typedef struct	s_mini
 }	t_mini;
 
 /* minishell.c */
-t_token	*process_input(char *input, t_mini *mini); // should be void, testing
+t_cmd	*process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
