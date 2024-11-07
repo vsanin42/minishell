@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/06 19:51:42 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/06 22:44:59 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,13 @@ char	*process_text(char *input, int *i)
 	treat_specials_as_text_sq = 0;
 	treat_specials_as_text_dq = 0;
 	start = *i;
+	printf("start: %d\n", start);
 	node_value = NULL;
-	while (input[*i])
+	while (input && input[*i])
 	{
-		if (input[*i] == '"') // when encounter "/', start/stop treating specials as text
+		if (input[*i] == '"' && treat_specials_as_text_sq == 0) // when encounter "/', start/stop treating specials as text
 			treat_specials_as_text_dq = !treat_specials_as_text_dq;
-		else if (input[*i] == '\'')
+		else if (input[*i] == '\''  && treat_specials_as_text_dq == 0)
 			treat_specials_as_text_sq = !treat_specials_as_text_sq;
 		// if it is one of the delimeters and it has its powers we are at the end of text input, i is now at that delimeter and we break out to the main loop
 		else if (treat_specials_as_text_sq == 0 && treat_specials_as_text_dq == 0 && (input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i])))
@@ -65,14 +66,14 @@ char	*process_text(char *input, int *i)
 		}
 		else if (treat_specials_as_text_sq == 0 && treat_specials_as_text_dq == 1 && (input[*i]  == '"' /*|| input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i]) */))
 		{
-			node_value = ft_substr(input, start, *i - start);
-			(*i)--;
+			node_value = ft_substr(input, start, *i - start + 1);
+			//(*i)++;
 			return (node_value);
 		}
 		else if (treat_specials_as_text_sq == 1 && treat_specials_as_text_dq == 0 && (input[*i] == '\''/*  || input[*i] == '|' || input[*i] == '>' || input[*i] == '<' || iswhitespace(input[*i]) */))
 		{
-			node_value = ft_substr(input, start, *i - start);
-			(*i)--;
+			node_value = ft_substr(input, start, *i - start + 1);
+			//(*i)++;
 			return (node_value);
 		}
 		(*i)++; // else the character we are on is a basic printable character so we add it to the string
@@ -83,6 +84,19 @@ char	*process_text(char *input, int *i)
 	return (node_value);
 }
 
+// as soon as we encounter first etxt = char that is not operator or whitespace we call this function
+// @returns created text node and moves the iteration pointer to the correct element pointing to the //
+//char	*process_text(char *input, int *i)
+
+
+
+
+
+
+
+
+
+
 t_token	*get_token_list(char *input)
 {
 	t_token	*token_list;
@@ -92,8 +106,8 @@ t_token	*get_token_list(char *input)
 
 	new_tok = NULL;
 	token_list = NULL;
-	i = -1;
-	while (input && input[++i])
+	i = 0;
+	while (/* input &&  */input[i])
 	{
 		while (input[i] && iswhitespace(input[i]))
 			i++;
@@ -104,6 +118,7 @@ t_token	*get_token_list(char *input)
 			node_value = ft_substr(input, i, 1);
 		else // store text
 			node_value = process_text(input, &i);
+		printf("i after token: %d(%c)\n", i, input[i]);
 		if (node_value)
 		{
 			new_tok = new_token(ft_strdup(node_value),
@@ -114,6 +129,7 @@ t_token	*get_token_list(char *input)
 			free(node_value);
 			node_value = NULL;
 		}
+		i++;
 	}
 	return (token_list);
 }
@@ -129,3 +145,4 @@ t_token	*lexer(char *input)
 	input = NULL;
 	return (token_list);
 }
+
