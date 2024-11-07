@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 17:03:27 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 17:25:39 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ char	*handle_env(char *name);
 void	expand_env(t_mini *mini, t_token *token);
 void	expand_envs(t_mini *mini, t_token **token);
 char 	*parse_eq(t_token *token);
+char	*process_env(char *env_to_process);
+char *get_env_value_to_process(char *text);
 
 /* exit.c */
 int		error_msg(char *msg);
@@ -101,8 +103,8 @@ int		error_msg(char *msg);
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
+// void	parse_envs_and_quotes(t_token *token);
 void	parse_envs_and_quotes(t_token *token);
-
 /* parcer.c */
 t_cmd   *parser(t_mini *mini, t_token *token_list);
 

@@ -1,7 +1,7 @@
 # minishell
 
 42 project by vsanin & zpiarova - work in progress
-NUMBER OF TIMES WE CHANGED LEXER: II
+NUMBER OF TIMES WE CHANGED LEXER: III
 NUMBER OF TIMES WE CHANGED PARSER: I
 
 # edge test cases
@@ -9,7 +9,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - change double quotes lexing: because in input ${HOME}"aa" it should append the aa as text right after expanded home, but our will not because it is stored in a different node
 
 # TODO
-- lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this 
+- lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this
 set stdin back to 0 when redirecting from files - maybe not if we use a different process
 - in lexer I would add to each node information if there is whitespace before or if the new node is started because it is different type - good for parsing envs
 - ! when there is text type before "" or '', then what si between quotes is not set to text type but keeps its type

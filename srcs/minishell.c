@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 17:07:30 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 17:26:50 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	show_prompt(t_mini *mini)
 	/* testing export_env - WORKS*/
 	// expand_envs(mini, &token_list);
 	// head = token_list;
-	
+
 	/* testing parser */
 	// printf("commands:\n\n");
 	// t_cmd *temp = cmd_list;
@@ -154,7 +154,7 @@ int	show_prompt(t_mini *mini)
 	}
 	clear_token_list(head);
 	//clear_token_list(head);
-	
+
 	/* printing token list */
 	// t_token *temp2 = token_list;
 	// while (temp2)
