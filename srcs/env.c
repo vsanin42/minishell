@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/07 17:27:42 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:26:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char *get_env_value_to_process(char *text)
 		}
 
 	// ENVS IN $
-		if (text[i] == '$')
+		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
 		{
 			i++;
 	// ENVS IN {}
@@ -99,7 +99,7 @@ char *get_env_value_to_process(char *text)
 			else // collect everything until encountering end of the line or the first non-alphanumeric character, the rest until whitespace is then appended after the expanded env, if not exist, it is null and we append to this
 			{
 				start = i;
-				while (text[i] && isalnum(text[i]))
+				while (text[i] && ft_isalnum(text[i]))
 				{
 					len++;
 					i++;
@@ -121,7 +121,14 @@ char *get_env_value_to_process(char *text)
 					break ;
 			}
 		}
-		else // meaning we must have come to the end of string since we did not encounter $
+		else if (text[i] == '$' && text[i + 1] && !ft_isalnum(text[i + 1]))// meaning we must have come to the end of string since we did not encounter $
+		{
+			to_append = ft_strdup("$");
+			res = ft_strjoin(res, to_append);
+			free(to_append);
+			to_append = NULL;
+		}
+		else
 			break ;
 		i++;
 	}

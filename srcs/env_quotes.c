@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_quotes.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/07 17:53:52 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/07 18:03:08 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void	parse_envs_and_quotes(t_token *token)
 	// it will expand the variables with expand_envs function
 	// it will return a string that will be malloced and will not contain the last character, the i will stay on " or out of bounds
 	// then we check if the current i is on " - we know the quote was ended
-	// if the i is on NULL that means that the quote was not finished and we can throw error Unclosed quote 
+	// if the i is on NULL that means that the quote was not finished and we can throw error Unclosed quote
 	// in this outer function we check
 	// if we encounter ', call function handle_between_sq
 
@@ -270,7 +270,7 @@ char	**trim_quotes_in_array(char **head)
 {
 	char	**temp;
 	char	*oldstr;
-	
+
 	temp = head;
 	oldstr = NULL;
 	while (temp && *temp)
@@ -279,13 +279,14 @@ char	**trim_quotes_in_array(char **head)
 		{
 			oldstr = *temp;
 			*temp = ft_strtrim(*temp, "'");
+			free(oldstr);
 		}
 		else if (*temp[0] == '"')
 		{
 			oldstr = *temp;
 			*temp = ft_strtrim(*temp, "\"");
+			free(oldstr);
 		}
-		free(oldstr);
 		temp++;
 	}
 	return (head);
@@ -334,13 +335,13 @@ char 	*parse_eq(t_token *token)
 	int		i;
 	char	**text_array_in;
 	char	**head;
-	
+
 	i = 0;
 	text = token->value;
 	if (token->type != TOKEN_TEXT)
 		return (NULL);
 	text_array_in = malloc(sizeof(char *) * (find_words(text) + 1));
-	printf("words: %d\n", find_words(text));
+	//printf("words: %d\n", find_words(text));
 	head = text_array_in;
 	while (text[i])
 	{
@@ -351,10 +352,10 @@ char 	*parse_eq(t_token *token)
 			*text_array_in = expanded; /// expand envs
 			free(separated);
 			separated = NULL;
-			printf("word added: %s\n", *text_array_in);
+			//printf("word added: %s\n", *text_array_in);
 			text_array_in++;
 			i += find_q_or_end(text + i);
-			printf("i after moving past added word: %d\n", i);
+			//printf("i after moving past added word: %d\n", i);
 		}
 		else
 		{
@@ -370,10 +371,10 @@ char 	*parse_eq(t_token *token)
 					error_msg("unclosed quote"); // proper exit
 				}
 				*text_array_in = ft_substr(text, i, find_q_or_end(text + i));
-				printf("word added: %s\n", *text_array_in);
+				//printf("word added: %s\n", *text_array_in);
 				text_array_in++;
 				i += find_q_or_end(text + i);
-				printf("i after moving past added word: %d\n", i);
+				//printf("i after moving past added word: %d\n", i);
 			}
 			else if (text[i] == '"')
 			{
@@ -391,10 +392,10 @@ char 	*parse_eq(t_token *token)
 				*text_array_in = expanded; /// expand envs
 				free(separated);
 				separated = NULL;
-				printf("word added: %s\n", *text_array_in);
+				//printf("word added: %s\n", *text_array_in);
 				text_array_in++;
 				i += find_q_or_end(text + i);
-				printf("i after moving past added word: %d\n", i);
+				//printf("i after moving past added word: %d\n", i);
 			}
 		}
 	}

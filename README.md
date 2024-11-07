@@ -1,7 +1,7 @@
 # minishell
 
 42 project by vsanin & zpiarova - work in progress
-NUMBER OF TIMES WE CHANGED LEXER: III
+NUMBER OF TIMES WE CHANGED LEXER: IIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 
 # edge test cases

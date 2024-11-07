@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 10:17:14 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/07 17:59:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,21 @@ t_token	*get_token_list(char *input)
 t_token	*lexer(char *input)
 {
 	t_token	*token_list;
+	char *new_str;
 
 	token_list = get_token_list(input);
 	if (!token_list)
 		return (NULL);
 	free(input);
 	input = NULL;
+	t_token *temp = token_list;
+	while (temp)
+	{
+		new_str = parse_eq(temp);
+		free(temp->value);
+		temp->value = new_str;
+		temp = temp->next;
+	}
 	return (token_list);
 }
 

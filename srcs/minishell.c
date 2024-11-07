@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 17:26:50 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:00:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,30 +140,29 @@ int	show_prompt(t_mini *mini)
 	//clear_cmd_list(head);
 	/* testing lexer */
 	// printf("tokens:\n");
-	t_token *temp = token_list;
-	char	*new_str;
-	while (temp)
-	{
-		printf("\n");
-		printf("old value:\t%s\n", temp->value);
-		new_str = parse_eq(temp);
-		free(temp->value);
-		temp->value = new_str;
-		printf("new value:\t%s\n", temp->value);
-		temp = temp->next;
-	}
-	clear_token_list(head);
+	// t_token *temp = token_list;
+	// char	*new_str;
+	// while (temp)
+	// {
+	// 	printf("\n");
+	// 	//printf("old value:\t%s\n", temp->value);
+	// 	new_str = parse_eq(temp);
+	// 	free(temp->value);
+	// 	temp->value = new_str;
+	// 	//printf("new value:\t%s\n", temp->value);
+	// 	temp = temp->next;
+	// }
 	//clear_token_list(head);
 
 	/* printing token list */
-	// t_token *temp2 = token_list;
-	// while (temp2)
-	// {
-	// 	printf("%s\t", temp2->value); // attention content
-	// 	printf("type: %d\n", temp2->type);
-	// 	temp2 = temp2->next;
-	// }
-	// clear_token_list(head);
+	t_token *temp2 = token_list;
+	while (temp2)
+	{
+		printf("%s\t", temp2->value); // attention content
+		printf("type: %d\n", temp2->type);
+		temp2 = temp2->next;
+	}
+	clear_token_list(head);
 	return (1);
 }
 
