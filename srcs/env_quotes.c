@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 14:37:55 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 21:00:17 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ char	*str_from_array(char **head)
 	char	*str;
 	char	*res;
 	char	**thead;
-
+	char	*temp;
+	
 	thead = head;
 	res = malloc(sizeof(char) * (array_char_len(thead) + 1));
 	if (!res)
@@ -98,15 +99,17 @@ char	*str_from_array(char **head)
 	str = res;
 	while (thead && *thead)
 	{
-		while (**thead)
+		temp = *thead;
+		while (*temp)
 		{
-			*str = **thead;
+			*str = *temp;
 			str++;
-			(*thead)++;
+			temp++;
 		}
 		thead++;
 	}
 	*str = '\0';
+	free_char_pp(head);
 	return (res);
 }
 

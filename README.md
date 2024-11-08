@@ -19,3 +19,26 @@ set stdin back to 0 when redirecting from files - maybe not if we use a differen
 - error handling when unclosed quotes
 - NOW IF ENVS ARE NOT ABLE TO BE EXPANDED A NULL VALUE/NOTHING IS RETURNED TO THE NODES VALUE, SO WE CAN HAVE VALUES OF TYPE TEXT BUT WITH NO STORED VALUE/NULL - HANDLE THIS - create a function that removes these nodes when processing them into the array
 - !!! FILENAMES CAN ALSO BE ENVIRONMENT VARIABLES - must also go through the parse_eq_and_envs function !!!
+
+# general notes
+
+1. assume:
+char **head;
+char **temp = head;
+
+don't use (*temp)++ to move the pointer when accessing strings themselves, it changes the starting position of strings within head, causing corruption.
+
+reason: temp is a separate pointer iterating over the array, so it doesn't modify head itself. However, the problem lies in the line:
+(*temp)++;
+This alters the actual char * string that temp points to, meaning you're modifying the original head's strings' pointers, not just moving through the array.
+
+weird shit but it's fixed :D
+
+2. do this when using strjoin to avoid leaks - free the old res value before reassigning (setting to NULL probably doesn't matter but anyway):
+to_append = ft_substr(text, (*i) - len, len);
+oldres = res;
+res = ft_strjoin(res, to_append);
+free(oldres);
+free(to_append);
+oldres = NULL;
+to_append = NULL;

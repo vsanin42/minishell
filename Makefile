@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/08 17:41:13 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/08 22:06:19 by vsanin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ SRC  =  srcs/minishell.c \
 		srcs/env_utils_v.c \
 		srcs/env.c \
 		srcs/exit.c \
+		srcs/free.c \
 		srcs/lexer.c \
 		srcs/parser_redir.c \
 		srcs/parser.c \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 18:27:44 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 22:06:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ char	*get_env_value_to_process(char *text);
 /* exit.c */
 int		error_msg(char *msg);
 
+/* free.c */
+void	free_token_list(t_token *token);
+void	free_char_pp(char **arr);
+void	free_redir(t_redir *redir);
+void	free_cmd_list(t_cmd *node);
+
 /* lexer.c */
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
@@ -125,7 +131,7 @@ int		get_ttokens_len(t_token	*token);
 char	**alloc_args(char **args, t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
 t_cmd	*new_cmd(t_token *token);
-t_cmd	*parser(t_mini *mini, t_token *token_list);
+t_cmd	*parser(t_mini *mini);
 
 /* paths.c */
 char	*get_current_directory(void);
@@ -143,7 +149,6 @@ void	sig_handler(int sig);
 /* token_list.c */
 t_token	*new_token(char *value, t_token_type type);
 void	add_back_token(t_token **lst, t_token *new);
-void	clear_token_list(t_token *token);
 
 /* utils.c */
 int		iswhitespace(char c);

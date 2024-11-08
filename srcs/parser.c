@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 18:22:32 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 20:43:45 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,26 +93,26 @@ t_cmd	*new_cmd(t_token *token)
 	return (node);
 }
 
-t_cmd	*parser(t_mini *mini, t_token *token_list)
+t_cmd	*parser(t_mini *mini)
 {
 	t_cmd	*parsed_list;
 	t_cmd	*new_node;
 	t_token *temp;
 
-	(void)mini;
 	parsed_list = NULL;
-	temp = token_list;
+	temp = mini->token_list;
 	while (temp)
 	{
 		new_node = new_cmd(temp);
 		if (!new_node)
 			return (NULL);
 		add_back_cmd(&parsed_list, new_node);
-		while (temp && temp->type != TOKEN_PIPE) 
+		while (temp && temp->type != TOKEN_PIPE)
     		temp = temp->next;
 		if (temp)
 		 	temp = temp->next;
 	}
+	free_token_list(mini->token_list);
 	return (parsed_list);
 }
 

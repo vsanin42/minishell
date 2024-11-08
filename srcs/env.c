@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 15:57:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 21:53:46 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ char	*handle_normal_word(char *res, char *text, int *i)
 	int		len;
 	char	*to_append;
 	char	*env;
-
+	char	*oldres;
+	
+	oldres = NULL;
 	len = 0;
 	to_append = NULL;
 	env = NULL;
@@ -29,8 +31,11 @@ char	*handle_normal_word(char *res, char *text, int *i)
 	if (len)
 	{
 		to_append = ft_substr(text, (*i) - len, len);
+		oldres = res;
 		res = ft_strjoin(res, to_append);
+		free(oldres);
 		free(to_append);
+		oldres = NULL;
 		to_append = NULL;
 	}
 	return (res);
@@ -77,7 +82,9 @@ char *handle_env_without_braces(char *res, char *text, int *i)
 	int len;
 	char *to_append;
 	char *env;
-
+	char *oldres;
+	
+	oldres = NULL;
 	len = 0;
 	to_append = NULL;
 	env = NULL;
@@ -91,8 +98,11 @@ char *handle_env_without_braces(char *res, char *text, int *i)
 		to_append = ft_substr(text, (*i) - len, len);
 		env = process_env(to_append);
 		if (env)
+		{
+			oldres = res; // work on this oldres to make space for 25 lines somehow
 			res = ft_strjoin(res, env);
-		free_four_mallocs(to_append, env, NULL, NULL);
+		}
+		free_four_mallocs(to_append, env, oldres, NULL);
 		(*i)--;
 	}
 	return (res);
@@ -120,11 +130,13 @@ char *get_env_value_to_process(char *text)
 {
 	int i;
 	char *res;
+	char *oldres;
 
 	i = -1;
 	res = ft_strdup("");
 	while (text[++i])
 	{
+		oldres = res;
 		res = handle_normal_word(res, text, &i);
 		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
 		{
@@ -133,7 +145,10 @@ char *get_env_value_to_process(char *text)
 				break ;
 		}
 		else if (text[i] == '$' && (!text[i + 1] || ((text[i + 1] && !ft_isalnum(text[i + 1])))))
+		{	
 			res = ft_strjoin(res, ft_strdup("$"));
+			free(oldres);
+		}
 		else
 			break ;
 	}

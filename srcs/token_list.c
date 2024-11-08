@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_list.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 13:58:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 22:05:42 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,4 @@ void	add_back_token(t_token **lst, t_token *new)
 	while (temp->next)
 		temp = temp->next;
 	temp->next = new;
-}
-
-void	clear_token_list(t_token *token)
-{
-	t_token *temp;
-
-	while (token)
-	{
-		temp = token;
-		free((token)->value);
-		token = (token)->next;
-		free(temp);
-	}
-	token = NULL;
 }

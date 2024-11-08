@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/08 18:16:01 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 20:46:25 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
-	(void)mini;
-	t_token *token_list = lexer(input);
-	if (token_list)
-		mini->cmd_list =  parser(mini, token_list);
+	mini->token_list = lexer(input);
+	if (mini->cmd_list)
+		mini->cmd_list =  parser(mini);
 	return (mini->cmd_list); // testing
 }
 
@@ -126,6 +125,7 @@ int	show_prompt(t_mini *mini)
 		printf("---------------------------\n");
 		temp = temp->next;
 	}
+	free_cmd_list(cmd_list);
 	/* testing paring envs and quotes to true text values */
 	// printf("parsing:\n");
 	// t_token *temp = token_list;
