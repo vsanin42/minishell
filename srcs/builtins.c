@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/04 20:04:16 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 15:40:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 
 // changes directory, handles absolute, relative, no path
 // call for type EXECUTABLE
-// FREE is done in caller function 
+// FREE is done in caller function
 // @returns 0 on successful change of directory, 1 on error
 int	cd_builtin(char *path)
 {
 	char	*home;
-	
+
 	if (path == NULL || !ft_strncmp(path, "~", 1))
 	{
 		home = getenv("HOME");
@@ -56,7 +56,7 @@ int	pwd_builtin()
 	cwdlen = ft_strlen(cwd);
 	write(1, cwd, cwdlen);
 	write(1, "\n", 1);
-	// free(cwd); // maybe will be don ein calling function 
+	// free(cwd); // maybe will be don ein calling function
 	return (0);
 }
 
@@ -76,15 +76,9 @@ void	exit_builtin(char *status)
 	exit(exit_status);
 }
 
-// prints all env variables to terminal as strings each in new line
-int env_builtin()
-{
-	return (0);
-}
-
 // returns value of $ENV, check if it really is ENV happens before it is called
 // when calling if we are calling echo $non-existent-env, it prints newline if it is alone, and nothing if there is anything else
-char	*handle_env(char *name) // handles $NAME and prints its value eg. "Zuzka"
+char	*env_builtin(char *name) // handles $NAME and prints its value eg. "Zuzka"
 {
 	char	*value;
 

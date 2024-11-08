@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 13:57:46 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:30:46 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,16 @@ char	*process_env(char *name)
 	else
 		res = NULL;
 	return (res);
+}
+
+void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4)
+{
+	free(s1);
+	free(s2);
+	free(s3);
+	free(s4);
+	s1 = NULL;
+	s2 = NULL;
+	s3 = NULL;
+	s4 = NULL;
 }
