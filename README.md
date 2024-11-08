@@ -4,6 +4,14 @@
 NUMBER OF TIMES WE CHANGED LEXER: IIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 
+# november 8 evening final status: (you can delete after reading)
+- new free functions for freeing individual structs in a new file
+- cmd is freed in show_prompt(), token list is freed in parser()
+- now we can do a clean exit without leaks (based on fsanitize address) when an input is successfully converted to the cmd struct
+- tested on only one case so could fail somewhere else: a "$HOME" c < infile.txt | d > outfile.txt
+- env functions were fixed - free old value of res before reassigning it with ft_strjoin. very tight on norm there
+- random notes at the end of readme below
+
 # edge test cases
 - how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
 - change double quotes lexing: because in input ${HOME}"aa" it should append the aa as text right after expanded home, but our will not because it is stored in a different node
@@ -19,6 +27,7 @@ set stdin back to 0 when redirecting from files - maybe not if we use a differen
 - error handling when unclosed quotes
 - NOW IF ENVS ARE NOT ABLE TO BE EXPANDED A NULL VALUE/NOTHING IS RETURNED TO THE NODES VALUE, SO WE CAN HAVE VALUES OF TYPE TEXT BUT WITH NO STORED VALUE/NULL - HANDLE THIS - create a function that removes these nodes when processing them into the array
 - !!! FILENAMES CAN ALSO BE ENVIRONMENT VARIABLES - must also go through the parse_eq_and_envs function !!!
+- major free function + error handling at all times
 
 # general notes
 
