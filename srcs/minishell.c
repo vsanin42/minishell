@@ -102,10 +102,6 @@ int	show_prompt(t_mini *mini)
 	// 	token_list = token_list->next;
 	// }
 
-	/* testing export_env - WORKS*/
-	// expand_envs(mini, &token_list);
-	// head = token_list;
-
 	/* testing parser */
 	printf("commands:\n\n");
 	t_cmd *temp = cmd_list;

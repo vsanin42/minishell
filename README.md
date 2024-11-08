@@ -17,3 +17,5 @@ set stdin back to 0 when redirecting from files - maybe not if we use a differen
 - $'HOME' input segfaults - attempting free on address which was not malloced
 - nested envs give error zsh: bad substitution
 - error handling when unclosed quotes
+- NOW IF ENVS ARE NOT ABLE TO BE EXPANDED A NULL VALUE/NOTHING IS RETURNED TO THE NODES VALUE, SO WE CAN HAVE VALUES OF TYPE TEXT BUT WITH NO STORED VALUE/NULL - HANDLE THIS - create a function that removes these nodes when processing them into the array
+- !!! FILENAMES CAN ALSO BE ENVIRONMENT VARIABLES - must also go through the parse_eq_and_envs function !!!

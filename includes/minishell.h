@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
 /*   Updated: 2024/11/08 18:27:44 by vsanin           ###   ########.fr       */
@@ -34,14 +34,11 @@ typedef enum	e_token_type
 	/* 0 */ TOKEN_TEXT, // maybe in parser we separate text types into files, paths, commands/executables, ...
 	/* 1 */ TOKEN_ARG, // idk if will be used - later we could create array of arguments because it is needed as input for execve
 	/* 2 */ TOKEN_PIPE, // |
-	/* 3 */ TOKEN_SQUOTE, // '
-	/* 4 */ TOKEN_DQUOTE, // "
-	/* 5 */ TOKEN_REDIRIN, // <
-	/* 6 */ TOKEN_REDIROUT, // >
-	/* 7 */ TOKEN_APPEND, // >>
-	/* 8 */ TOKEN_HEREDOC, // <<
-	/* 9 */ TOKEN_ENV, // $
-	/* 10 */TOKEN_FILE
+	/* 3 */ TOKEN_REDIRIN, // <
+	/* 4 */ TOKEN_REDIROUT, // >
+	/* 5 */ TOKEN_APPEND, // >>
+	/* 6 */ TOKEN_HEREDOC, // <<
+	/* 7 */TOKEN_FILE
 }	t_token_type;
 
 typedef struct s_redir
@@ -87,7 +84,7 @@ void	set_termios(void);
 int		cd_builtin(char *path);
 int		pwd_builtin();
 void	exit_builtin(char *status);
-char	*handle_env(char *name);
+char	*env_builtin(char *name);
 
 /* env_quotes.c */
 int		find_q_or_end(char *text);
@@ -102,10 +99,11 @@ char	*exp_sub(char *str);
 int		check_next_char(char c, char c2, int i);
 
 /* env.c */
-void	expand_env(t_mini *mini, t_token *token);
-char	*expand_envs(char *str_to_expand);
-char	*process_env(char *env_to_process);
-char 	*get_env_value_to_process(char *text);
+char	*handle_normal_word(char *res, char *text, int *i);
+char	*handle_env_in_braces(char *res, char *text, int *i);
+char	*handle_env_without_braces(char *res, char *text, int *i);
+char	*handle_env(char *res, char *text, int *i);
+char	*get_env_value_to_process(char *text);
 
 /* exit.c */
 int		error_msg(char *msg);
@@ -114,7 +112,6 @@ int		error_msg(char *msg);
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
-// void	parse_envs_and_quotes(t_token *token);
 void	parse_envs_and_quotes(t_token *token);
 
 /* parser_redir.c */
@@ -143,10 +140,15 @@ int	redirect_input(char *file);
 /* signal.c */
 void	sig_handler(int sig);
 
-/* utils.c */
-int		iswhitespace(char c);
+/* token_list.c */
 t_token	*new_token(char *value, t_token_type type);
 void	add_back_token(t_token **lst, t_token *new);
 void	clear_token_list(t_token *token);
+
+/* utils.c */
+int		iswhitespace(char c);
+int		is_alnum(char *str);
+char	*process_env(char *name);
+void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 
 #endif

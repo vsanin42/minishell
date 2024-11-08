@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
 #    Updated: 2024/11/08 17:41:13 by vsanin           ###   ########.fr        #
@@ -36,6 +36,7 @@ SRC  =  srcs/minishell.c \
 		srcs/paths.c \
 		srcs/redirections.c \
 		srcs/signal.c \
+		srcs/token_list.c \
 		srcs/utils.c \
 
 OBJ = $(SRC:.c=.o)

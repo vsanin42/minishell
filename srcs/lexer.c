@@ -27,20 +27,15 @@ t_token_type	get_token_type(char *value)
 			return (TOKEN_REDIROUT);
 		if (value[0] == '<')
 			return (TOKEN_REDIRIN);
-		// if (value[0] == '\'')
-		// 	return (TOKEN_SQUOTE);
-		// if (value[0] == '"')
-		// 	return (TOKEN_DQUOTE);
-		// if (value[0] == '$')
-		// 	return (TOKEN_ENV);
 		if (value[0] == '|')
 			return (TOKEN_PIPE);
 	}
 	return (TOKEN_TEXT);
 }
 
-// as soon as we encounter first text char that is not operator or whitespace we call this function
-// @returns created text node and moves the iteration pointer to the correct element pointing index to the correct position where it moved it
+// operates on input string from readline and separates it into tokens
+// called as soon as we encounter first text char that is not operator
+// @returns created text node and moves iteration pointer to correct character
 char	*process_text(char *input, int *i)
 {
 	char	*node_value;

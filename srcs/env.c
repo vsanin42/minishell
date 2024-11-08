@@ -6,183 +6,136 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/07 18:26:51 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:57:14 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// we get optimal value WITHOUT $ that we just transform to env value or nothing if it doesnt match anything
-// @returns expanded allocated value if found, NULL if not found, od allocated "$" if there was nothing
-char	*process_env(char *env_to_process)
+char	*handle_normal_word(char *res, char *text, int *i)
 {
-	char *res;
+	int		len;
+	char	*to_append;
+	char	*env;
 
-	if (!env_to_process)
-		res = ft_strdup("$");
-	else if (getenv(env_to_process))
-	{
-		res = ft_strdup(getenv(env_to_process));
-	}
-	else
-		res = NULL;
-	return (res); // return found str, NULL if not found, or $ if there was nothing after the $
-}
-
-// we only get a string between "" or not, if quotes are in the middle they are non-special
-// eg. we can get $HOME, "$HOME", "$HOME'"
-//TODO: WHAT IF LEN IS 0 MEANING THAT THERE IS NO VALID TEXT AFTER $
-//TODO: WHAT ABOUT WHITESPACES
-char *get_env_value_to_process(char *text)
-{
-	int i;
-	int len;
-	int start;
-	char *to_append;
-	char *res;
-	char *env;
-
-	i = 0;
-	res = ft_strdup("");
+	len = 0;
 	to_append = NULL;
 	env = NULL;
-
-	// WORDS WITHOUT $ - WORKS
-	while (text[i])
+	while (text[*i] && text[*i] != '$')
 	{
-		start = i;
-		len = 0;
-		while (text[i] && text[i] != '$')	// collect what we find before $ to substring
-		{
-			i++;
-			len++;
-		}
-		if (len)
-		{
-			to_append = ft_substr(text, start, len);
-			res = ft_strjoin(res, to_append);
-			free(to_append);
-			to_append = NULL;
-			len = 0;
-		}
-
-	// ENVS IN $
-		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
-		{
-			i++;
-	// ENVS IN {}
-			if (text[i] == '{') // collect everything until we encounter } or end of line
-			{
-				i++;
-				start = i;
-				while (text[i] && text[i] != '}')
-				{
-					len++;
-					i++;
-				}
-				if (len)
-				{
-					to_append = ft_substr(text, start, len);
-					env = process_env(to_append);
-					if (env) // ELSE MAYBE ERROR zminishell: bas substitution? if we could not find the value in {} as it is done in zsh
-						res = ft_strjoin(res, env);
-					free(to_append);
-					free(env);
-					to_append = NULL;
-					env = NULL;
-					len = 0;
-				}
-				if (text[i] != '}') // means we did not end up on the } so the string must have ended
-					break ;
-			}
-	// ENVS WITHOUT {}
-			else // collect everything until encountering end of the line or the first non-alphanumeric character, the rest until whitespace is then appended after the expanded env, if not exist, it is null and we append to this
-			{
-				start = i;
-				while (text[i] && ft_isalnum(text[i]))
-				{
-					len++;
-					i++;
-				}
-				if (len)
-				{
-					to_append = ft_substr(text, start, len);
-					env = process_env(to_append);
-					if (env)
-						res = ft_strjoin(res, env);
-					free(to_append);
-					free(env);
-					env = NULL;
-					to_append = NULL;
-					len = 0;
-					i--;
-				}
-				if (!text[i]) // means we did  end up outside of the string so there  is nothing to collect so we will break
-					break ;
-			}
-		}
-		else if (text[i] == '$' && text[i + 1] && !ft_isalnum(text[i + 1]))// meaning we must have come to the end of string since we did not encounter $
-		{
-			to_append = ft_strdup("$");
-			res = ft_strjoin(res, to_append);
-			free(to_append);
-			to_append = NULL;
-		}
-		else
-			break ;
-		i++;
+		(*i)++;
+		len++;
+	}
+	if (len)
+	{
+		to_append = ft_substr(text, (*i) - len, len);
+		res = ft_strjoin(res, to_append);
+		free(to_append);
+		to_append = NULL;
 	}
 	return (res);
 }
 
-
-// will get a string without quotes as input, only quotes that are there are treates as normal text
-// TODO: gets a string, if it has $, expands, if not, returns it back
-char *expand_envs(char *str_to_expand)
+char	*handle_env_in_braces(char *res, char *text, int *i)
 {
-	char *str_to_check;
-	char *env;
-	char *res;
-	char *rest;
-	int i = 0;
-	int len = 0;
+	int		len;
+	char	*to_append;
+	char	*env;
 
-	while (str_to_expand[i])
+	len = 0;
+	to_append = NULL;
+	env = NULL;
+	(*i)++;
+	while (text[*i] && text[*i] != '}')
 	{
-		if (str_to_expand[i] == '$')
+		len++;
+		(*i)++;
+	}
+	if (text[*i] != '}')
+	{
+		free_four_mallocs(res, NULL, NULL, NULL);
+		error_msg("minishell: missing }"); // 	MEMORY
+	}
+	if (len)
+	{
+		to_append = ft_substr(text, (*i) - len, len);
+		if (!is_alnum(to_append))
 		{
-			i++;
-			if (str_to_expand[i] == '{')
-			{
-				while (str_to_expand[i] && str_to_expand[i] != '}')
-				{
-					i++;
-					len++;
-				}
-				if (str_to_expand[i] == '}')
-				{
-					str_to_check = ft_substr(str_to_expand, i, len - 1);
-					if (getenv(str_to_check))
-					{
-						env = ft_strdup(getenv(str_to_check));
-						rest = (str_to_expand + (i) + 1);
-						res = ft_strjoin(env, rest);
-					}
-					else
-						res = "\n";
-					free(str_to_check);
-				}
-				else
-					res = ft_strdup("minishell: bad substitution}");
-				}
+			free_four_mallocs(to_append, res, NULL, NULL);
+			error_msg("minishell: bad substitution");	// MEMORY
 		}
-		else
+		env = process_env(to_append);
+		if (env)
+			res = ft_strjoin(res, env);
+		free_four_mallocs(to_append, env, NULL, NULL);
+	}
+	return (res);
+}
+
+char *handle_env_without_braces(char *res, char *text, int *i)
+{
+	int len;
+	char *to_append;
+	char *env;
+
+	len = 0;
+	to_append = NULL;
+	env = NULL;
+	while (text[*i] && ft_isalnum(text[*i]))
+	{
+		len++;
+		(*i)++;
+	}
+	if (len)
+	{
+		to_append = ft_substr(text, (*i) - len, len);
+		env = process_env(to_append);
+		if (env)
+			res = ft_strjoin(res, env);
+		free_four_mallocs(to_append, env, NULL, NULL);
+		(*i)--;
+	}
+	return (res);
+}
+
+char *handle_env(char *res, char *text, int *i)
+{
+	(*i)++;
+	if (text[*i] == '{')
+		res = handle_env_in_braces(res, text, i);
+	else
+		res = handle_env_without_braces(res, text, i);
+	return (res);
+}
+
+// get string with or without ""/'' at  ends, quotes  in middle are non-special
+// doesnt take into consderation if it is between "/', expands always
+// thus check for whether it should be expanded must be in the calling function
+// first checks the word before encountering $
+// if encounters $ and after it is alphanumeric character or }, checks the env
+// if encounters $ and after it isnt alphanumeric character treats it as $ char
+// else we know we processed entire word and there is no $ and we are at end
+// @returns allocated string back with envs expanded
+char *get_env_value_to_process(char *text)
+{
+	int i;
+	char *res;
+
+	i = -1;
+	res = ft_strdup("");
+	while (text[++i])
+	{
+		res = handle_normal_word(res, text, &i);
+		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
 		{
-			if (getenv(str_to_expand))
-				res = ft_strdup(getenv(str_to_expand)); // returns value of env or NULL if not found
-			else
-				res = ft_strdup("\n");
-			}
+			res = handle_env(res, text, &i);
+			if (!text[i])
+				break ;
+		}
+		else if (text[i] == '$' && (!text[i + 1] || ((text[i + 1] && !ft_isalnum(text[i + 1])))))
+			res = ft_strjoin(res, ft_strdup("$"));
+		else
+			break ;
 	}
 	return (res);
 }
