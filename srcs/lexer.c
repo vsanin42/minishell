@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 17:59:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:34:46 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,12 @@ t_token	*lexer(char *input)
 	t_token *temp = token_list;
 	while (temp)
 	{
-		new_str = parse_eq(temp);
-		free(temp->value);
-		temp->value = new_str;
+		if (temp->type == TOKEN_TEXT)
+		{
+			new_str = str_from_array(parse_eq(temp));
+			free(temp->value);
+			temp->value = new_str;
+		}
 		temp = temp->next;
 	}
 	return (token_list);

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 17:40:14 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 18:27:44 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct	s_mini
 }	t_mini;
 
 /* minishell.c */
-t_token	*process_input(char *input, t_mini *mini); // should be void, testing
+t_cmd	*process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
@@ -89,12 +89,23 @@ int		pwd_builtin();
 void	exit_builtin(char *status);
 char	*handle_env(char *name);
 
+/* env_quotes.c */
+int		find_q_or_end(char *text);
+int		find_words(char *text);
+char	**trim_quotes_in_array(char **head);
+char	*str_from_array(char **head);
+char 	**parse_eq(t_token *token);
+
+/* env_utils_v.c */
+int		array_char_len(char **head);
+char	*exp_sub(char *str);
+int		check_next_char(char c, char c2, int i);
+
 /* env.c */
 void	expand_env(t_mini *mini, t_token *token);
 char	*expand_envs(char *str_to_expand);
-char 	*parse_eq(t_token *token);
 char	*process_env(char *env_to_process);
-char *get_env_value_to_process(char *text);
+char 	*get_env_value_to_process(char *text);
 
 /* exit.c */
 int		error_msg(char *msg);
@@ -105,8 +116,19 @@ t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
 // void	parse_envs_and_quotes(t_token *token);
 void	parse_envs_and_quotes(t_token *token);
-/* parcer.c */
-t_cmd   *parser(t_mini *mini, t_token *token_list);
+
+/* parser_redir.c */
+void	add_back_redir(t_redir **lst, t_redir *new);
+t_redir	*create_redir(t_token_type type, char *value);
+t_redir	*find_redirs(t_token *token);
+void	init_cmd_node(t_cmd *node);
+
+/* parser.c */
+int		get_ttokens_len(t_token	*token);
+char	**alloc_args(char **args, t_token *token);
+void	add_back_cmd(t_cmd **lst, t_cmd *new);
+t_cmd	*new_cmd(t_token *token);
+t_cmd	*parser(t_mini *mini, t_token *token_list);
 
 /* paths.c */
 char	*get_current_directory(void);
