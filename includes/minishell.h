@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/07 17:40:14 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/08 14:00:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,9 @@ void	exit_builtin(char *status);
 char	*handle_env(char *name);
 
 /* env.c */
-void	expand_env(t_mini *mini, t_token *token);
-char	*expand_envs(char *str_to_expand);
 char 	*parse_eq(t_token *token);
 char	*process_env(char *env_to_process);
-char *get_env_value_to_process(char *text);
+char	*get_env_value_to_process(char *text);
 
 /* exit.c */
 int		error_msg(char *msg);
@@ -103,10 +101,10 @@ int		error_msg(char *msg);
 int		check_token(char *input, int i, t_token **token_list);
 t_token	*get_token_list(char *input);
 t_token	*lexer(char *input);
-// void	parse_envs_and_quotes(t_token *token);
 void	parse_envs_and_quotes(t_token *token);
-/* parcer.c */
-t_cmd   *parser(t_mini *mini, t_token *token_list);
+
+/* parser.c */
+t_cmd	*parser(t_mini *mini, t_token *token_list);
 
 /* paths.c */
 char	*get_current_directory(void);
@@ -121,10 +119,14 @@ int	redirect_input(char *file);
 /* signal.c */
 void	sig_handler(int sig);
 
-/* utils.c */
-int		iswhitespace(char c);
+/* token_list.c */
 t_token	*new_token(char *value, t_token_type type);
 void	add_back_token(t_token **lst, t_token *new);
 void	clear_token_list(t_token *token);
+
+/* utils.c */
+int		iswhitespace(char c);
+int		is_alnum(char *str);
+char	*process_env(char *name);
 
 #endif

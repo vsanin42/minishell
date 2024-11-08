@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/07 18:00:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 12:44:39 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ t_token	*process_input(char *input, t_mini *mini) // should be void
 {
 	(void)mini;
 	t_token *token_list = lexer(input);
-	if (token_list)
-		mini->cmd_list =  parser(mini, token_list);
+	// if (token_list)
+	// 	mini->cmd_list =  parser(mini, token_list);
 	return (token_list); // testing
 }
 
@@ -101,10 +101,6 @@ int	show_prompt(t_mini *mini)
 	// 	printf("type: %d\n", token_list->type);
 	// 	token_list = token_list->next;
 	// }
-
-	/* testing export_env - WORKS*/
-	// expand_envs(mini, &token_list);
-	// head = token_list;
 
 	/* testing parser */
 	// printf("commands:\n\n");

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/06 13:06:04 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/08 13:57:46 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,46 +20,38 @@ int	iswhitespace(char c)
 	return (0);
 }
 
-t_token	*new_token(char *value, t_token_type type)
+// takes a string and checks if it consists of alphanumeric characters only
+// @returns 1 if string is alnum, 0 if not
+int	is_alnum(char *str)
 {
-	t_token	*node;
+	char *temp;
 
-	node = (t_token *)malloc(sizeof(t_token));
-	if (!node)
-		return (NULL);
-	node->value = value;
-	node->type = type;
-	node->next = NULL;
-	return (node);
+	temp = str;
+	while (*temp)
+	{
+		if (!ft_isalnum(*temp))
+			return (0);
+		temp++;
+	}
+	return (1);
 }
 
-void	add_back_token(t_token **lst, t_token *new)
+// receives string value WITHOUT $ that should be checked if it exists as env
+// @returns expanded allocated value if found, NULL if not found,
+// or allocated "$" if no value to check
+char	*process_env(char *name)
 {
-	t_token	*temp;
+	char *res;
 
-	if (!lst || !new)
-		return ;
-	if (*lst == NULL)
+	if (!name)
+		res = ft_strdup("$");
+	else if (getenv(name))
 	{
-		*lst = new;
-		return ;
+		res = ft_strdup(getenv(name));
+		if (!res)
+			return (NULL);
 	}
-	temp = *lst;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new;
-}
-
-void	clear_token_list(t_token *token)
-{
-	t_token *temp;
-
-	while (token)
-	{
-		temp = token;
-		free((token)->value);
-		token = (token)->next;
-		free(temp);
-	}
-	token = NULL;
+	else
+		res = NULL;
+	return (res);
 }
