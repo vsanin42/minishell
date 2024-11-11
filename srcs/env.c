@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/11 17:28:48 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/11 20:15:41 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // called on start of the input or after we go out of any env's scope
 // processes the text we collected before encountering $ character
-// @returns the collected string
+// @returns allocated collected string before it encountered $ or text end
 // positions i on $ or right after the last character
 char	*handle_word_no_env(char *res, char *text, int *i)
 {
@@ -42,7 +42,10 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 
 // called when '${' is encountered
 // pointer to i is now at '{' character, so we increment by 1 to be on a char
-// @returns old res if nothing could expand, or res appended by expanded string
+// @returns allocated res appended by expanded env, nothing if could not expand
+// removed this from initialization as it will not be causing errors:
+//	to_append = NULL; // remove if necessary, will not be used when not found
+//	env = NULL; // remove if necessary, will not be used when not found
 char	*handle_env_in_braces(char *res, char *text, int *i)
 {
 	int		len;
@@ -51,9 +54,7 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 	char	*to_append;
 
 	len = -1;
-	env = NULL; // remove if necessary, will not be used when not found
 	oldres = res;
-	to_append = NULL; // remove if necessary, will not be used when not found
 	while ((++len >= 0) && text[*i] && text[*i] != '}')
 		(*i)++;
 	if (text[*i] != '}')
@@ -75,13 +76,13 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 }
 
 // called when $ followed by alnum character is encountered in input
-// @returns old res if nothing could expand, or res appended by expanded string
+// @returns allocated res appended by expanded env, nothing if could not expand
 char *handle_env_without_braces(char *res, char *text, int *i)
 {
-	int len;
-	char *env;
-	char *oldres;
-	char *to_append;
+	int		len;
+	char	*env;
+	char	*oldres;
+	char	*to_append;
 
 	len = -1;
 	env = NULL;
@@ -110,6 +111,8 @@ char *handle_env_without_braces(char *res, char *text, int *i)
 // sets i to the last element of the searched string - last alnum char or }
 // if there are no braces, after calling the function we end up on next element
 // after the string but it will be incremented after so we decrease by one
+// we do not decrement by 1 with {} because then the i will end up on closing }
+// which will then be incremented in loop so that is where we want the i to be
 char *handle_env(char *res, char *text, int *i)
 {
 	(*i)++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_quotes.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/11 15:44:33 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:59:35 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	find_q_or_end(char *text)
 {
-	int	i;
+	int		i;
 	char	q_start;
 
 	i = 0;

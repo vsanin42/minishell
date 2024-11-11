@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/11 12:58:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/11 20:05:46 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+// checks if the char is a whitespace
+// @returns 0 if not whitespace, 1 if whitespace
 int	iswhitespace(char c)
 {
 	if (c && (c == ' ' || c == '\t' || c == '\n'
@@ -20,7 +22,7 @@ int	iswhitespace(char c)
 	return (0);
 }
 
-// takes a string and checks if it consists of alphanumeric characters only
+// checks if string consists of alphanumeric characters only
 // @returns 1 if string is alnum, 0 if not
 int	is_alnum(char *str)
 {

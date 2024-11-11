@@ -4,12 +4,13 @@
 NUMBER OF TIMES WE CHANGED LEXER: IIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 
-#n november 11 add-ins by Zuzka:
-- added comments with quic overview above some functions so we have easier time when evaluating and forget sth
+# november 11 add-ins by Zuzka:
+- added comments with quick overview above some functions so we have easier time when evaluating and forget sth
+- added testing.c where I added functions we can use during eval - print token_list and print command_list
 - passing struct mini to functions that can throw error so we can properly free all and exit program
 - changed the error_msg function to accept the struct mini and also possibly two allocated strings which it will free so we save some lines, can pass in NULL if we do not have any string to free
-- could we possibly add all the processing and freeing into the process_input funcion? so we have it all together one after another and it is more readable, so we do token_list = lexer() --> cmd-list = parser(token_list) --> free(token_list) --> ... -> free(cmd_list) so it is all together and in this function we can also assign all the values to the mini struct so we have all this functionality in one place
-- why is there the if statement in minishelll.c ?
+- could we possibly add all the processing and freeing into the process_input function? so we have it all together one after another and it is more readable, so we do token_list = lexer() --> cmd-list = parser(token_list) --> free(token_list) --> ... -> free(cmd_list) so it is all together and in this function we can also assign all the values to the mini struct so we have all this functionality in one place --> check process_input in minishell.c
+- why is there the if statement in minishell.c ?
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
@@ -17,15 +18,11 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 		mini->cmd_list =  parser(mini);
 	return (mini->cmd_list); // testing
 }
-- only has some leaks because trim_quotes was double freeing when we had non-expandable envs, because in envs I was freeing some memory
+- had some leaks because we were double freeing when we had non-expandable(bad) envs, but its fixed
 - add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe
+- '"'"a"'"' causes memory leaks
+- working on making lexer norm friendly
 
-# november 8 evening final status: (you can delete after reading)
-- cmd is freed in show_prompt(), token list is freed in parser()
-- now we can do a clean exit without leaks (based on fsanitize address) when an input is successfully converted to the cmd struct
-- tested on only one case so could fail somewhere else: a "$HOME" c < infile.txt | d > outfile.txt
-- env functions were fixed - free old value of res before reassigning it with ft_strjoin. very tight on norm there
-- random notes at the end of readme below
 
 # edge test cases
 - how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
@@ -34,10 +31,9 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this
 - set stdin back to 0 when redirecting from files - maybe not if we use a different process
 - error handling when unclosed quotes
-- NOW IF ENVS ARE NOT ABLE TO BE EXPANDED A NULL VALUE/NOTHING IS RETURNED TO THE NODES VALUE, SO WE CAN HAVE VALUES OF TYPE TEXT BUT WITH NO STORED VALUE/NULL - HANDLE THIS - create a function that removes these nodes when processing them into the array
 - major free function + error handling at all times
-- someimes when we call it, it does not guie any output??? just prints the "commmands: " but nothing after and we have to make re / make fclean + make again
 - handle heredoc <<
+- set error codes properly
 
 # general notes
 
