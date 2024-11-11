@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/08 22:06:19 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/11 15:42:58 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRC  =  srcs/minishell.c \
 		srcs/paths.c \
 		srcs/redirections.c \
 		srcs/signal.c \
+		srcs/testing.c \
 		srcs/token_list.c \
 		srcs/utils.c \
 

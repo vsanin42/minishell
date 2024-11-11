@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 20:43:45 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 15:37:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	get_ttokens_len(t_token	*token)
 char	**alloc_args(char **args, t_token *token)
 {
 	int len;
-	
+
 	len = get_ttokens_len(token->next);
 	printf("number of text nodes ahead: %d\n", len);
 	if (!args)
@@ -112,7 +112,7 @@ t_cmd	*parser(t_mini *mini)
 		if (temp)
 		 	temp = temp->next;
 	}
-	free_token_list(mini->token_list);
+	//free_token_list(mini->token_list); // can we free it in the process input function so all functions(lexer, parser, .., execution), assignment to mini, frees are called in one place?
 	return (parsed_list);
 }
 

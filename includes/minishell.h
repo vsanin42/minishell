@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 22:06:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 15:31:44 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,17 @@ char	*exp_sub(char *str);
 int		check_next_char(char c, char c2, int i);
 
 /* env.c */
-char	*handle_normal_word(char *res, char *text, int *i);
+char	*handle_word_no_env(char *res, char *text, int *i);
+char	*handle_env(char *res, char *text, int *i);
 char	*handle_env_in_braces(char *res, char *text, int *i);
 char	*handle_env_without_braces(char *res, char *text, int *i);
-char	*handle_env(char *res, char *text, int *i);
 char	*get_env_value_to_process(char *text);
 
 /* exit.c */
-int		error_msg(char *msg);
+int		error_msg(char *msg, t_mini *mini, char *string_to_free_1, char *str_to_free_2);
 
 /* free.c */
+void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 void	free_token_list(t_token *token);
 void	free_char_pp(char **arr);
 void	free_redir(t_redir *redir);
@@ -146,6 +147,10 @@ int	redirect_input(char *file);
 /* signal.c */
 void	sig_handler(int sig);
 
+/* testing.c */
+void	print_token_list(t_mini *mini);
+void	print_command_list(t_mini *mini);
+
 /* token_list.c */
 t_token	*new_token(char *value, t_token_type type);
 void	add_back_token(t_token **lst, t_token *new);
@@ -154,6 +159,5 @@ void	add_back_token(t_token **lst, t_token *new);
 int		iswhitespace(char c);
 int		is_alnum(char *str);
 char	*process_env(char *name);
-void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_quotes.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 21:00:17 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 15:44:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,15 @@ char	**trim_quotes_in_array(char **head)
 		{
 			oldstr = *temp;
 			*temp = ft_strtrim(*temp, "'");
-			free(oldstr);
+			if (oldstr)
+				free(oldstr);
 		}
 		else if (*temp[0] == '"')
 		{
 			oldstr = *temp;
 			*temp = ft_strtrim(*temp, "\"");
-			free(oldstr);
+			if (oldstr)
+				free(oldstr);
 		}
 		temp++;
 	}
@@ -91,7 +93,7 @@ char	*str_from_array(char **head)
 	char	*res;
 	char	**thead;
 	char	*temp;
-	
+
 	thead = head;
 	res = malloc(sizeof(char) * (array_char_len(thead) + 1));
 	if (!res)

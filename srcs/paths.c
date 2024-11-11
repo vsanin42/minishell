@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/04 20:22:20 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 14:53:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	is_directory(const char *path)
 	// lstat automatically fills in the stat struct with information about the file/dir pointed to by path
 	if (lstat(path, &sb) == -1) // fails when file doesn't exist or are insufficient permissions
 	{
-		error_msg("lstat failed");
+		error_msg("lstat failed", /* mini */NULL, NULL, NULL);
 		return (-1);
 	}
 	// st_mode now stores permissions and file type
@@ -54,7 +54,7 @@ int is_executable_file(const char *path)
 
 	if (lstat(path, &sb) == -1)
 	{
-		error_msg("lstat failed");
+		error_msg("lstat failed", /* mini */NULL, NULL, NULL);
 		return (-1);
 	}
 	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))); // returns non-zero if it's regular file, 0 if not
@@ -67,7 +67,7 @@ int is_readable_file(const char *path)
 
 	if (lstat(path, &sb) == -1)
 	{
-		error_msg("lstat failed");
+		error_msg("lstat failed", /* mini */NULL, NULL, NULL);
 		return (-1);
 	}
 	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IRUSR | S_IRGRP | S_IROTH))); // returns non-zero if it's regular file, 0 if not

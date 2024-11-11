@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/08 20:46:25 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 15:32:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,13 @@
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
-	if (mini->cmd_list)
-		mini->cmd_list =  parser(mini);
+	print_token_list(mini);
+	// if (mini->cmd_list)
+	// 	mini->cmd_list =  parser(mini); ??? why if mini??? it didnt run then :(
+	mini->cmd_list =  parser(mini);
+	free_token_list(mini->token_list);
+	print_command_list(mini);
+	free_cmd_list(mini->cmd_list);
 	return (mini->cmd_list); // testing
 }
 
@@ -35,7 +40,7 @@ int	show_prompt(t_mini *mini)
 	}
 	//printf("%s\n", input); // for now just print
 	add_history(input);
-
+	process_input(input, mini);
 	/* 	testing current directory - WORKS */
 	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 		printf("cwd: %s\n", cwd);
@@ -89,9 +94,9 @@ int	show_prompt(t_mini *mini)
 	// head = token_list;
 
 	/* testing parser */
-	t_cmd *head = NULL;
-	t_cmd *cmd_list = process_input(input, mini);
-	head = cmd_list;
+	//t_cmd *head = NULL;
+	// t_cmd *cmd_list = process_input(input, mini);
+	//head = cmd_list;
 
 	// printf("tokens from input:\n");
 	// while (token_list)
@@ -102,30 +107,32 @@ int	show_prompt(t_mini *mini)
 	// }
 
 	/* testing parser */
-	printf("commands:\n\n");
-	t_cmd *temp = cmd_list;
-	char **atemp2;
-	t_redir *aredir;
-	while (temp)
-	{
-		printf("cmd name:\t%s\n", temp->cmd);
-		atemp2 = temp->args;
-		aredir = temp->redir;
-		while (atemp2 && *atemp2)
-		{
-			printf("argument:\t%s\n", *atemp2);
-			atemp2++;
-		}
-		while (aredir)
-		{
-			printf("redir file:\t%s\n", aredir->file);
-			printf("redir type:\t%d\n", aredir->type);
-			aredir = aredir->next;
-		}
-		printf("---------------------------\n");
-		temp = temp->next;
-	}
-	free_cmd_list(cmd_list);
+	// printf("commands:\n\n");
+	// t_cmd *temp = cmd_list;
+	// char **atemp2;
+	// t_redir *aredir;
+	// while (temp)
+	// {
+	// 	printf("cmd name:\t%s\n", temp->cmd);
+	// 	atemp2 = temp->args;
+	// 	aredir = temp->redir;
+	// 	while (atemp2 && *atemp2)
+	// 	{
+	// 		printf("argument:\t%s\n", *atemp2);
+	// 		atemp2++;
+	// 	}
+	// 	while (aredir)
+	// 	{
+	// 		printf("redir file:\t%s\n", aredir->file);
+	// 		printf("redir type:\t%d\n", aredir->type);
+	// 		aredir = aredir->next;
+	// 	}
+	// 	printf("---------------------------\n");
+	// 	temp = temp->next;
+	// }
+	//free_cmd_list(head);
+
+
 	/* testing paring envs and quotes to true text values */
 	// printf("parsing:\n");
 	// t_token *temp = token_list;
@@ -184,15 +191,17 @@ int main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
 
+	//mini = NULL;
 	mini.env = env;
 	mini.token_list = NULL;
+	mini.cmd_list = NULL;
 	//init_mini(&mini);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
-		error_msg("Too many arguments. Use: ./minishell");
+		error_msg("Too many arguments. Use: ./minishell", NULL, NULL, NULL);
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 			break ;

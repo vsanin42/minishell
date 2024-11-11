@@ -3,26 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 21:53:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 17:28:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*handle_normal_word(char *res, char *text, int *i)
+// called on start of the input or after we go out of any env's scope
+// processes the text we collected before encountering $ character
+// @returns the collected string
+// positions i on $ or right after the last character
+char	*handle_word_no_env(char *res, char *text, int *i)
 {
 	int		len;
-	char	*to_append;
-	char	*env;
 	char	*oldres;
-	
-	oldres = NULL;
+	char	*to_append;
+
 	len = 0;
+	oldres = NULL;
 	to_append = NULL;
-	env = NULL;
 	while (text[*i] && text[*i] != '$')
 	{
 		(*i)++;
@@ -33,88 +35,94 @@ char	*handle_normal_word(char *res, char *text, int *i)
 		to_append = ft_substr(text, (*i) - len, len);
 		oldres = res;
 		res = ft_strjoin(res, to_append);
-		free(oldres);
-		free(to_append);
-		oldres = NULL;
-		to_append = NULL;
+		free_four_mallocs(to_append, oldres, NULL, NULL);
 	}
 	return (res);
 }
 
+// called when '${' is encountered
+// pointer to i is now at '{' character, so we increment by 1 to be on a char
+// @returns old res if nothing could expand, or res appended by expanded string
 char	*handle_env_in_braces(char *res, char *text, int *i)
 {
 	int		len;
-	char	*to_append;
 	char	*env;
+	char	*oldres;
+	char	*to_append;
 
-	len = 0;
-	to_append = NULL;
-	env = NULL;
-	(*i)++;
-	while (text[*i] && text[*i] != '}')
-	{
-		len++;
+	len = -1;
+	env = NULL; // remove if necessary, will not be used when not found
+	oldres = res;
+	to_append = NULL; // remove if necessary, will not be used when not found
+	while ((++len >= 0) && text[*i] && text[*i] != '}')
 		(*i)++;
-	}
 	if (text[*i] != '}')
-	{
-		free_four_mallocs(res, NULL, NULL, NULL);
-		error_msg("minishell: missing }"); // 	MEMORY
-	}
+		error_msg("minishell: missing }", NULL, res, NULL); // 	MEMORY - add mini and free everything inside it - token_list and cmd_list
 	if (len)
 	{
 		to_append = ft_substr(text, (*i) - len, len);
 		if (!is_alnum(to_append))
-		{
-			free_four_mallocs(to_append, res, NULL, NULL);
-			error_msg("minishell: bad substitution");	// MEMORY
-		}
+			error_msg("minishell: bad substitution", NULL, to_append, res);	// MEMORY - add mini and free everything inside it - token_list and cmd_list
 		env = process_env(to_append);
 		if (env)
+		{
 			res = ft_strjoin(res, env);
+			free_four_mallocs(oldres, NULL, NULL, NULL);
+		}
+		free_four_mallocs(to_append, env, NULL, NULL); // error, frees the
+	}
+	return (res);
+}
+
+// called when $ followed by alnum character is encountered in input
+// @returns old res if nothing could expand, or res appended by expanded string
+char *handle_env_without_braces(char *res, char *text, int *i)
+{
+	int len;
+	char *env;
+	char *oldres;
+	char *to_append;
+
+	len = -1;
+	env = NULL;
+	oldres = NULL;
+	to_append = NULL;
+	while ((++len >= 0) && text[*i] && ft_isalnum(text[*i]))
+		(*i)++;
+	if (len)
+	{
+		to_append = ft_substr(text, (*i) - len, len);
+		env = process_env(to_append);
+		oldres = res;
+		if (env)
+		{
+			res = ft_strjoin(res, env);
+			free_four_mallocs(oldres, NULL, NULL, NULL);
+		}
 		free_four_mallocs(to_append, env, NULL, NULL);
 	}
 	return (res);
 }
 
-char *handle_env_without_braces(char *res, char *text, int *i)
-{
-	int len;
-	char *to_append;
-	char *env;
-	char *oldres;
-	
-	oldres = NULL;
-	len = 0;
-	to_append = NULL;
-	env = NULL;
-	while (text[*i] && ft_isalnum(text[*i]))
-	{
-		len++;
-		(*i)++;
-	}
-	if (len)
-	{
-		to_append = ft_substr(text, (*i) - len, len);
-		env = process_env(to_append);
-		if (env)
-		{
-			oldres = res; // work on this oldres to make space for 25 lines somehow
-			res = ft_strjoin(res, env);
-		}
-		free_four_mallocs(to_append, env, oldres, NULL);
-		(*i)--;
-	}
-	return (res);
-}
-
+// called when we encounter $ in input, i is at $ at start so we move it by one
+// if there are braces { we move i one more character forward
+// @returns expanded res, or the original res if could not expand
+// sets i to the last element of the searched string - last alnum char or }
+// if there are no braces, after calling the function we end up on next element
+// after the string but it will be incremented after so we decrease by one
 char *handle_env(char *res, char *text, int *i)
 {
 	(*i)++;
 	if (text[*i] == '{')
+	{
+		(*i)++;
 		res = handle_env_in_braces(res, text, i);
+	}
 	else
+	{
 		res = handle_env_without_braces(res, text, i);
+		(*i)--;
+	}
 	return (res);
 }
 
@@ -122,8 +130,8 @@ char *handle_env(char *res, char *text, int *i)
 // doesnt take into consderation if it is between "/', expands always
 // thus check for whether it should be expanded must be in the calling function
 // first checks the word before encountering $
-// if encounters $ and after it is alphanumeric character or }, checks the env
-// if encounters $ and after it isnt alphanumeric character treats it as $ char
+// if encounters $ and after it is alphanumeric character or {, checks the env
+// if encounters $ and after it isnt alnum character/{, treats it as '$' char
 // else we know we processed entire word and there is no $ and we are at end
 // @returns allocated string back with envs expanded
 char *get_env_value_to_process(char *text)
@@ -136,8 +144,7 @@ char *get_env_value_to_process(char *text)
 	res = ft_strdup("");
 	while (text[++i])
 	{
-		oldres = res;
-		res = handle_normal_word(res, text, &i);
+		res = handle_word_no_env(res, text, &i);
 		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
 		{
 			res = handle_env(res, text, &i);
@@ -145,9 +152,10 @@ char *get_env_value_to_process(char *text)
 				break ;
 		}
 		else if (text[i] == '$' && (!text[i + 1] || ((text[i + 1] && !ft_isalnum(text[i + 1])))))
-		{	
-			res = ft_strjoin(res, ft_strdup("$"));
-			free(oldres);
+		{
+			oldres = res;
+			res = ft_strjoin(res, "$");
+			free_four_mallocs(oldres, NULL, NULL, NULL);
 		}
 		else
 			break ;

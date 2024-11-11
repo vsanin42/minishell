@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 22:05:19 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 22:06:53 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/11 12:58:22 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+
+void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4)
+{
+	free(s1);
+	free(s2);
+	free(s3);
+	free(s4);
+	s1 = NULL;
+	s2 = NULL;
+	s3 = NULL;
+	s4 = NULL;
+}
 
 void	free_token_list(t_token *token)
 {
