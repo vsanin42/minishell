@@ -3,6 +3,7 @@
 42 project by vsanin & zpiarova - work in progress
 NUMBER OF TIMES WE CHANGED LEXER: IIII
 NUMBER OF TIMES WE CHANGED PARSER: I
+- tester: https://github.com/LucasKuhn/minishell_tester
 
 # november 11 add-ins by Zuzka:
 - added comments with quick overview above some functions so we have easier time when evaluating and forget sth
@@ -19,11 +20,14 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 	return (mini->cmd_list); // testing
 }
 - had some leaks because we were double freeing when we had non-expandable(bad) envs, but its fixed
-- '"'"a"'"' causes memory leaks
-- working on making lexer norm friendly
+- '"'"a"'"' causes memory leaks - FIXED
 
-# edge test cases
-- how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
+# november 12 add-ins by Zuzka
+- made lexer norm friendly - tough as hell, we have to test a lot if no errors appeared, but i didnt find any so far
+- renamed some files to be grouped by functionality: env_quotes -> lexer_quotes, env -> lexer_env, env_quotes_utils -> lexer_quotes_utils, like we have with parser_redir, you can change it back if it doesnt make sense to you
+- fixing '"'"a"'"' causes memory leaks - it handles two different pairs of nested quotes but on 3rd pair it starts causing leaks : "'"a"'" - count_words was not working good because here were supposed to be 3 words: ", a, ", but it was not counting the " as words and just moved past them thus the array was alllocated to small - only 1 word for a
+- OKAY THE ERROR ABOVE I PROBABLY FIXED, TESTED ALSO, BUT WE SHOULD RATHER DO MORE TESTING
+- can you add description pls to the check_next_char function I couldnt figure out what it does :D :D i remember we did something there togehter but dont remember 
 
 # TODO
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this
@@ -32,7 +36,10 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - major free function + error handling at all times
 - handle heredoc <<
 - set error codes properly
-- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe
+- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe --> probably in parser_redir.c find_redirs function or maybe in new_cmd function or in parser function
+- now it is possible to get an empty argument in the cmd->args when env cannot be expanded to anything, if we pass this empty argument to an executable, it will not run - we have to go over the args list and remove empty/NULL arguments
+- how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
+
 
 
 # general notes

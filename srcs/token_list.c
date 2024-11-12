@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   token_list.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/08 22:05:42 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/12 18:54:03 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"../includes/minishell.h"
 
-t_token	*new_token(char *value, t_token_type type)
+// adjusted ft_lstnew = allocates memory for t_token node and fills in values
+// @returns created node of the token list
+t_token	*new_token(char *value, t_type type)
 {
 	t_token	*node;
 
@@ -25,6 +27,8 @@ t_token	*new_token(char *value, t_token_type type)
 	return (node);
 }
 
+// adjusted ft_lstadd_back = appends created node to end of token list
+// @returns nothing
 void	add_back_token(t_token **lst, t_token *new)
 {
 	t_token	*temp;

@@ -6,12 +6,13 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/11 15:32:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/12 20:32:30 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../includes/minishell.h"
 
+// prints the token list in format: value	type
 void	print_token_list(t_mini *mini)
 {
 	t_token *temp;
@@ -26,6 +27,7 @@ void	print_token_list(t_mini *mini)
 	}
 }
 
+// prints the command list in format: cmd\n, arguments\n, redir\n, redir->type\n, /...new_command/
 void print_command_list(t_mini *mini)
 {
 	printf("commands:\n\n");

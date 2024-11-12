@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   lexer_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/11 20:15:41 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/12 19:55:14 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,30 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 		oldres = res;
 		res = ft_strjoin(res, to_append);
 		free_four_mallocs(to_append, oldres, NULL, NULL);
+	}
+	return (res);
+}
+
+// called when we encounter $ in input, i is at $ at start so we move it by one
+// if there are braces { we move i one more character forward
+// @returns expanded res, or the original res if could not expand
+// sets i to the last element of the searched string - last alnum char or }
+// if there are no braces, after calling the function we end up on next element
+// after the string but it will be incremented after so we decrease by one
+// we do not decrement by 1 with {} because then the i will end up on closing }
+// which will then be incremented in loop so that is where we want the i to be
+char *handle_env(char *res, char *text, int *i)
+{
+	(*i)++;
+	if (text[*i] == '{')
+	{
+		(*i)++;
+		res = handle_env_in_braces(res, text, i);
+	}
+	else
+	{
+		res = handle_env_without_braces(res, text, i);
+		(*i)--;
 	}
 	return (res);
 }
@@ -101,30 +125,6 @@ char *handle_env_without_braces(char *res, char *text, int *i)
 			free_four_mallocs(oldres, NULL, NULL, NULL);
 		}
 		free_four_mallocs(to_append, env, NULL, NULL);
-	}
-	return (res);
-}
-
-// called when we encounter $ in input, i is at $ at start so we move it by one
-// if there are braces { we move i one more character forward
-// @returns expanded res, or the original res if could not expand
-// sets i to the last element of the searched string - last alnum char or }
-// if there are no braces, after calling the function we end up on next element
-// after the string but it will be incremented after so we decrease by one
-// we do not decrement by 1 with {} because then the i will end up on closing }
-// which will then be incremented in loop so that is where we want the i to be
-char *handle_env(char *res, char *text, int *i)
-{
-	(*i)++;
-	if (text[*i] == '{')
-	{
-		(*i)++;
-		res = handle_env_in_braces(res, text, i);
-	}
-	else
-	{
-		res = handle_env_without_braces(res, text, i);
-		(*i)--;
 	}
 	return (res);
 }

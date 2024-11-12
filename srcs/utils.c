@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/11 20:05:46 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/12 20:16:05 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,22 @@ char	*process_env(char *name)
 	else
 		res = NULL;
 	return (res);
+}
+
+// counts text tokens in token list after input token and before end or pipe
+// @returns number of text tokens after token from parameter
+int	get_ttokens_len(t_token	*token)
+{
+	t_token *temp;
+	int	i;
+
+	temp = token;
+	i = 0;
+	while (temp && temp->type != TOKEN_PIPE)
+	{
+		if (temp->type == TOKEN_TEXT)
+			i++;
+		temp = temp->next;
+	}
+	return (i);
 }

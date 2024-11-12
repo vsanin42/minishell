@@ -3,34 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 00:09:34 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/12 20:28:34 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// takes token from token list and counts following text tokens in that command
-// @returns number of text tokens after token from parameter
-int	get_ttokens_len(t_token	*token)
+// initializes cmd_nodes values cmd, args, redir, next to NULL
+void	init_cmd_node(t_cmd *node)
 {
-	t_token *temp;
-	int	i;
-
-	temp = token;
-	i = 0;
-	while (temp && temp->type != TOKEN_PIPE)
-	{
-		if (temp->type == TOKEN_TEXT)
-			i++;
-		temp = temp->next;
-	}
-	return (i);
+	node->cmd = NULL;
+	node->args = NULL;
+	node->redir = NULL;
+	node->next = NULL;
 }
 
-
+// allocates size of array of arguments collected from text strings
+// @returns the allocates array with empty spaces for arguments
 char	**alloc_args(char **args, t_token *token)
 {
 	int len;
@@ -40,7 +32,7 @@ char	**alloc_args(char **args, t_token *token)
 	{
 		if (len > 0)
 		{
-			args = malloc(sizeof(char *) * (len + 1)); // allocate for the number of following text tokens
+			args = malloc(sizeof(char *) * (len + 1));
 			if (!args)
 				return (NULL);
 			args[len] = NULL;
@@ -49,23 +41,11 @@ char	**alloc_args(char **args, t_token *token)
 	return (args);
 }
 
-void	add_back_cmd(t_cmd **lst, t_cmd *new)
-{
-	t_cmd	*temp;
-
-	if (!lst || !new)
-		return ;
-	if (*lst == NULL)
-	{
-		*lst = new;
-		return ;
-	}
-	temp = *lst;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new;
-}
-
+// adjusted ft_lstnew = allocates new struct cmd and assigns its values
+// collects tokens into one command until encounters end or a pipe
+// store first text token as command, the rest into arguments array
+// store every text node after redir type into redir struct
+// @returns created cmd node in command list
 t_cmd	*new_cmd(t_token *token)
 {
 	t_cmd	*node;
@@ -95,25 +75,46 @@ t_cmd	*new_cmd(t_token *token)
 	return (node);
 }
 
+// adjusted ft_lstadd_back = appends created node to a cmd list
+void	add_back_cmd(t_cmd **lst, t_cmd *new)
+{
+	t_cmd	*temp;
+
+	if (!lst || !new)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	temp = *lst;
+	while (temp->next)
+		temp = temp->next;
+	temp->next = new;
+}
+
+// collects tokens from token list into command or commands separated by pipe
+// if encounters pipe, starts creating new command
+// @returns head of the command list
 t_cmd	*parser(t_mini *mini)
 {
-	t_cmd	*parsed_list;
+	t_cmd	*command_list;
 	t_cmd	*new_node;
-	t_token *temp;
+	t_token	*temp;
 
-	parsed_list = NULL;
+	new_node = NULL;
+	command_list = NULL;
 	temp = mini->token_list;
 	while (temp)
 	{
 		new_node = new_cmd(temp);
 		if (!new_node)
 			return (NULL);
-		add_back_cmd(&parsed_list, new_node);
+		add_back_cmd(&command_list, new_node);
 		while (temp && temp->type != TOKEN_PIPE)
 			temp = temp->next;
 		if (temp)
 		 	temp = temp->next;
 	}
-	//free_token_list(mini->token_list); // can we free it in the process input function so all functions(lexer, parser, .., execution), assignment to mini, frees are called in one place?
-	return (parsed_list);
+	return (command_list);
 }
