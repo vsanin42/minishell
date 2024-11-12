@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/11 14:53:17 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/12 00:10:09 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_current_directory(void)
 	char	*cwd;
 
 	cwd = (char*)malloc(PATH_MAX * sizeof(char)); // allocate memory for buffer where getcwd stores output
-	if (cwd == NULL)
+	if (!cwd)
 		return (NULL);
 	if (getcwd(cwd, PATH_MAX) == NULL)	// getcwd stores current working directory in buffer that we have to allocate
 	{

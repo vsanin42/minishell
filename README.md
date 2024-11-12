@@ -10,7 +10,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - passing struct mini to functions that can throw error so we can properly free all and exit program
 - changed the error_msg function to accept the struct mini and also possibly two allocated strings which it will free so we save some lines, can pass in NULL if we do not have any string to free
 - could we possibly add all the processing and freeing into the process_input function? so we have it all together one after another and it is more readable, so we do token_list = lexer() --> cmd-list = parser(token_list) --> free(token_list) --> ... -> free(cmd_list) so it is all together and in this function we can also assign all the values to the mini struct so we have all this functionality in one place --> check process_input in minishell.c
-- why is there the if statement in minishell.c ?
+- why is there this if statement in minishell.c ?
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
@@ -19,10 +19,8 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 	return (mini->cmd_list); // testing
 }
 - had some leaks because we were double freeing when we had non-expandable(bad) envs, but its fixed
-- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe
 - '"'"a"'"' causes memory leaks
 - working on making lexer norm friendly
-
 
 # edge test cases
 - how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
@@ -34,6 +32,8 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - major free function + error handling at all times
 - handle heredoc <<
 - set error codes properly
+- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe
+
 
 # general notes
 

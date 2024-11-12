@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/11 15:37:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/12 00:09:34 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+// takes token from token list and counts following text tokens in that command
+// @returns number of text tokens after token from parameter
 int	get_ttokens_len(t_token	*token)
 {
 	t_token *temp;
@@ -28,12 +30,12 @@ int	get_ttokens_len(t_token	*token)
 	return (i);
 }
 
+
 char	**alloc_args(char **args, t_token *token)
 {
 	int len;
 
 	len = get_ttokens_len(token->next);
-	printf("number of text nodes ahead: %d\n", len);
 	if (!args)
 	{
 		if (len > 0)
@@ -68,7 +70,7 @@ t_cmd	*new_cmd(t_token *token)
 {
 	t_cmd	*node;
 	char	**args;
-	char **args_head;
+	char	**args_head;
 
 	args = NULL;
 	args_head = NULL;
@@ -108,15 +110,10 @@ t_cmd	*parser(t_mini *mini)
 			return (NULL);
 		add_back_cmd(&parsed_list, new_node);
 		while (temp && temp->type != TOKEN_PIPE)
-    		temp = temp->next;
+			temp = temp->next;
 		if (temp)
 		 	temp = temp->next;
 	}
 	//free_token_list(mini->token_list); // can we free it in the process input function so all functions(lexer, parser, .., execution), assignment to mini, frees are called in one place?
 	return (parsed_list);
 }
-
-// 1. ' : first change everything inside '' to plain text because it does not expand environment variables and treats all special characters as text as well
-// 2. $ : expand envs to their true value and remove $ char (do it before checking for "" because within "" env value should be already expanded)
-// 3. " : change everything between "" to plain text as now the envs have correct value and special characters are also treated as text
-// 4. < > >> << : argument after redir operator is always a file, so set the type of following node to file (? and also check if it actually exists and the input is valid ?)

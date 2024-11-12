@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/11 15:31:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/12 00:13:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,6 @@ typedef struct s_cmd
 	char			*cmd;
 	char			**args;
 	t_redir			*redir;
-	// int				heredoc; // 0 default, 1 if followed by <<
-	// int				append;
 	struct s_cmd	*next;
 }			t_cmd;
 
