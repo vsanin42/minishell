@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 20:25:56 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/13 13:11:26 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 
 typedef enum e_token_type
 {
-	TOKEN_TEXT,
+	TOKEN_TEXT, // text must stay at position 0 !!!
 	TOKEN_ARG,
 	TOKEN_PIPE, // |
 	TOKEN_REDIRIN, // <
@@ -82,8 +82,6 @@ int		pwd_builtin(void);
 void	exit_builtin(char *status);
 char	*env_builtin(char *name);
 
-
-
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 
@@ -123,13 +121,13 @@ int		check_next_char(char c, char c2, int i);
 /* parser_redir.c */
 void	add_back_redir(t_redir **lst, t_redir *new);
 t_redir	*create_redir(t_type type, char *value);
-t_redir	*find_redirs(t_token *token);
+t_redir	*find_redirs(t_token *token, t_token *previous);
 
 /* parser.c */
 void	init_cmd_node(t_cmd *node);
 char	**alloc_args(char **args, t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
-t_cmd	*new_cmd(t_token *token);
+t_cmd	*new_cmd(t_token *token, t_token *previous);
 t_cmd	*parser(t_mini *mini);
 
 /* paths.c */

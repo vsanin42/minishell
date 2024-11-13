@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 23:01:17 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:03:10 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	array_char_len(char **head)
 	return (i);
 }
 
-// we have array created from etxt string separated based on "/'
+// we have array of strings created from text string separated based on "/'
 // based on whether and which quote we have, we want or dont to expand envs
 // @returns expanded string if allowed to expand or the string back if in ''
 char	*exp_sub(char *str)

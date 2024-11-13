@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/12 19:50:16 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:57:46 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
-	print_token_list(mini);
+	// print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
 	mini->cmd_list =  parser(mini);

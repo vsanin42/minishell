@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 20:28:34 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/13 13:27:53 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ char	**alloc_args(char **args, t_token *token)
 // store first text token as command, the rest into arguments array
 // store every text node after redir type into redir struct
 // @returns created cmd node in command list
-t_cmd	*new_cmd(t_token *token)
+// @param token token from which we start collecting tokens into command
+// @param previous exists if we had a pipe before our command
+t_cmd	*new_cmd(t_token *token, t_token *previous)
 {
 	t_cmd	*node;
 	char	**args;
@@ -58,7 +60,7 @@ t_cmd	*new_cmd(t_token *token)
 	if (!node)
 		return (NULL);
 	init_cmd_node(node);
-	node->redir = find_redirs(token);
+	node->redir = find_redirs(token, previous);
 	while (token && token->type != TOKEN_PIPE)
 	{
 		if (token->type == TOKEN_TEXT && !node->cmd)
@@ -96,25 +98,31 @@ void	add_back_cmd(t_cmd **lst, t_cmd *new)
 // collects tokens from token list into command or commands separated by pipe
 // if encounters pipe, starts creating new command
 // @returns head of the command list
+// @var previous stores previous node, so if it is pipe we can save it in redir
 t_cmd	*parser(t_mini *mini)
 {
 	t_cmd	*command_list;
 	t_cmd	*new_node;
 	t_token	*temp;
+	t_token	*previous;
 
 	new_node = NULL;
+	previous = NULL;
 	command_list = NULL;
 	temp = mini->token_list;
-	while (temp)
+	while (temp) // temp is first token at start, or pipe, or we found end so null so it will not run anymore
 	{
-		new_node = new_cmd(temp);
+		new_node = new_cmd(temp, previous);
 		if (!new_node)
 			return (NULL);
 		add_back_cmd(&command_list, new_node);
 		while (temp && temp->type != TOKEN_PIPE)
 			temp = temp->next;
 		if (temp)
+		{
+			previous = temp;
 		 	temp = temp->next;
+		}
 	}
 	return (command_list);
 }
