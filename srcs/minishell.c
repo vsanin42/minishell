@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/08 20:46:25 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/13 12:57:46 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,22 @@
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
-	if (mini->cmd_list)
-		mini->cmd_list =  parser(mini);
+	// print_token_list(mini);
+	// if (mini->cmd_list)
+	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
+	mini->cmd_list =  parser(mini);
+	free_token_list(mini->token_list);
+	print_command_list(mini);
+	free_cmd_list(mini->cmd_list);
 	return (mini->cmd_list); // testing
 }
 
-// called on loop to show a prompt
+// called in loop to show a prompt and proessits input
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
 
-	input = readline("\033[32mminishell \033[37m> "); // colors optional but looks nicer
+	input = readline("\033[32mminishell \033[37m> ");
 	if (!input) // if ctrl d was pressed, exit the process
 		return (0); // needs proper exit in the future
 	if (input[0] == '\0') // if empty input/enter
@@ -33,14 +38,14 @@ int	show_prompt(t_mini *mini)
 		free(input);
 		return (1); // if enter (empty input) was pressed, continue to the next iteration
 	}
-	//printf("%s\n", input); // for now just print
 	add_history(input);
+	process_input(input, mini); // called without assigning, just for testing
+
 
 	/* 	testing current directory - WORKS */
 	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 		printf("cwd: %s\n", cwd);
 		free(cwd); */
-
 
 	/*	testing getting command paths - WORKS */
 	/* 	char *path = get_path_env(input);
@@ -48,7 +53,6 @@ int	show_prompt(t_mini *mini)
 		printf("path: %s\n", path);
 	else
 		printf("Path does not exist"); */
-
 
 	/* testing cd_builtin - WORKS  */
 	/* 	printf("cd: %d\n", cd_builtin(input));
@@ -83,84 +87,6 @@ int	show_prompt(t_mini *mini)
 	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
 	printf("buff: %s\n", buff); */
 
-	/* testing lexer */
-	// t_token *head = NULL;
-	// t_token *token_list = process_input(input, mini);
-	// head = token_list;
-
-	/* testing parser */
-	t_cmd *head = NULL;
-	t_cmd *cmd_list = process_input(input, mini);
-	head = cmd_list;
-
-	// printf("tokens from input:\n");
-	// while (token_list)
-	// {
-	// 	printf("%s\t", token_list->value); // attention content
-	// 	printf("type: %d\n", token_list->type);
-	// 	token_list = token_list->next;
-	// }
-
-	/* testing parser */
-	printf("commands:\n\n");
-	t_cmd *temp = cmd_list;
-	char **atemp2;
-	t_redir *aredir;
-	while (temp)
-	{
-		printf("cmd name:\t%s\n", temp->cmd);
-		atemp2 = temp->args;
-		aredir = temp->redir;
-		while (atemp2 && *atemp2)
-		{
-			printf("argument:\t%s\n", *atemp2);
-			atemp2++;
-		}
-		while (aredir)
-		{
-			printf("redir file:\t%s\n", aredir->file);
-			printf("redir type:\t%d\n", aredir->type);
-			aredir = aredir->next;
-		}
-		printf("---------------------------\n");
-		temp = temp->next;
-	}
-	free_cmd_list(cmd_list);
-	/* testing paring envs and quotes to true text values */
-	// printf("parsing:\n");
-	// t_token *temp = token_list;
-	// while (temp)
-	// {
-	// 	parse_envs_and_quotes(temp);
-	// 	temp = temp->next;
-	// 	printf("\n");
-	// }
-	//clear_cmd_list(head);
-	/* testing lexer */
-	// printf("tokens:\n");
-	// t_token *temp = token_list;
-	// char	*new_str;
-	// while (temp)
-	// {
-	// 	printf("\n");
-	// 	//printf("old value:\t%s\n", temp->value);
-	// 	new_str = parse_eq(temp);
-	// 	free(temp->value);
-	// 	temp->value = new_str;
-	// 	//printf("new value:\t%s\n", temp->value);
-	// 	temp = temp->next;
-	// }
-	//clear_token_list(head);
-
-	/* printing token list */
-	// t_token *temp2 = token_list;
-	// while (temp2)
-	// {
-	// 	printf("%s\t", temp2->value); // attention content
-	// 	printf("type: %d\n", temp2->type);
-	// 	temp2 = temp2->next;
-	// }
-	// clear_token_list(head);
 	return (1);
 }
 
@@ -184,15 +110,17 @@ int main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
 
+	//mini = NULL;
 	mini.env = env;
 	mini.token_list = NULL;
+	mini.cmd_list = NULL;
 	//init_mini(&mini);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
-		error_msg("Too many arguments. Use: ./minishell");
+		error_msg("Too many arguments. Use: ./minishell", NULL, NULL, NULL);
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 			break ;

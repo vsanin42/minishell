@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_utils_v.c                                      :+:      :+:    :+:   */
+/*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 15:06:53 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/13 12:03:10 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,13 @@ int	array_char_len(char **head)
 	return (i);
 }
 
+// we have array of strings created from text string separated based on "/'
+// based on whether and which quote we have, we want or dont to expand envs
+// @returns expanded string if allowed to expand or the string back if in ''
 char	*exp_sub(char *str)
 {
-	char *expanded;
-	
+	char	*expanded;
+
 	if (str[0] == '"' || str[0] != '\'')
 	{
 		expanded = get_env_value_to_process(str);
@@ -40,11 +43,13 @@ char	*exp_sub(char *str)
 	return (expanded);
 }
 
+// checks if the next character is the same as current character
+// @returns index by which we should move in input string - +2 or as it was
 int	check_next_char(char c, char c2, int i)
 {
 	if (c == c2)
 		i += 2;
 	if (c != c2 && c2 == '\0')
-		error_msg("\nError: unclosed quote"); // proper exit
+		error_msg("\nError: unclosed quote", NULL, NULL, NULL);
 	return (i);
 }

@@ -6,12 +6,14 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/08 15:30:46 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/12 20:16:05 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+// checks if the char is a whitespace
+// @returns 0 if not whitespace, 1 if whitespace
 int	iswhitespace(char c)
 {
 	if (c && (c == ' ' || c == '\t' || c == '\n'
@@ -20,7 +22,7 @@ int	iswhitespace(char c)
 	return (0);
 }
 
-// takes a string and checks if it consists of alphanumeric characters only
+// checks if string consists of alphanumeric characters only
 // @returns 1 if string is alnum, 0 if not
 int	is_alnum(char *str)
 {
@@ -56,14 +58,20 @@ char	*process_env(char *name)
 	return (res);
 }
 
-void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4)
+// counts text tokens in token list after input token and before end or pipe
+// @returns number of text tokens after token from parameter
+int	get_ttokens_len(t_token	*token)
 {
-	free(s1);
-	free(s2);
-	free(s3);
-	free(s4);
-	s1 = NULL;
-	s2 = NULL;
-	s3 = NULL;
-	s4 = NULL;
+	t_token *temp;
+	int	i;
+
+	temp = token;
+	i = 0;
+	while (temp && temp->type != TOKEN_PIPE)
+	{
+		if (temp->type == TOKEN_TEXT)
+			i++;
+		temp = temp->next;
+	}
+	return (i);
 }
