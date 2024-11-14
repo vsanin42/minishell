@@ -26,6 +26,7 @@
 # include "../libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <errno.h>
 
 # include "../includes/minishell.h"
 
@@ -38,7 +39,9 @@ typedef enum e_token_type
 	TOKEN_REDIROUT, // >
 	TOKEN_APPEND, // >>
 	TOKEN_HEREDOC, // <<
-	TOKEN_FILE
+	TOKEN_FILE,
+	TOKEN_PIPE_RD,
+	TOKEN_PIPE_WR
 }	t_type;
 
 typedef struct s_redir
@@ -72,7 +75,7 @@ typedef struct s_mini
 }	t_mini;
 
 /* minishell.c */
-t_cmd	*process_input(char *input, t_mini *mini); // should be void, testing
+void	process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
@@ -90,8 +93,12 @@ int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
 int		check_input(char *input);
 
+/* evaluator.c */
+int	evaluator(t_mini *mini);
+
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
+void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
 
 /* free.c */
@@ -120,7 +127,7 @@ int		find_q_or_end(char *text);
 int		find_words(char *text);
 char	**trim_quotes_in_array(char **head);
 char	*str_from_array(char **head);
-char 	**process_envs_and_quotes(t_token *token);
+char	**process_envs_and_quotes(t_token *token);
 
 /* lexer_quotes_utils.c */
 int		array_char_len(char **head);
@@ -145,6 +152,7 @@ char	*get_path_env(char *cmd);
 int		is_directory(const char *path);
 int		is_executable_file(const char *path);
 int		is_readable_file(const char *path);
+int		is_writable_file(const char *path);
 
 /* redirections.c */
 int		redirect_input(char *file);

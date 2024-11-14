@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"../includes/minishell.h"
+#include "../includes/minishell.h"
 
 // adjusted ft_lstnew = allocates memory for t_token node and fills in values
 // @returns created node of the token list

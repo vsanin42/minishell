@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
 #    Updated: 2024/11/14 19:14:25 by vsanin           ###   ########.fr        #
@@ -13,7 +13,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 RM = rm -f
 
 LIBFTDIR = libft
@@ -27,6 +27,7 @@ READLINE_DIR = /usr/local/opt/readline
 SRC  =  srcs/minishell.c \
 		srcs/builtins.c \
 		srcs/check_input.c \
+		srcs/evaluator.c \
 		srcs/exit.c \
 		srcs/free.c \
 		srcs/lexer.c \

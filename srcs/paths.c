@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/12 00:10:09 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/14 19:26:52 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,23 +54,34 @@ int is_executable_file(const char *path)
 
 	if (lstat(path, &sb) == -1)
 	{
-		error_msg("lstat failed", /* mini */NULL, NULL, NULL);
 		return (-1);
 	}
 	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))); // returns non-zero if it's regular file, 0 if not
 }
 
 // checks if file is a regular file and if it is readable
+// if errno is ENOENT the file does not exist
 int is_readable_file(const char *path)
 {
 	struct stat	sb;
 
 	if (lstat(path, &sb) == -1)
 	{
-		error_msg("lstat failed", /* mini */NULL, NULL, NULL);
+			return (-1);
+	}
+	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)));
+}
+
+// checks if file is a regular file and if it is writable
+int is_writable_file(const char *path)
+{
+	struct stat	sb;
+
+	if (lstat(path, &sb) == -1)
+	{
 		return (-1);
 	}
-	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IRUSR | S_IRGRP | S_IROTH))); // returns non-zero if it's regular file, 0 if not
+	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH))); // returns non-zero if it's regular file, 0 if not
 }
 
 // env PATH: for commands/programs - searches for executable in each path from PATH env

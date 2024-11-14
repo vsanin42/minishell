@@ -48,7 +48,7 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 // after the string but it will be incremented after so we decrease by one
 // we do not decrement by 1 with {} because then the i will end up on closing }
 // which will then be incremented in loop so that is where we want the i to be
-char *handle_env(char *res, char *text, int *i)
+char	*handle_env(char *res, char *text, int *i)
 {
 	(*i)++;
 	if (text[*i] == '{')
@@ -94,14 +94,14 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 			res = ft_strjoin(res, env);
 			free_four_mallocs(oldres, NULL, NULL, NULL);
 		}
-		free_four_mallocs(to_append, env, NULL, NULL); // error, frees the
+		free_four_mallocs(to_append, env, NULL, NULL);
 	}
 	return (res);
 }
 
 // called when $ followed by alnum character is encountered in input
 // @returns allocated res appended by expanded env, nothing if could not expand
-char *handle_env_without_braces(char *res, char *text, int *i)
+char	*handle_env_without_braces(char *res, char *text, int *i)
 {
 	int		len;
 	char	*env;
@@ -137,11 +137,11 @@ char *handle_env_without_braces(char *res, char *text, int *i)
 // if encounters $ and after it isnt alnum character/{, treats it as '$' char
 // else we know we processed entire word and there is no $ and we are at end
 // @returns allocated string back with envs expanded
-char *get_env_value_to_process(char *text)
+char	*get_env_value_to_process(char *text)
 {
-	int i;
-	char *res;
-	char *oldres;
+	int		i;
+	char	*res;
+	char	*oldres;
 
 	i = -1;
 	res = ft_strdup("");

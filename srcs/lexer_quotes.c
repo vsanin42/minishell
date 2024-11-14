@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/12 23:00:09 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 17:11:53 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,8 @@ char 	**process_envs_and_quotes(t_token *token)
 		}
 		*text_array = exp_sub(ft_substr(text, i, find_q_or_end(text + i)));
 		text_array++;
-		// somewhere here we should not add to array if the value we get from exp_sub is NULL but cannot figure out where
 		i += find_q_or_end(text + i);
 	}
-	*text_array = NULL; // and if we leave out that element of array fill the empty spaces from the back with NULLs
+	*text_array = NULL;
 	return (trim_quotes_in_array(head));
 }

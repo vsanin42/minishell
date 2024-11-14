@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
+
 /*   Updated: 2024/11/14 21:52:26 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_cmd	*process_input(char *input, t_mini *mini) // should be void
+void	process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
 	print_token_list(mini);
@@ -23,9 +24,12 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
-	// validator(); // 1
+	if (evaluator(mini) == 0)
+		printf("OK to execute");	//executor();
+	else
+		printf("not ok to execute\n");
 	free_cmd_list(mini->cmd_list);
-	return (mini->cmd_list); // testing
+	//return (mini->cmd_list); // testing
 }
 
 // called in loop to show a prompt and proessits input
