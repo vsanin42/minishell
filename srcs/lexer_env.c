@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/14 16:57:51 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 19:51:05 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,13 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 	oldres = res;
 	while ((++len >= 0) && text[*i] && text[*i] != '}')
 		(*i)++;
-	if (text[*i] != '}')
-		error_msg("minishell: missing }", NULL, res, NULL);
+	// if (text[*i] != '}')
+	// 	error_msg("minishell: missing }", NULL, res, NULL); // 	MEMORY - add mini and free everything inside it - token_list and cmd_list
 	if (len)
 	{
 		to_append = ft_substr(text, (*i) - len, len);
-		if (!is_alnum(to_append))
-			error_msg("minishell: bad substitution", NULL, to_append, res);
+		// if (!is_alnum(to_append))
+		// 	error_msg("minishell: bad substitution", NULL, to_append, res);	// MEMORY - add mini and free everything inside it - token_list and cmd_list
 		env = process_env(to_append);
 		if (env)
 		{

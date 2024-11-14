@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/13 13:27:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 20:33:09 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	**alloc_args(char **args, t_token *token)
 {
 	int len;
 
-	len = get_ttokens_len(token->next);
+	len = get_ttokens_len(token);
 	if (!args)
 	{
 		if (len > 0)
@@ -69,7 +69,7 @@ t_cmd	*new_cmd(t_token *token, t_token *previous)
 			args = alloc_args(args, token);
 			args_head = args;
 		}
-		else if (token->type == TOKEN_TEXT && node->cmd)
+		if (token->type == TOKEN_TEXT) //&& node->cmd)
 			*args++ = ft_strdup(token->value);
 		token = token->next;
 	}

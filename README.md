@@ -37,6 +37,9 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - STARTED EVALUATOR - there are things we have to do before execution, feel free to add more
 - we have to fix lexer - how strings in arrray are counted when we have unclosed quotes - functions mainly find_words, process_env_and_text and also check_next_char,
 
+# november 14 add-ins by Vlad
+- token list nodes with NULL value (in fact it's not null but \0 since it originates from ft_strdup("")) are now removed before being passed to parser
+- braces after $ and unclosed quotes are handled right after receiving input and before passing to lexer - keeping it for now or until we find a safe way of doing it in a heredoc style
 
 # TODO
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this

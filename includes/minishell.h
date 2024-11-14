@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 20:14:34 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 21:55:23 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,21 @@ int		pwd_builtin(void);
 void	exit_builtin(char *status);
 char	*env_builtin(char *name);
 
+/* check_input.c */
+int		isbq(char *input); // move this later
+int 	check_braces_alnum(char *input, int start);
+int		check_curly_braces(char *input);
+int		check_next_quote(char *input, int i);
+int		check_quotes(char *input);
+int		check_input(char *input);
+
 /* evaluator.c */
 int	evaluator(t_mini *mini);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
+void	s_error_msg(char *msg);
 
 /* free.c */
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
@@ -158,6 +167,7 @@ void	print_command_list(t_mini *mini);
 /* token_list.c */
 t_token	*new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
+t_token	*remove_null_tokens(t_token *token);
 
 /* utils.c */
 int		iswhitespace(char c);
