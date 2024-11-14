@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 20:16:05 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:55:34 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 int	iswhitespace(char c)
 {
 	if (c && (c == ' ' || c == '\t' || c == '\n'
-		|| c == '\r' || c == '\v' || c == '\f'))
+			|| c == '\r' || c == '\v' || c == '\f'))
 		return (1);
 	return (0);
 }
@@ -26,7 +26,7 @@ int	iswhitespace(char c)
 // @returns 1 if string is alnum, 0 if not
 int	is_alnum(char *str)
 {
-	char *temp;
+	char	*temp;
 
 	temp = str;
 	while (*temp)
@@ -43,7 +43,7 @@ int	is_alnum(char *str)
 // or allocated "$" if no value to check
 char	*process_env(char *name)
 {
-	char *res;
+	char	*res;
 
 	if (!name)
 		res = ft_strdup("$");
@@ -62,11 +62,11 @@ char	*process_env(char *name)
 // @returns number of text tokens after token from parameter
 int	get_ttokens_len(t_token	*token)
 {
-	t_token *temp;
-	int	i;
+	int		i;
+	t_token	*temp;
 
-	temp = token;
 	i = 0;
+	temp = token;
 	while (temp && temp->type != TOKEN_PIPE)
 	{
 		if (temp->type == TOKEN_TEXT)

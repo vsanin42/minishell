@@ -6,11 +6,11 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/12 18:54:03 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:56:55 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"../includes/minishell.h"
+#include "../includes/minishell.h"
 
 // adjusted ft_lstnew = allocates memory for t_token node and fills in values
 // @returns created node of the token list

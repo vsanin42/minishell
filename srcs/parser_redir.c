@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 16:48:38 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 18:11:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_redir	*find_redirs(t_token *token, t_token *previous)
 	head_redir = NULL;
 	new_redir = NULL;
 	if (previous)
-		add_back_redir(&head_redir, create_redir(TOKEN_REDIRIN, "RD"));
+		add_back_redir(&head_redir, create_redir(TOKEN_PIPE_RD, "RD"));
 	previous = NULL;
 	while (n)
 	{
@@ -86,7 +86,7 @@ t_redir	*find_redirs(t_token *token, t_token *previous)
 		}
 		if (n->type == TOKEN_PIPE)
 		{
-			add_back_redir(&head_redir, create_redir(TOKEN_REDIROUT, "WR"));
+			add_back_redir(&head_redir, create_redir(TOKEN_PIPE_WR, "WR"));
 			break ;
 		}
 		n = n->next;

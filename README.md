@@ -51,6 +51,7 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - pass struct mini to all functions that may need to quit the program
 - also now when we have unclosed quotes or braces or non-albnum char in braces we exit the program but we could just print the error message and continue with waiting for input
 - show prompt function is called at end of error_msg but it doesnt free all and returns 1 and keeps the data and continues the program, but we should get back to start of the program back
+- implement errno
 
 
 # general notes

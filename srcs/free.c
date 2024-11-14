@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 22:05:19 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 16:27:18 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:56:27 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4)
 // frees the token list
 void	free_token_list(t_token *token)
 {
-	t_token *temp;
+	t_token	*temp;
 
 	while (token)
 	{

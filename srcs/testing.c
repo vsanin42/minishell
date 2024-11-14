@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   testing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/14 16:25:05 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/14 17:00:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../includes/minishell.h"
+#include "../includes/minishell.h"
 
 // prints the token list in format: value	type
 void	print_token_list(t_mini *mini)
 {
-	t_token *temp;
+	t_token	*temp;
 
 	temp = mini->token_list;
 	printf("tokens from input: \n");
@@ -28,12 +28,14 @@ void	print_token_list(t_mini *mini)
 }
 
 // prints the command list in format: cmd\n, arguments\n, redir\n, redir->type\n, /...new_command/
-void print_command_list(t_mini *mini)
+void	print_command_list(t_mini *mini)
 {
+	t_cmd	*temp;
+	t_redir	*aredir;
+	char	**atemp2;
+
+	temp = mini->cmd_list;
 	printf("commands:\n\n");
-	t_cmd *temp = mini->cmd_list;
-	char **atemp2;
-	t_redir *aredir;
 	while (temp)
 	{
 		printf("cmd name:\t%s\n", temp->cmd);
@@ -54,8 +56,6 @@ void print_command_list(t_mini *mini)
 		temp = temp->next;
 	}
 }
-
-
 
 	/* 	testing current directory - WORKS */
 	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
