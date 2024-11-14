@@ -5,8 +5,9 @@ NUMBER OF TIMES WE CHANGED LEXER: IIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+
 # november 11 add-ins by Zuzka:
-- added comments with quick overview above some functions so we have easier time when evaluating and forget sth
+- added comments with quick overview above functions so we have easier time when evaluating and forget sth
 - added testing.c where I added functions we can use during eval - print token_list and print command_list
 - passing struct mini to functions that can throw error so we can properly free all and exit program
 - changed the error_msg function to accept the struct mini and also possibly two allocated strings which it will free so we save some lines, can pass in NULL if we do not have any string to free
@@ -29,8 +30,12 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 
 # november 13 add-ins by Zuzka
 - changed the error_msg functions so it takes a message string, but also the struct mini so it can free it and also possibly 2 strings whic we need to free, helps with norm, if no string to free just pass in NULL
-- working on adding RD and WR end of pipe to redir struct
-DOING: if it starts with pipe we should not store it as fd - or maybe it is good because now we know that command started with pipe because first cmd->node has RD redir when it should not have and we can quit
+- working on adding RD and WR end of pipe to redir struct:
+- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe --> probably in parser_redir.c find_redirs function or maybe in new_cmd function or in parser function - DONE
+- if input starts /ends with pipe we store it in redirs but we can check if first cmd node has RD pipe in redirs OR last cmd node has pipe WR in redirs and know pipe was first/last element - storing it is good because now we know that command started with pipe and we know we can quit/give the prompt back
+- DOING: passing struct mini to all functions that may quit the program - BUT WE PROBABLY SHOULD DO IT THAT THEY CLEAR TOKEN AND COMMAND LISTS AND GIVE THE PROMPT BACK
+- STARTED EVALUATOR - there are things we have to do before execution, feel free to add more
+- we have to fix lexer - how strings in arrray are counted when we have unclosed quotes - functions mainly find_words, process_env_and_text and also check_next_char,
 
 
 # TODO
@@ -39,13 +44,13 @@ DOING: if it starts with pipe we should not store it as fd - or maybe it is good
 - major free function + error handling at all times
 - handle heredoc <<
 - set error codes properly
-- add WR end of the pipe and RD end of the pipe as file descriptors when we encounter a pipe --> probably in parser_redir.c find_redirs function or maybe in new_cmd function or in parser function
 - how to handle unclosed brackets or unclosed quotes and pipe at the end of input - HEREDOC ???
 - now it is possible to get an empty argument in the cmd->args when env cannot be expanded to anything, if we pass this empty argument to an executable, it will not run - we have to go over the args list and remove empty/NULL arguments
 - when envs do not expand it stores NULL value in the array of arguments - we have to go over it and remove these values because if there are NULL values in the cmd args we pass to execve it will not run !
 - also when env is the first text arg and it will not expand we do not have command to run  - what bash does it then goes to the next text element and stores this as command and the rest aas arguments
 - pass struct mini to all functions that may need to quit the program
 - also now when we have unclosed quotes or braces or non-albnum char in braces we exit the program but we could just print the error message and continue with waiting for input
+- show prompt function is called at end of error_msg but it doesnt free all and returns 1 and keeps the data and continues the program, but we should get back to start of the program back
 
 
 # general notes
@@ -70,3 +75,5 @@ free(oldres);
 free(to_append);
 oldres = NULL;
 to_append = NULL;
+
+3. when freeing token list, changed the function to use a double pointer (t_token **token), so we pass in the address of original pointer. This allows you to modify the caller’s reference directly, setting it to NULL after freeing all nodes (tsken from GPT) so now we set the head of token list to NULL to avoid double frees - I dont understand it well yet but kinda makes sense
