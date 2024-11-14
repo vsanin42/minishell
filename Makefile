@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/14 15:56:50 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/14 16:40:59 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
 		srcs/builtins.c \
+		srcs/evaluator.c \
 		srcs/exit.c \
 		srcs/free.c \
 		srcs/lexer.c \
