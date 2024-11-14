@@ -32,6 +32,8 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 - working on adding RD and WR end of pipe to redir struct
 DOING: if it starts with pipe we should not store it as fd - or maybe it is good because now we know that command started with pipe because first cmd->node has RD redir when it should not have and we can quit
 
+# november 14 add-ins by Vlad
+- 
 
 # TODO
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this

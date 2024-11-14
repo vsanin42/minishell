@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/14 16:24:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/14 21:52:26 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
 	print_token_list(mini);
+	mini->token_list = remove_null_tokens(mini->token_list);
+	print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
+	// validator(); // 1
 	free_cmd_list(mini->cmd_list);
 	return (mini->cmd_list); // testing
 }
@@ -39,6 +42,8 @@ int	show_prompt(t_mini *mini)
 		return (1); // if enter (empty input) was pressed, continue to the next iteration
 	}
 	add_history(input);
+	if (check_input(input) == 1)
+		return (free(input), 1);
 	process_input(input, mini); // called without assigning, just for testing
 
 	return (1);

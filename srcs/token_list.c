@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_list.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/12 18:54:03 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 21:42:40 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,33 @@ void	add_back_token(t_token **lst, t_token *new)
 	while (temp->next)
 		temp = temp->next;
 	temp->next = new;
+}
+
+t_token	*remove_null_tokens(t_token *token)
+{
+	t_token	*head;
+	t_token	*temp;
+
+	head = token;
+	while (head && head->value[0] == '\0')
+	{
+		temp = head;
+		head = head->next;
+		free(temp->value); // just in case
+ 		free(temp);
+	}
+	token = head;
+	while (token && token->next)
+	{
+		if (token->next->value[0] == '\0')
+		{	
+			temp = token->next;
+			token->next = token->next->next;
+			free(temp->value); // just in case
+ 			free(temp);
+		}
+		else
+			token = token->next;
+	}
+	return (head);
 }
