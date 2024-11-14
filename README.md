@@ -33,7 +33,8 @@ t_cmd	*process_input(char *input, t_mini *mini) // should be void
 DOING: if it starts with pipe we should not store it as fd - or maybe it is good because now we know that command started with pipe because first cmd->node has RD redir when it should not have and we can quit
 
 # november 14 add-ins by Vlad
-- 
+- token list nodes with NULL value (in fact it's not null but \0 since it originates from ft_strdup("")) are now removed before being passed to parser
+- braces after $ and unclosed quotes are handled right after receiving input and before passing to lexer - keeping it for now or until we find a safe way of doing it in a heredoc style
 
 # TODO
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this
