@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/13 13:51:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:48:38 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int	new_redir_condition(t_token *token)
 {
 	if 	((token->type == TOKEN_REDIRIN
 		|| token->type == TOKEN_REDIROUT
-		|| token->type == TOKEN_APPEND)
+		|| token->type == TOKEN_APPEND
+		|| token->type == TOKEN_HEREDOC)
 		&& token->next
 		&& token->next->type == TOKEN_TEXT)
 		return (1);
