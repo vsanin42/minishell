@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/13 12:57:46 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:24:58 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 t_cmd	*process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
-	// print_token_list(mini);
+	print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
 	mini->cmd_list =  parser(mini);
@@ -40,52 +40,6 @@ int	show_prompt(t_mini *mini)
 	}
 	add_history(input);
 	process_input(input, mini); // called without assigning, just for testing
-
-
-	/* 	testing current directory - WORKS */
-	/* char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
-		printf("cwd: %s\n", cwd);
-		free(cwd); */
-
-	/*	testing getting command paths - WORKS */
-	/* 	char *path = get_path_env(input);
-	if (path)
-		printf("path: %s\n", path);
-	else
-		printf("Path does not exist"); */
-
-	/* testing cd_builtin - WORKS  */
-	/* 	printf("cd: %d\n", cd_builtin(input));
-	char *cwd = get_current_directory(); // testing finding a path when we will be expecting path type
-	printf("cwd: %s\n", cwd);
-	free(cwd); */
-
-
-	/* 	testing builtin pwd with no options - WORKS
-	pwd_builtin(); */
-
-	/* 	testing exit  - WORKS */
-	/* 	if (input)
-		exit_builtin(input); */
-
-
-	/* testing is_executable/is_readable - WORKS
-	printf("exec: %d\n", is_readable_file(input)); */
-
-	/* testing if input is being redirected properly - WORKS  */
-	/* 	if (redirect_input(input) == -1)
-	{
-		perror("Error redirecting input hh");
-		return 1;  // Exit or handle error appropriately
-	}
-	char buff[50];
-	ssize_t bytesRead = read(STDIN_FILENO, buff, sizeof(buff) - 1);
-	if (bytesRead == -1) {
-		perror("Error reading from redirected input");
-		return 1;  // Handle the read error appropriately
-	}
-	buff[bytesRead] = '\0';  // Null-terminate the string to safely print
-	printf("buff: %s\n", buff); */
 
 	return (1);
 }
