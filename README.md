@@ -101,35 +101,38 @@ to_append = NULL;
 3. when freeing token list, changed the function to use a double pointer (t_token **token), so we pass in the address of original pointer. This allows you to modify the caller’s reference directly, setting it to NULL after freeing all nodes (tsken from GPT) so now we set the head of token list to NULL to avoid double frees - I dont understand it well yet but kinda makes sense
 
 # heredoc examples:
+
+edit: nevermind there's a lot of cases, better test for yourself. cat << EOF -> "$USER" -> EOF -> "vsanin", while echo "$USER" is vsanin no quotes. insane after all the work we've done on this. maybe just don't trim the quotes idk
+
 $ cat << EOF
-> $USER -------- same for ${USER}
-EOF
+$: $USER (same for ${USER})
+$: EOF
 vsanin
 
-$ cat << 'EOF' --- same for "EOF"
-> $USER
-EOF
+$ cat << 'EOF' (same for "EOF")
+$: $USER
+$: EOF
 $USER
 
 vsanin@c2r4s5:~/42Core/minishell$ cat << $USER
-> vsanin
-> $USER
+$: vsanin
+$: $USER
 vsanin
 
 vsanin@c2r4s5:~/42Core/minishell$ cat << "$USER"
-> vsanin
-> $USER
+$: vsanin
+$: $USER
 vsanin
 
 vsanin@c2r4s5:~/42Core/minishell$ cat << '$USER'
-> vsanin
-> $USER
+$: vsanin
+$: $USER
 vsanin
 
 vsanin@c2r4s5:~/42Core/minishell$ cat << ${USER}
-> vsanin
-> $USER
-> ${USER}
+$: vsanin
+$: $USER
+$: ${USER}
 vsanin
 vsanin
 
