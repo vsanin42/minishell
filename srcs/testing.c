@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   testing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/14 17:00:09 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/18 15:47:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	print_command_list(t_mini *mini)
 	char	**atemp2;
 
 	temp = mini->cmd_list;
-	printf("commands:\n\n");
+	printf("\ncommands:\n");
 	while (temp)
 	{
 		printf("cmd name:\t%s\n", temp->cmd);

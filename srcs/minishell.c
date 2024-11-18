@@ -16,23 +16,23 @@
 void	process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
-	print_token_list(mini);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
+	/////////parser_heredoc(mini);
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
 	if (evaluator(mini) == 0)
-		printf("OK to execute");	//executor();
+		printf("OK to execute\n");	//executor();
 	else
 		printf("not ok to execute\n");
 	free_cmd_list(mini->cmd_list);
 	//return (mini->cmd_list); // testing
 }
 
-// called in loop to show a prompt and proessits input
+// called in loop to show a prompt and process input
 int	show_prompt(t_mini *mini)
 {
 	char	*input;

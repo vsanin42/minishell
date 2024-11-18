@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/12 19:32:03 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/18 18:13:04 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,9 @@ t_type	get_type(char *value)
 // creates new token from value and appends it to end of token list
 // frees node_value it received, value of token is newly malloced
 // expands envs and removes trailing quotes from start/end
+// only if the previous token is not heredoc based on hdoc flag
 // @returns 1 on success, 0 on error
-int	create_and_append_token(char *node_value, t_token **token_list)
+int	create_and_add_tok(char *node_value, t_token **token_list, int *hdoc)
 {
 	char	*new_value;
 	t_token	*new_tok;
@@ -52,7 +53,10 @@ int	create_and_append_token(char *node_value, t_token **token_list)
 	node_value = NULL;
 	if (!new_tok)
 		return (0);
-	if (new_tok->type == TOKEN_TEXT)
+	// printf("initial value: %s\n", new_tok->value);
+	// printf("type: %d\n", new_tok->type);
+	// printf("hdoc: %d\n\n", *hdoc);
+	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
 		new_value = str_from_array(process_envs_and_quotes(new_tok));
 		free(new_tok->value);
@@ -60,6 +64,7 @@ int	create_and_append_token(char *node_value, t_token **token_list)
 	}
 	if (new_tok->value)
 		add_back_token(token_list, new_tok);
+	*hdoc = 0;
 	return (1);
 }
 
@@ -106,18 +111,38 @@ char	*process_text(char *text, int *i, int in_sq, int in_dq)
 	return (ft_substr(text, start, ft_strlen(text + start)));
 }
 
+// chunk of get_token_list that gets the value of a node
+char	*create_node_value(char *input, int *i)
+{
+	char	*node_value;
+
+	node_value =  NULL;
+	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
+			&& input[*i + 1] == '<'))
+		node_value = ft_substr(input, (*i)++, 2);
+	else if (input[*i] == '|' || input[*i] == '>' || input[*i] == '<')
+		node_value = ft_substr(input, *i, 1);
+	else
+		node_value = process_text(input, i, 0, 0);
+	return (node_value);
+}
+
 // iterates over characters from strings received from readline
 // if it is whitespace, just moves past it
 // if it is one of operators, stores it as separate token with its type
 // if it is text, stores it as text until encountering delimeter
+// sets flag for the next iteration to indicate that heredoc was just processed
+// and therefore don't enter the expanding/trimming functions
 // stores received value as tokens value and appends it to end of token list
 // @returns head of token_list
 t_token	*get_token_list(char *input)
 {
+	int		hdoc_flag;
 	int		i;
 	char	*node_value;
 	t_token	*token_list;
 
+	hdoc_flag = 0;
 	i = -1;
 	node_value = NULL;
 	token_list = NULL;
@@ -125,18 +150,15 @@ t_token	*get_token_list(char *input)
 	{
 		while (input[i] && iswhitespace(input[i]))
 			i++;
-		if ((input[i] == '>' && input[i + 1] == '>') || (input[i] == '<'
-				&& input[i + 1] == '<'))
-			node_value = ft_substr(input, (i)++, 2);
-		else if (input[i] == '|' || input[i] == '>' || input[i] == '<')
-			node_value = ft_substr(input, i, 1);
-		else
-			node_value = process_text(input, &i, 0, 0);
+		node_value = create_node_value(input, &i);
 		if (node_value)
 		{
-			if (!create_and_append_token(node_value, &token_list))
+			if (!create_and_add_tok(node_value, &token_list, &hdoc_flag))
 				return (NULL);
+			if (!ft_strncmp(input + (i - 1), "<<", 2))
+				hdoc_flag = 1;
 		}
+		// printf("hdoc at loop end: %d\n\n", hdoc_flag);
 	}
 	return (token_list);
 }
