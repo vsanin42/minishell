@@ -20,7 +20,7 @@ void	process_input(char *input, t_mini *mini) // should be void
 	print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
-	/////mini->token_list = parser_heredoc(mini);
+	/////////parser_heredoc(mini);
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
@@ -32,7 +32,7 @@ void	process_input(char *input, t_mini *mini) // should be void
 	//return (mini->cmd_list); // testing
 }
 
-// called in loop to show a prompt and proessits input
+// called in loop to show a prompt and process input
 int	show_prompt(t_mini *mini)
 {
 	char	*input;

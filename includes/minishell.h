@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/18 17:25:59 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/18 19:54:39 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,9 @@ char	**process_envs_and_quotes(t_token *token);
 int		array_char_len(char **head);
 char	*exp_sub(char *str);
 int		check_next_char(char c, char c2, int i);
+
+/* parser_heredoc.c */
+int		parser_heredoc(t_mini *mini);
 
 /* parser_redir.c */
 void	add_back_redir(t_redir **lst, t_redir *new);
