@@ -58,6 +58,11 @@ specifics and edge cases:
 misc:
 - at the end of readme i left chatgpt's recap of a slack thread about how people did heredoc to get an idea of all available approaches and their benefits. i'll do the simplest one with a temp file for now. our priorities are ease of implementation and debugging, we don't expect large inputs. a big plus is that we have unlink() function available so we can delete the file after use
 
+# november 19 by Vlad
+- heredoc generally works by overwriting the value of token after << with a colleceted string
+- lexer get_token_list edits and fixes
+- TODO: error handling, handle case with nothing after <<, ctrl+c response - possibly with fork
+
 # TODO
 - lexer works but if we keep a space or other whitespace at the end of readline input it stores it as a separate node - but we can fix this
 - set stdin back to 0 when redirecting from files - maybe not if we use a different process

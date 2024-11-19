@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/18 18:13:04 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/19 20:47:37 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,12 +119,21 @@ char	*create_node_value(char *input, int *i)
 	node_value =  NULL;
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 			&& input[*i + 1] == '<'))
-		node_value = ft_substr(input, (*i)++, 2);
+		node_value = ft_substr(input, *i, 2); // (*i)++
 	else if (input[*i] == '|' || input[*i] == '>' || input[*i] == '<')
 		node_value = ft_substr(input, *i, 1);
 	else
 		node_value = process_text(input, i, 0, 0);
 	return (node_value);
+}
+
+// i hate norminette
+void init_gtl_vars(int *f, int *i, char **node, t_token **token)
+{
+	*f = 0;
+	*i = -1;
+	*node = NULL;
+	*token = NULL;
 }
 
 // iterates over characters from strings received from readline
@@ -142,10 +151,7 @@ t_token	*get_token_list(char *input)
 	char	*node_value;
 	t_token	*token_list;
 
-	hdoc_flag = 0;
-	i = -1;
-	node_value = NULL;
-	token_list = NULL;
+	init_gtl_vars(&hdoc_flag, &i, &node_value, &token_list);
 	while (input[++i])
 	{
 		while (input[i] && iswhitespace(input[i]))
@@ -155,10 +161,12 @@ t_token	*get_token_list(char *input)
 		{
 			if (!create_and_add_tok(node_value, &token_list, &hdoc_flag))
 				return (NULL);
-			if (!ft_strncmp(input + (i - 1), "<<", 2))
+			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
+			{
 				hdoc_flag = 1;
+				i++;
+			}
 		}
-		// printf("hdoc at loop end: %d\n\n", hdoc_flag);
 	}
 	return (token_list);
 }

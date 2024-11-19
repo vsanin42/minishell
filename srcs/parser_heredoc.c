@@ -6,39 +6,96 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/18 20:45:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/19 21:52:22 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	process_heredoc(char *limit, t_mini *mini)
-{
-	char	*input;
-	int		len;
-	int		fd;
+int	g_signal = 0;
 
-	fd = dup(STDIN_FILENO);
-	if (fd < 0)
-		return (error_msg("Error opening fd", mini, 0, 0)); // handle
-	len = ft_strlen(limit) + 1;
-	while (1)
+void	heredoc_handler(int sig) // WIP
+{
+	if (sig == SIGINT)
 	{
-		input = readline("> ");
-		if (!input)
-			break ;
-		if (input[0] == '\0')
-		{
-			free(input);
-			continue ;
-		}
-		if (!ft_strncmp(input, limit, len))
-			break ;
-		write(fd, input, ft_strlen(input));
-		free(input);
+		// g_signal = SIGINT;
+		// write(STDOUT_FILENO, "\n", 1);
+		
+		// close(STDIN_FILENO);
+		// write(STDERR_FILENO, "\n", 1);
+		
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
-	close(fd);
-	return (free(input), free(limit), 0);
+}
+
+// frees ONLY S1 - to avoid using oldres and similar things
+char	*str_append_nl(char *s1, char *s2)
+{
+	char	*tmp;
+	char	*res;
+
+	if (!s1 || !s2)
+		return (NULL);
+	tmp = ft_strjoin(s1, s2);
+	free(s1);
+	if (!tmp)
+		return (NULL);
+	res = ft_strjoin(tmp, "\n");
+	free(tmp);
+	if (!res)
+		return (NULL);
+	return (res);
+}
+
+char	*heredoc_readline(char *limit)
+{
+	char	*res;
+	char	*input;
+
+	signal(SIGINT, heredoc_handler);
+	res = ft_strdup("");
+	if (!res)
+		return (NULL);
+	input = readline("> ");
+	while (input && ft_strncmp(input, limit, ft_strlen(limit) + 1))
+	{
+		res = str_append_nl(res, input);
+		if (!res)
+			return (free(input), NULL); // null or break?
+		free(input);
+		input = readline("> ");
+		if (g_signal == SIGINT)
+		{
+			g_signal = 0;
+			break ;
+		}
+	}
+	free(input);
+	return (res);
+}
+
+void	free_memo(void *mem_seg)
+{
+	if (mem_seg)
+		free(mem_seg);
+}
+
+int	process_heredoc(t_token *token, char *limit, t_mini *mini)
+{
+	(void)mini;
+	//int		fd;
+	//fd = dup(STDIN_FILENO);
+	//fd = open();
+	// if (fd < 0)
+	// 	return (error_msg("Error opening fd", mini, 0, 0)); // handle
+	free(token->value);
+	token->value = heredoc_readline(limit);
+	//close(fd);
+	// free_memo((void *)limit);
+	return (0);
 }
 
 int	parser_heredoc(t_mini *mini)
@@ -56,10 +113,10 @@ int	parser_heredoc(t_mini *mini)
 			if (!limit_token)
 				return (error_msg("Error: expected delimiter after <<", mini, 0, 0)); // handle
 			limit = ft_strdup(limit_token->value);
-			process_heredoc(limit, mini);
+			process_heredoc(limit_token, limit, mini);
+			free_memo((void *)limit);
 		}
 		temp = temp->next;
 	}
-	free(limit);
 	return (0);
 }
