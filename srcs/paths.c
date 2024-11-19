@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/14 19:26:52 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/19 20:41:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,16 @@ char	*get_path_env(char *cmd)
 		path_without_cmd = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(path_without_cmd, cmd);
 		free(path_without_cmd);
+		path_without_cmd = NULL;
 		if (!path)
 			return (NULL);
 		if (access(path, F_OK) == 0)
+		{
+			i = -1;
+			while (paths[++i])
+				free(paths[i]);
 			return (path);
+		}
 		free(path);
 		i++;
 	}

@@ -6,7 +6,7 @@
 #    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/14 19:14:25 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/19 21:53:24 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins.c \
 		srcs/check_input.c \
 		srcs/evaluator.c \
+		srcs/executor.c \
 		srcs/exit.c \
 		srcs/free.c \
 		srcs/lexer.c \
@@ -37,7 +38,6 @@ SRC  =  srcs/minishell.c \
 		srcs/parser_redir.c \
 		srcs/parser.c \
 		srcs/paths.c \
-		srcs/redirections.c \
 		srcs/signal.c \
 		srcs/testing.c \
 		srcs/token_list.c \

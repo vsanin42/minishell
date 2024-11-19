@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 20:33:09 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/19 21:52:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	**alloc_args(char **args, t_token *token)
 // @returns created cmd node in command list
 // @param token token from which we start collecting tokens into command
 // @param previous exists if we had a pipe before our command
-t_cmd	*new_cmd(t_token *token, t_token *previous)
+t_cmd	*new_cmd(t_token *token)
 {
 	t_cmd	*node;
 	char	**args;
@@ -60,7 +60,7 @@ t_cmd	*new_cmd(t_token *token, t_token *previous)
 	if (!node)
 		return (NULL);
 	init_cmd_node(node);
-	node->redir = find_redirs(token, previous);
+	node->redir = find_redirs(token);
 	while (token && token->type != TOKEN_PIPE)
 	{
 		if (token->type == TOKEN_TEXT && !node->cmd)
@@ -69,7 +69,7 @@ t_cmd	*new_cmd(t_token *token, t_token *previous)
 			args = alloc_args(args, token);
 			args_head = args;
 		}
-		if (token->type == TOKEN_TEXT) //&& node->cmd)
+		if (token->type == TOKEN_TEXT)
 			*args++ = ft_strdup(token->value);
 		token = token->next;
 	}
@@ -104,25 +104,20 @@ t_cmd	*parser(t_mini *mini)
 	t_cmd	*command_list;
 	t_cmd	*new_node;
 	t_token	*temp;
-	t_token	*previous;
 
 	new_node = NULL;
-	previous = NULL;
 	command_list = NULL;
 	temp = mini->token_list;
-	while (temp) // temp is first token at start, or pipe, or we found end so null so it will not run anymore
+	while (temp)
 	{
-		new_node = new_cmd(temp, previous);
+		new_node = new_cmd(temp);
 		if (!new_node)
 			return (NULL);
 		add_back_cmd(&command_list, new_node);
 		while (temp && temp->type != TOKEN_PIPE)
 			temp = temp->next;
 		if (temp)
-		{
-			previous = temp;
-		 	temp = temp->next;
-		}
+			temp = temp->next;
 	}
 	return (command_list);
 }
