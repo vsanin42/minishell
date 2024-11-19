@@ -28,6 +28,7 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins.c \
 		srcs/check_input.c \
 		srcs/evaluator.c \
+		srcs/executor.c \
 		srcs/exit.c \
 		srcs/free.c \
 		srcs/lexer.c \
@@ -38,7 +39,6 @@ SRC  =  srcs/minishell.c \
 		srcs/parser_redir.c \
 		srcs/parser.c \
 		srcs/paths.c \
-		srcs/redirections.c \
 		srcs/signal.c \
 		srcs/testing.c \
 		srcs/token_list.c \

@@ -13,24 +13,26 @@
 
 #include "../includes/minishell.h"
 
-void	process_input(char *input, t_mini *mini) // should be void
+int	process_input(char *input, t_mini *mini)
 {
 	mini->token_list = lexer(input);
 	mini->token_list = remove_null_tokens(mini->token_list);
-	//print_token_list(mini);
-	// if (mini->cmd_list)
-	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
-	parser_heredoc(mini);
 	print_token_list(mini);
+	// parser_heredoc(mini);
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
 	if (evaluator(mini) == 0)
-		printf("OK to execute\n");	//executor();
-	else
-		printf("not ok to execute\n");
+	{
+		if (executor(mini, mini->cmd_list) == ERROR)
+		{
+			printf("minishell: error when executing command\n");
+			free_cmd_list(mini->cmd_list);
+			return (ERROR);
+		}
+	}
 	free_cmd_list(mini->cmd_list);
-	//return (mini->cmd_list); // testing
+	return (0);
 }
 
 // called in loop to show a prompt and process input

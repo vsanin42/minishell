@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 18:11:36 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/19 21:52:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	add_back_redir(t_redir **lst, t_redir *new)
 // @returns collected redir list for each commmand
 // @param token token from which we start collecting redir info
 // @param previous exists if we had a pipe before our new command
-t_redir	*find_redirs(t_token *token, t_token *previous)
+t_redir	*find_redirs(t_token *token)
 {
 	t_token	*n;
 	t_redir	*head_redir;
@@ -74,9 +74,6 @@ t_redir	*find_redirs(t_token *token, t_token *previous)
 	n = token;
 	head_redir = NULL;
 	new_redir = NULL;
-	if (previous)
-		add_back_redir(&head_redir, create_redir(TOKEN_PIPE_RD, "RD"));
-	previous = NULL;
 	while (n)
 	{
 		if (new_redir_condition(n))
@@ -85,10 +82,7 @@ t_redir	*find_redirs(t_token *token, t_token *previous)
 			n->next->type = TOKEN_FILE;
 		}
 		if (n->type == TOKEN_PIPE)
-		{
-			add_back_redir(&head_redir, create_redir(TOKEN_PIPE_WR, "WR"));
 			break ;
-		}
 		n = n->next;
 	}
 	return (head_redir);

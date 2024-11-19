@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
 /*   Updated: 2024/11/19 20:36:48 by vsanin           ###   ########.fr       */
@@ -23,6 +23,7 @@
 # include <dirent.h> // opendir, readdir, closedit
 # include <limits.h> // PATH_MAX
 # include <sys/stat.h> // S_constants
+# include <sys/wait.h>
 # include "../libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -75,7 +76,7 @@ typedef struct s_mini
 }	t_mini;
 
 /* minishell.c */
-void	process_input(char *input, t_mini *mini); // should be void, testing
+int	process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
@@ -96,10 +97,16 @@ int		check_input(char *input);
 /* evaluator.c */
 int	evaluator(t_mini *mini);
 
+/* executor.c */
+int	executor(t_mini *mini, t_cmd *cmd);
+
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
+
+/* heredoc.c */
+char	*heredoc_input(char *delimeter);
 
 /* free.c */
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
@@ -147,13 +154,13 @@ int		parser_heredoc(t_mini *mini);
 /* parser_redir.c */
 void	add_back_redir(t_redir **lst, t_redir *new);
 t_redir	*create_redir(t_type type, char *value);
-t_redir	*find_redirs(t_token *token, t_token *previous);
+t_redir	*find_redirs(t_token *token);
 
 /* parser.c */
 void	init_cmd_node(t_cmd *node);
 char	**alloc_args(char **args, t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
-t_cmd	*new_cmd(t_token *token, t_token *previous);
+t_cmd	*new_cmd(t_token *token);
 t_cmd	*parser(t_mini *mini);
 
 /* paths.c */
@@ -163,9 +170,6 @@ int		is_directory(const char *path);
 int		is_executable_file(const char *path);
 int		is_readable_file(const char *path);
 int		is_writable_file(const char *path);
-
-/* redirections.c */
-int		redirect_input(char *file);
 
 /* signal.c */
 void	sig_handler(int sig);
