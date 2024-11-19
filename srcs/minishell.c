@@ -17,10 +17,11 @@ void	process_input(char *input, t_mini *mini) // should be void
 {
 	mini->token_list = lexer(input);
 	mini->token_list = remove_null_tokens(mini->token_list);
-	print_token_list(mini);
+	//print_token_list(mini);
 	// if (mini->cmd_list)
 	// 	mini->cmd_list =  parser(mini);    why if mini??? it didnt run then :(
-	/////////parser_heredoc(mini);
+	parser_heredoc(mini);
+	print_token_list(mini);
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);

@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/14 19:14:25 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/19 19:42:11 by vsanin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror 
 RM = rm -f
 
 LIBFTDIR = libft
@@ -34,6 +34,7 @@ SRC  =  srcs/minishell.c \
 		srcs/lexer_env.c \
 		srcs/lexer_quotes.c \
 		srcs/lexer_quotes_utils.c \
+		srcs/parser_heredoc.c \
 		srcs/parser_redir.c \
 		srcs/parser.c \
 		srcs/paths.c \

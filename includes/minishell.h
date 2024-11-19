@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/18 19:54:39 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/19 20:36:48 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void	free_redir(t_redir *redir);
 void	free_cmd_list(t_cmd *node);
 
 /* lexer.c */
+void	init_gtl_vars(int *f, int *i, char **node, t_token **token);
 char	*create_node_value(char *input, int *i); // move later
 t_type	get_type(char *value);
 int		create_and_add_tok(char *node_value, t_token **token_list, int *hdoc);
@@ -136,6 +137,11 @@ char	*exp_sub(char *str);
 int		check_next_char(char c, char c2, int i);
 
 /* parser_heredoc.c */
+void	heredoc_handler(int sig); // move to signal.c
+char	*str_append_nl(char *s1, char *s2);
+char	*heredoc_readline(char *limit);
+void	free_memo(void *mem_seg);
+int		process_heredoc(t_token *token, char *limit, t_mini *mini);
 int		parser_heredoc(t_mini *mini);
 
 /* parser_redir.c */
