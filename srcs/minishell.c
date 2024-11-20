@@ -3,11 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-
-/*   Updated: 2024/11/14 21:52:26 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/20 21:02:33 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +17,19 @@ int	process_input(char *input, t_mini *mini)
 	mini->token_list = lexer(input);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	print_token_list(mini);
-	// parser_heredoc(mini);
+	parser_heredoc(mini);
 	mini->cmd_list =  parser(mini);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
-	if (evaluator(mini) == 0)
-	{
-		if (executor(mini, mini->cmd_list) == ERROR)
-		{
-			printf("minishell: error when executing command\n");
-			free_cmd_list(mini->cmd_list);
-			return (ERROR);
-		}
-	}
+	// if (evaluator(mini) == 0)
+	// {
+	// 	if (executor(mini, mini->cmd_list) == ERROR)
+	// 	{
+	// 		printf("minishell: error when executing command\n");
+	// 		free_cmd_list(mini->cmd_list);
+	// 		return (ERROR);
+	// 	}
+	// }
 	free_cmd_list(mini->cmd_list);
 	return (0);
 }
