@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/19 21:57:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/20 11:32:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,26 @@ int	get_cmd_count(t_cmd *cmd)
 	}
 	return (i);
 
+}
+
+t_cmd *get_nth_command(t_cmd *cmdhead, int n)
+{
+	int	i;
+
+	i = 0;
+	if (!cmdhead)
+	{
+		return (NULL);
+	}
+	while (i < n && cmdhead)
+	{
+		cmdhead = cmdhead->next;
+		i++;
+	}
+	if (i == n)
+		return (cmdhead);
+	else
+		return (NULL);
 }
 
 // NOT WORKING - testing function for n pipes
@@ -223,12 +243,18 @@ int	executor(t_mini *mini, t_cmd *cmd)
 
 int	executor_mult(t_mini *mini, t_cmd *cmd)
 {
-	int		pid;
 	int		infile = -1;
 	int		outfile = -1;
 	char	*path;
 	t_redir	*redir;
+	int num_of_p = get_cmd_count(cmd);
+	int		pids[num_of_p];
+	int		pipes[num_of_p + 1][2];
+	int i;
+	int	j;
+	t_cmd *nthcmd;
 
+	// open infile and outfile if exist
 	redir = cmd->redir;
 	while (redir)
 	{
@@ -252,7 +278,100 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		}
 		redir = redir->next;
 	}
-	pid = fork();
+	// open pipes between each process
+	i = 0;
+	while (i)
+	{
+		if (pipe(pipes[i]) == -1)
+		{
+			printf("error creating pipes");
+			return (ERROR);
+		}
+		i++;
+	}
+	i = -1;
+	// open infile and outfile
+	while (++i < num_of_p)
+	{
+		pids[i] = fork();
+		if (pids[i] == -1)
+		{
+			// go back to parent, there pipes and fds will be closed
+			printf("error forking processes\n");
+			return (ERROR);
+		}
+		if (pids[i] == 0)
+		{
+			// set up infile - write end of first pipe
+			if (i == 0 && infile != -1)
+			{
+				dup2(infile, pipes[0][0]); // or dup2(infile, STDIN_FILENO);
+				close(infile);
+			}
+			else
+			{
+				dup2(STDIN_FILENO, pipes[0][0]); // or dup2(pipes[0][0], STDIN_FILENO); close(pipes[0][0])
+
+			}
+			// set up outfile - read end of last pipe
+			if (i == num_of_p + 1 && outfile != -1)
+			{
+				dup2(outfile, pipes[i][1]);
+				close(outfile);
+			}
+			else
+			{
+				dup2(STDOUT_FILENO, pipes[i][1]);
+			}
+			// dup other pipes
+			// close remaining pipes
+				j = 0;
+				while (j < num_of_p + 1)
+				{
+					if (j != i)
+						close(pipes[j][0]);
+					if (j + 1 != i)
+						close(pipes[j][1]);
+				}
+			nthcmd = get_nth_command(cmd, i);
+			if (!nthcmd)
+			{
+				close(pipes[i][0]);
+				close(pipes[i + 1][1]);
+				printf(" error retrieving command\n");
+				return (ERROR);
+			}
+			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
+			if (execve(nthcmd->cmd, nthcmd->args, mini->env) == -1)
+			{
+				close(pipes[i][0]);
+				close(pipes[i + 1][1]);
+				printf(" error executing command\n");
+				return (ERROR);
+			}
+		}
+	}
+	// close in and outfiles
+	close(infile);
+	close(outfile);
+	// close all pipes
+	i = 0;
+	while (i < num_of_p + 1)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+	// parent waits for all children
+	i = 0;
+	while (i < num_of_p)
+	{
+		wait(NULL);
+	}
+
+
+
+
+
 	if (pid == 0)
 	{
 		if (infile > -1)
@@ -269,8 +388,6 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		if (execve(path, cmd->args, mini->env) == -1)
 			printf("could not execute\n");
 	}
-	close(infile);
-	close(outfile);
 	wait(NULL);
 	return (0);
 }
