@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/20 11:32:48 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/20 15:51:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,11 +247,11 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	int		outfile = -1;
 	char	*path;
 	t_redir	*redir;
-	int num_of_p = get_cmd_count(cmd);
+	int		num_of_p = get_cmd_count(cmd);
 	int		pids[num_of_p];
-	int		pipes[num_of_p + 1][2];
-	int i;
-	int	j;
+	int		pipes[num_of_p - 1][2];
+	int		i;
+	int		j;
 	t_cmd *nthcmd;
 
 	// open infile and outfile if exist
@@ -278,116 +278,151 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		}
 		redir = redir->next;
 	}
+	// checking infile and outfile
+	printf("infile: %d, outfile: %d\n", infile, outfile);
+	//write(outfile, "abc", 3);
 	// open pipes between each process
 	i = 0;
-	while (i)
+	while (i < num_of_p - 1)
 	{
 		if (pipe(pipes[i]) == -1)
 		{
 			printf("error creating pipes");
+			while (i > 0)
+			{
+				close(pipes[i][1]);
+				close(pipes[i][0]);
+				i++;
+			}
 			return (ERROR);
 		}
 		i++;
 	}
 	i = -1;
-	// open infile and outfile
 	while (++i < num_of_p)
 	{
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
-			// go back to parent, there pipes and fds will be closed
+			// close pipes and files
+			i = 0;
+			while (i < num_of_p - 1)
+			{
+				close(pipes[i][1]);
+				close(pipes[i][0]);
+				i++;
+			}
+			if (infile > -1)
+				close(infile);
+			if (outfile > -1)
+				close(outfile);
 			printf("error forking processes\n");
 			return (ERROR);
 		}
 		if (pids[i] == 0)
 		{
+			printf("forked process %d\n", i);
 			// set up infile - write end of first pipe
-			if (i == 0 && infile != -1)
+			if (i == 0)
 			{
-				dup2(infile, pipes[0][0]); // or dup2(infile, STDIN_FILENO);
-				close(infile);
-			}
-			else
-			{
-				dup2(STDIN_FILENO, pipes[0][0]); // or dup2(pipes[0][0], STDIN_FILENO); close(pipes[0][0])
-
+				if (infile != -1)
+				{
+					dup2(infile, STDIN_FILENO);
+					close(infile);
+				}
+				dup2(pipes[0][1], STDOUT_FILENO);
+				close(pipes[0][1]);
+				// if (outfile != -1)
+				// 	close(outfile);
 			}
 			// set up outfile - read end of last pipe
-			if (i == num_of_p + 1 && outfile != -1)
+			if (i == num_of_p - 1)
 			{
-				dup2(outfile, pipes[i][1]);
-				close(outfile);
-			}
-			else
-			{
-				dup2(STDOUT_FILENO, pipes[i][1]);
-			}
-			// dup other pipes
-			// close remaining pipes
-				j = 0;
-				while (j < num_of_p + 1)
+				dup2(pipes[i - 1][0], STDIN_FILENO);
+				close(pipes[i - 1][0]);
+				if  (outfile != -1)
 				{
-					if (j != i)
-						close(pipes[j][0]);
-					if (j + 1 != i)
+					dup2(outfile, STDOUT_FILENO);
+					close(outfile);
+				}
+				// if (infile != -1)
+				// 	close(infile);
+			}
+			if (i > 0 && i < num_of_p - 1)
+			{
+				dup2(pipes[i - 1][0], STDIN_FILENO);
+				close(pipes[i - 1][0]);
+				dup2(pipes[i][1], STDOUT_FILENO);
+				close(pipes[i][1]);
+				// if (infile != -1)
+				// 	close(infile);
+				// if (outfile != -1)
+				// 	close(outfile);
+			}
+			// close remaining pipes
+			j = 0;
+			while (j < num_of_p - 1)
+			{
+				if (j != i)
+				{
+					if (pipes[j][1] > -1)
 						close(pipes[j][1]);
 				}
+				if (j!= i - 1)
+				{
+					if (pipes[j][0] > -1)
+						close(pipes[j][0]);
+				}
+				j++;
+			}
 			nthcmd = get_nth_command(cmd, i);
 			if (!nthcmd)
 			{
-				close(pipes[i][0]);
-				close(pipes[i + 1][1]);
-				printf(" error retrieving command\n");
+				close(pipes[i][1]);
+				close(pipes[i - 1][0]);
+				printf("error retrieving command\n");
 				return (ERROR);
 			}
-			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
-			if (execve(nthcmd->cmd, nthcmd->args, mini->env) == -1)
+			path = get_path_env(nthcmd->cmd);
+			if (!path)
 			{
-				close(pipes[i][0]);
-				close(pipes[i + 1][1]);
-				printf(" error executing command\n");
+				close(pipes[i][1]);
+				close(pipes[i - 1][0]);
+				printf("minishell: command not found: %s\n", nthcmd->cmd);
+				return (ERROR);
+			}
+			printf("executing ...\n");
+			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
+			if (execve(path, nthcmd->args, mini->env) == -1)
+			{
+				if (pipes[i][1])
+					close(pipes[i][1]);
+				if (pipes[i - 1][0])
+					close(pipes[i - 1][0]);
+				printf("error executing command\n");
 				return (ERROR);
 			}
 		}
-	}
-	// close in and outfiles
-	close(infile);
-	close(outfile);
-	// close all pipes
-	i = 0;
-	while (i < num_of_p + 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
 	}
 	// parent waits for all children
-	i = 0;
-	while (i < num_of_p)
-	{
+	i = -1;
+	while (++i < num_of_p)
 		wait(NULL);
-	}
-
-
-
-
-
-	if (pid == 0)
+	printf("executed all\n");
+	// close in and outfiles
+	if (infile > -1)
+		close(infile);
+	if (outfile > -1)
+		close(outfile);
+	// close all pipes
+	i = 0;
+	while (i < num_of_p - 1)
 	{
-		if (infile > -1)
-		{
-			dup2(infile, STDIN_FILENO);
-			close(infile);
-		}
-		if (outfile > -1)
-		{
-			dup2(outfile, STDOUT_FILENO);
-			close(outfile);
-		}
-		path = get_path_env(cmd->cmd);
-		if (execve(path, cmd->args, mini->env) == -1)
-			printf("could not execute\n");
+		if (pipes[i][0] > -1)
+			close(pipes[i][0]);
+		if (pipes[i][1] > -1)
+			close(pipes[i][1]);
+		i++;
 	}
-	wait(NULL);
 	return (0);
 }

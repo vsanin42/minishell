@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 20:36:48 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/20 12:35:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ int	evaluator(t_mini *mini);
 
 /* executor.c */
 int	executor(t_mini *mini, t_cmd *cmd);
+int	executor_mult(t_mini *mini, t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);

@@ -24,7 +24,7 @@ int	process_input(char *input, t_mini *mini)
 	print_command_list(mini);
 	if (evaluator(mini) == 0)
 	{
-		if (executor(mini, mini->cmd_list) == ERROR)
+		if (executor_mult(mini, mini->cmd_list) == ERROR)
 		{
 			printf("minishell: error when executing command\n");
 			free_cmd_list(mini->cmd_list);
