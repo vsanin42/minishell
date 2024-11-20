@@ -80,6 +80,7 @@ misc:
 - make it accept not only readline input but also get next line for reading from something - that's the non-interactive part. no idea how to test. isatty() function is used
 - must check for pipes at start/end before starting to process input
 - HANDLE RELATIVE PATH IN THE GET_ENV_PATH = check first if we already maybe got a relative path, if not only then continue to searching the path in $PATH
+- multiple terminals?
 
 # general notes
 

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/20 15:51:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:41:29 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,9 +278,6 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		}
 		redir = redir->next;
 	}
-	// checking infile and outfile
-	printf("infile: %d, outfile: %d\n", infile, outfile);
-	//write(outfile, "abc", 3);
 	// open pipes between each process
 	i = 0;
 	while (i < num_of_p - 1)
@@ -296,6 +293,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			}
 			return (ERROR);
 		}
+		printf("pipe %d [%d][%d]\n", i, pipes[i][1], pipes[i][0]);
 		i++;
 	}
 	i = -1;
@@ -304,7 +302,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
-			// close pipes and files
+			// close pipes and files if cannot fork
 			i = 0;
 			while (i < num_of_p - 1)
 			{
@@ -322,16 +320,16 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		if (pids[i] == 0)
 		{
 			printf("forked process %d\n", i);
-			// set up infile - write end of first pipe
+			// set up first process
 			if (i == 0)
 			{
 				if (infile != -1)
 				{
 					dup2(infile, STDIN_FILENO);
-					close(infile);
+					//close(infile);
 				}
 				dup2(pipes[0][1], STDOUT_FILENO);
-				close(pipes[0][1]);
+				//close(pipes[0][1]);
 				// if (outfile != -1)
 				// 	close(outfile);
 			}
@@ -359,6 +357,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				// if (outfile != -1)
 				// 	close(outfile);
 			}
+			printf("process %d reads from fd %d and writes to fd %d\n", i, STDIN_FILENO, STDOUT_FILENO);
 			// close remaining pipes
 			j = 0;
 			while (j < num_of_p - 1)
@@ -378,20 +377,24 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			nthcmd = get_nth_command(cmd, i);
 			if (!nthcmd)
 			{
-				close(pipes[i][1]);
-				close(pipes[i - 1][0]);
+				if (pipes[i][1] > -1)
+					close(pipes[i][1]);
+				if (pipes[i - 1][0] > -1)
+					close(pipes[i - 1][0]);
 				printf("error retrieving command\n");
 				return (ERROR);
 			}
 			path = get_path_env(nthcmd->cmd);
 			if (!path)
 			{
-				close(pipes[i][1]);
-				close(pipes[i - 1][0]);
+				if (pipes[i][1] > -1)
+					close(pipes[i][1]);
+				if (pipes[i - 1][0] > -1)
+					close(pipes[i - 1][0]);
 				printf("minishell: command not found: %s\n", nthcmd->cmd);
 				return (ERROR);
 			}
-			printf("executing ...\n");
+			printf("executing %s from %d to %d\n", nthcmd->cmd, pipes[i - 1][0], pipes[i][1]);
 			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
 			if (execve(path, nthcmd->args, mini->env) == -1)
 			{
