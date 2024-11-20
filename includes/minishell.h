@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 20:36:48 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/20 19:32:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define MINISHELL_H
 # define _GNU_SOURCE
 # define ERROR 1
+# define EXP 1
+# define NO_EXP 0
 # include <stdio.h>
 # include <stdlib.h>
 # include <signal.h>
@@ -144,9 +146,13 @@ char	*exp_sub(char *str);
 int		check_next_char(char c, char c2, int i);
 
 /* parser_heredoc.c */
+char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini);
+char	*heredoc_expand(char *str);
+int		heredoc_dup(t_mini *mini);
+char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini);
 void	heredoc_handler(int sig); // move to signal.c
 char	*str_append_nl(char *s1, char *s2);
-char	*heredoc_readline(char *limit);
+char	*heredoc_readline(char *limit, int *expand_flag);
 void	free_memo(void *mem_seg);
 int		process_heredoc(t_token *token, char *limit, t_mini *mini);
 int		parser_heredoc(t_mini *mini);
