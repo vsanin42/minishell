@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/19 19:42:11 by vsanin           ###   ########.fr        #
+#    Updated: 2024/11/21 22:03:28 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 RM = rm -f
 
 LIBFTDIR = libft
@@ -29,6 +29,7 @@ SRC  =  srcs/minishell.c \
 		srcs/check_input.c \
 		srcs/evaluator.c \
 		srcs/executor.c \
+		srcs/executor_utils.c \
 		srcs/exit.c \
 		srcs/free.c \
 		srcs/lexer.c \

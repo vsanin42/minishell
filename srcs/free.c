@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 22:05:19 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 16:56:27 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:03:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,19 @@ void	free_token_list(t_token *token)
 // frees array of strings
 void	free_char_pp(char **arr)
 {
-	char	*temp;
 	char	**head;
 
+	if (!arr)
+		return ;
 	head = arr;
 	while (*arr)
 	{
-		temp = *arr;
-		free(temp);
+		free(*arr);
+		*arr = NULL;
 		arr++;
 	}
 	free(head);
+	head = NULL;
 }
 
 // frees redir struct

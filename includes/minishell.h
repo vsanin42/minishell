@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/20 19:32:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/21 22:11:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct s_mini
 }	t_mini;
 
 /* minishell.c */
-int	process_input(char *input, t_mini *mini); // should be void, testing
+int		process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
@@ -97,10 +97,15 @@ int		check_quotes(char *input);
 int		check_input(char *input);
 
 /* evaluator.c */
-int	evaluator(t_mini *mini);
+int		evaluator(t_mini *mini);
 
 /* executor.c */
-int	executor(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini, t_cmd *cmd);
+int		executor_mult(t_mini *mini, t_cmd *cmd);
+
+/* executor_utils.c */
+t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
+int		get_cmd_count(t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
