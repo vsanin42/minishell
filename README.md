@@ -92,6 +92,11 @@ misc:
 - make it accept not only readline input but also get next line for reading from something - that's the non-interactive part. no idea how to test. isatty() function is used
 - must check for pipes at start/end before starting to process input
 - HANDLE RELATIVE PATH IN THE GET_ENV_PATH = check first if we already maybe got a relative path, if not only then continue to searching the path in $PATH
+- multiple terminals?
+- check first for builtins,then relative path(starting with ./ or ../), then check absolute path (starting with /), then check $PATH
+- cd builtin - check if path exists - relative, absolute, $PATH AND add error handling before
+- shell cd does not work - FIXED - did builtin
+- group the functions in files better - eg. do files starting with type_... to store functions for out files e. type_cmd will store get_cmd_count, etc.
 - heredoc: error handling, handle case with nothing after <<
 
 # general notes

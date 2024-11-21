@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redir.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 21:52:17 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/20 17:40:13 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,9 @@ t_redir	*find_redirs(t_token *token)
 {
 	t_token	*n;
 	t_redir	*head_redir;
-	t_redir	*new_redir;
 
 	n = token;
 	head_redir = NULL;
-	new_redir = NULL;
 	while (n)
 	{
 		if (new_redir_condition(n))

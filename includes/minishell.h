@@ -101,6 +101,11 @@ int		evaluator(t_mini *mini);
 
 /* executor.c */
 int		executor(t_mini *mini, t_cmd *cmd);
+int		executor_mult(t_mini *mini, t_cmd *cmd);
+
+/* executor_utils.c */
+t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
+int		get_cmd_count(t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
