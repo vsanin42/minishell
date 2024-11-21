@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/20 21:02:33 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/21 19:17:31 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,14 @@
 
 int	process_input(char *input, t_mini *mini)
 {
-	mini->token_list = lexer(input);
-	mini->token_list = remove_null_tokens(mini->token_list);
+	if (lexer(input, mini) == ERROR)
+		return (ERROR);
+	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
 	print_token_list(mini);
-	parser_heredoc(mini);
-	mini->cmd_list =  parser(mini);
+	if (parser_heredoc(mini) == ERROR)
+		return (ERROR);
+	if (parser(mini) == ERROR)
+		return (ERROR);
 	free_token_list(mini->token_list);
 	print_command_list(mini);
 	// if (evaluator(mini) == 0)
@@ -66,11 +69,6 @@ void	set_termios() // terminal config editing to revent '^\' from being printed
 		exit(1);
 }
 
-// init_mini(t_mini *mini)
-// {
-// 	env =
-// }
-
 int main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
@@ -85,7 +83,7 @@ int main(int argc, char *argv[], char *env[])
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
-		error_msg("Too many arguments. Use: ./minishell", NULL, NULL, NULL);
+		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 			break ;

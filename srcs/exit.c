@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 21:50:25 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/21 18:43:33 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ int	error_msg(char *msg, t_mini *mini, char *str_to_free_1, char *str_to_free_2)
 {
 	if (mini)
 	{
-		free_token_list(mini->token_list);
-		free_cmd_list(mini->cmd_list);
+		if (mini->token_list)
+			free_token_list(mini->token_list);
+		if (mini->cmd_list)
+			free_cmd_list(mini->cmd_list);
 	}
 	free(str_to_free_1);
 	str_to_free_1 = NULL;
@@ -32,7 +34,7 @@ int	error_msg(char *msg, t_mini *mini, char *str_to_free_1, char *str_to_free_2)
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
 	show_prompt(mini);
-	return (1);
+	return (ERROR);
 	//exit(1);
 }
 
