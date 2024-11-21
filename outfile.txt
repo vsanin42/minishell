@@ -1,8 +1,3 @@
-reading from: 3, writing to: 4
-123
-AAAA
-ABC
+abcd
 Anka
 Zuzka
-abcd
-def

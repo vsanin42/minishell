@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/20 18:50:26 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/21 20:05:05 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,36 +254,11 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	int		j;
 	t_cmd *nthcmd;
 
-	// open infile and outfile if exist
 	printf("num of p: %d\n", num_of_p);
-	redir = cmd->redir;
-	while (redir)
-	{
-		if (redir->type == TOKEN_REDIRIN)
-		{
-			if (infile > STDIN_FILENO)
-				close(infile);
-			infile = open(redir->file, O_RDONLY);
-		}
-		else if (redir->type == TOKEN_REDIROUT)
-		{
-			if (outfile > STDOUT_FILENO)
-				close(outfile);
-			outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		}
-		else if (redir->type == TOKEN_APPEND)
-		{
-			if (outfile > STDOUT_FILENO)
-				close(outfile);
-			outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		}
-		redir = redir->next;
-	}
 	// open pipes between each process
 	i = 0;
 	while (i < num_of_p - 1)
 	{
-		printf(" i from pipes: %d\n", i);
 		if (pipe(pipes[i]) == -1)
 		{
 			printf("error creating pipes");
@@ -291,20 +266,23 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			{
 				close(pipes[i][1]);
 				close(pipes[i][0]);
-				i++;
+				i--;
 			}
 			return (ERROR);
 		}
-		printf("created pipe %d [%d][%d]\n", i, pipes[i][1], pipes[i][0]);
 		i++;
 	}
-	i = -1;
-	while (++i < num_of_p)
+	// create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
+	// and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
+	i = 0;
+	while (i < num_of_p)
 	{
+		// maybe here before forking add statement that if pid[i - 1] status code is 0 we can execute ths, set status code of pid[0] to 0
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
 			// close pipes and files if cannot fork
+			// BUT have to close also all pipes and files in other processes???? even the ones that didnt even run ?
 			i = 0;
 			while (i < num_of_p - 1)
 			{
@@ -312,122 +290,135 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				close(pipes[i][0]);
 				i++;
 			}
-			if (infile > STDIN_FILENO)
-				close(infile);
-			if (outfile > STDOUT_FILENO)
-				close(outfile);
 			printf("error forking processes\n");
 			return (ERROR);
 		}
-		if (pids[i] == 0)
+		// do this for every emerged child process
+		if (pids[i] == 0) // do this in each new child
 		{
 			printf("forked process %d\n", i);
+			nthcmd = get_nth_command(cmd, i);
+			if (!nthcmd)
+			{
+				// close pipes
+				printf("error retrieving command\n");
+				return (ERROR);
+			}
+			// for each process set the infile and outfile to the ones from its redir
+			redir = nthcmd->redir;
+			while (redir)
+			{
+				if (redir->type == TOKEN_REDIRIN)
+				{
+					if (infile > STDIN_FILENO)
+						close(infile);
+					infile = open(redir->file, O_RDONLY);
+				}
+				else if (redir->type == TOKEN_REDIROUT)
+				{
+					if (outfile > STDOUT_FILENO)
+						close(outfile);
+					outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				}
+				else if (redir->type == TOKEN_APPEND)
+				{
+					if (outfile > STDOUT_FILENO)
+						close(outfile);
+					outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				}
+				redir = redir->next;
+			}
 			// set up first process
 			if (i == 0)
 			{
-				if (infile > STDIN_FILENO)
-				{
-					dup2(infile, STDIN_FILENO);
-					close(infile);
-				}
-				if (pipes[i]) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
+				dup2(infile, STDIN_FILENO);
+				if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
 					dup2(pipes[0][1], STDOUT_FILENO);
-				//close(pipes[0][1]);
-				// if (outfile != -1)
-				// 	close(outfile);
+			}
+			// set ends op pipes to middle processes
+			if (i > 0 && i < num_of_p - 1)
+			{
+				dup2(pipes[i - 1][0], STDIN_FILENO);
+				dup2(pipes[i][1], STDOUT_FILENO);
 			}
 			// set up outfile - read end of last pipe
 			if (i == num_of_p - 1)
 			{
-				if (pipes[i - 1]) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
+				if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
 					dup2(pipes[i - 1][0], STDIN_FILENO);
-				if (outfile > STDOUT_FILENO)
-				{
-					dup2(outfile, STDOUT_FILENO);
-					close(outfile);
-				}
-				// if (infile != -1)
-				// 	close(infile);
+				dup2(outfile, STDOUT_FILENO);
 			}
-			if (i > 0 && i < num_of_p - 1)
-			{
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-				close(pipes[i - 1][0]);
-				dup2(pipes[i][1], STDOUT_FILENO);
-				close(pipes[i][1]);
-				// if (infile != -1)
-				// 	close(infile);
-				// if (outfile != -1)
-				// 	close(outfile);
-			}
-			printf("reading from: %d, writing to: %d\n", infile, outfile);
+			// close in and outfiles - they are dupped so we do not need them anymore
+			if (infile > STDIN_FILENO)
+				close(infile);
+			if (outfile > STDOUT_FILENO)
+				close(outfile);
 			// close remaining pipes
 			j = 0;
-			while (j < num_of_p - 1)
-			{
-				if (j != i)
-				{
-					if (pipes[j][1] > STDIN_FILENO)
-						close(pipes[j][1]);
+			// while (j < num_of_p - 1)
+			// {
+			// 	if (j != i)
+			// 	{
+			// 		if (pipes[j][1] > STDIN_FILENO)
+			// 			close(pipes[j][1]);
+			// 	}
+			// 	if (j!= i - 1)
+			// 	{
+			// 		if (pipes[j][0] > STDOUT_FILENO)
+			// 			close(pipes[j][0]);
+			// 	}
+			// 	j++;
+			// }
+			// this closes all pipes since they are already dupped and we do not need them
+			for (j = 0; j < num_of_p - 1; j++) {
+				if (j != i) {
+					close(pipes[j][1]); // Close write end of unused pipes
 				}
-				if (j!= i - 1)
-				{
-					if (pipes[j][0] > STDOUT_FILENO)
-						close(pipes[j][0]);
+				if (j != i - 1) {
+					close(pipes[j][0]); // Close read end of unused pipes
 				}
-				j++;
-			}
-			nthcmd = get_nth_command(cmd, i);
-			if (!nthcmd)
-			{
-				if (pipes[i][1] > -1)
-					close(pipes[i][1]);
-				if (pipes[i - 1][0] > -1)
-					close(pipes[i - 1][0]);
-				printf("error retrieving command\n");
-				return (ERROR);
 			}
 			path = get_path_env(nthcmd->cmd);
 			if (!path)
 			{
-				if (pipes[i][1] > -1)
-					close(pipes[i][1]);
-				if (pipes[i - 1][0] > -1)
-					close(pipes[i - 1][0]);
-				printf("minishell: command not found: %s\n", nthcmd->cmd);
+				perror("minishell: command not found: ");
+				perror(nthcmd->cmd);
+				perror("\n");
 				return (ERROR);
 			}
 			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
 			if (execve(path, nthcmd->args, mini->env) == -1)
 			{
-				if (pipes[i][1])
-					close(pipes[i][1]);
-				if (pipes[i - 1][0])
-					close(pipes[i - 1][0]);
-				printf("minishell: error executing command: %s\n", nthcmd->cmd);
+				perror("minishell: error executing command: ");
+				perror(nthcmd->cmd);
+				perror("\n");
 				return (ERROR);
 			}
 		}
+		i++;
 	}
-	// parent waits for all children
-	i = -1;
-	while (++i < num_of_p)
-		wait(NULL);
-	printf("executed all\n");
-	// close in and outfiles
-	if (infile > STDIN_FILENO)
-		close(infile);
-	if (outfile > STDOUT_FILENO)
-		close(outfile);
 	// close all pipes
 	i = 0;
 	while (i < num_of_p - 1)
 	{
-		if (pipes[i][0] > -1)
-			close(pipes[i][0]);
-		if (pipes[i][1] > -1)
-			close(pipes[i][1]);
+		close(pipes[i][0]);
+		close(pipes[i][1]);
 		i++;
 	}
+	// parent waits for all children
+	// i = -1;
+	// while (++i < num_of_p)
+	// 	wait(NULL);
+	int status;
+	for (i = 0; i < num_of_p; i++) {
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status)) {
+			printf("Process %d exited with status %d\n", pids[i], WEXITSTATUS(status));
+		} else {
+			printf("Process %d terminated abnormally\n", pids[i]);
+		}
+	}
+	printf("executed all\n");
+	// close all pipes
 	return (0);
 }
