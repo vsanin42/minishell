@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 20:47:37 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/21 20:41:39 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ int	create_and_add_tok(char *node_value, t_token **token_list, int *hdoc)
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
 		new_value = str_from_array(process_envs_and_quotes(new_tok));
+		if (!new_value)
+			return (0);
 		free(new_tok->value);
 		new_tok->value = new_value;
 	}
@@ -172,14 +174,15 @@ t_token	*get_token_list(char *input)
 }
 
 // creates list of all tokens in order from the input string from readline
-t_token	*lexer(char *input)
+int	lexer(char *input, t_mini *mini)
 {
 	t_token	*token_list;
 
 	token_list = get_token_list(input);
 	if (!token_list)
-		return (NULL);
+		return (error_msg("Lexer error", mini, 0, 0));
 	free(input);
 	input = NULL;
-	return (token_list);
+	mini->token_list = token_list;
+	return (0);
 }

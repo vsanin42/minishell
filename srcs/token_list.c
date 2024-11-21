@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/14 21:42:40 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/21 17:59:24 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_token	*remove_null_tokens(t_token *token)
 	t_token	*temp;
 
 	head = token;
-	while (head && head->value[0] == '\0')
+	while (head && (!head->value || head->value[0] == '\0'))
 	{
 		temp = head;
 		head = head->next;
@@ -62,7 +62,7 @@ t_token	*remove_null_tokens(t_token *token)
 	token = head;
 	while (token && token->next)
 	{
-		if (token->next->value[0] == '\0')
+		if (!token->next->value || token->next->value[0] == '\0')
 		{	
 			temp = token->next;
 			token->next = token->next->next;

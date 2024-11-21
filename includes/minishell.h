@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 22:11:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:12:41 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*env_builtin(char *name);
 
 /* check_input.c */
 int		isbq(char *input); // move this later
-int 	check_braces_alnum(char *input, int start);
+int		check_braces_alnum(char *input, int start);
 int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
@@ -129,7 +129,7 @@ t_type	get_type(char *value);
 int		create_and_add_tok(char *node_value, t_token **token_list, int *hdoc);
 char	*process_text(char *text, int *i, int in_sq, int in_dq);
 t_token	*get_token_list(char *input);
-t_token	*lexer(char *input);
+int		lexer(char *input, t_mini *mini);
 
 /* lexer_env.c */
 char	*handle_word_no_env(char *res, char *text, int *i);
@@ -139,6 +139,7 @@ char	*handle_env_without_braces(char *res, char *text, int *i);
 char	*get_env_value_to_process(char *text);
 
 /* lexer_quotes.c */
+int		cnc_check(char *text, int *i);
 int		find_q_or_end(char *text);
 int		find_words(char *text);
 char	**trim_quotes_in_array(char **head);
@@ -168,11 +169,13 @@ t_redir	*create_redir(t_type type, char *value);
 t_redir	*find_redirs(t_token *token);
 
 /* parser.c */
+int		first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead);
+int		nc_init(t_cmd **node, char ***args, char ***args_head);
 void	init_cmd_node(t_cmd *node);
 char	**alloc_args(char **args, t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
 t_cmd	*new_cmd(t_token *token);
-t_cmd	*parser(t_mini *mini);
+int		parser(t_mini *mini);
 
 /* paths.c */
 char	*get_current_directory(void);
