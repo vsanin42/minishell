@@ -1,2 +1,8 @@
-executing echo from 4205585 to 32767
-ho
+reading from: 3, writing to: 4
+123
+AAAA
+ABC
+Anka
+Zuzka
+abcd
+def

@@ -81,6 +81,10 @@ misc:
 - must check for pipes at start/end before starting to process input
 - HANDLE RELATIVE PATH IN THE GET_ENV_PATH = check first if we already maybe got a relative path, if not only then continue to searching the path in $PATH
 - multiple terminals?
+- check first for builtins,then relative path(starting with ./ or ../), then check absolute path (starting with /), then check $PATH
+- cd builtin - check if path exists - relative, absolute, $PATH
+- shell cd does not work
+
 
 # general notes
 

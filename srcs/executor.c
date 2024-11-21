@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/20 16:41:29 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/20 18:50:26 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ t_cmd *get_nth_command(t_cmd *cmdhead, int n)
 }
 
 // NOT WORKING - testing function for n pipes
-int	executorr(t_mini *mini, t_cmd *cmd)
+/* int	executorr(t_mini *mini, t_cmd *cmd)
 {
 	int		infile;
 	int		outfile;
@@ -184,7 +184,7 @@ int	executorr(t_mini *mini, t_cmd *cmd)
 	printf("closed pipes\n");
 
 	return (0);
-}
+} */
 
 // works for one command without pipes -> eg. < infile.txt sort >> outfile.txt
 int	executor(t_mini *mini, t_cmd *cmd)
@@ -243,8 +243,8 @@ int	executor(t_mini *mini, t_cmd *cmd)
 
 int	executor_mult(t_mini *mini, t_cmd *cmd)
 {
-	int		infile = -1;
-	int		outfile = -1;
+	int		infile = STDIN_FILENO;
+	int		outfile = STDOUT_FILENO;
 	char	*path;
 	t_redir	*redir;
 	int		num_of_p = get_cmd_count(cmd);
@@ -255,24 +255,25 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	t_cmd *nthcmd;
 
 	// open infile and outfile if exist
+	printf("num of p: %d\n", num_of_p);
 	redir = cmd->redir;
 	while (redir)
 	{
 		if (redir->type == TOKEN_REDIRIN)
 		{
-			if (infile > -1)
+			if (infile > STDIN_FILENO)
 				close(infile);
 			infile = open(redir->file, O_RDONLY);
 		}
 		else if (redir->type == TOKEN_REDIROUT)
 		{
-			if (outfile > -1)
+			if (outfile > STDOUT_FILENO)
 				close(outfile);
 			outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		}
 		else if (redir->type == TOKEN_APPEND)
 		{
-			if (outfile > -1)
+			if (outfile > STDOUT_FILENO)
 				close(outfile);
 			outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		}
@@ -282,6 +283,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	i = 0;
 	while (i < num_of_p - 1)
 	{
+		printf(" i from pipes: %d\n", i);
 		if (pipe(pipes[i]) == -1)
 		{
 			printf("error creating pipes");
@@ -293,7 +295,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			}
 			return (ERROR);
 		}
-		printf("pipe %d [%d][%d]\n", i, pipes[i][1], pipes[i][0]);
+		printf("created pipe %d [%d][%d]\n", i, pipes[i][1], pipes[i][0]);
 		i++;
 	}
 	i = -1;
@@ -310,9 +312,9 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				close(pipes[i][0]);
 				i++;
 			}
-			if (infile > -1)
+			if (infile > STDIN_FILENO)
 				close(infile);
-			if (outfile > -1)
+			if (outfile > STDOUT_FILENO)
 				close(outfile);
 			printf("error forking processes\n");
 			return (ERROR);
@@ -323,12 +325,13 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			// set up first process
 			if (i == 0)
 			{
-				if (infile != -1)
+				if (infile > STDIN_FILENO)
 				{
 					dup2(infile, STDIN_FILENO);
-					//close(infile);
+					close(infile);
 				}
-				dup2(pipes[0][1], STDOUT_FILENO);
+				if (pipes[i]) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
+					dup2(pipes[0][1], STDOUT_FILENO);
 				//close(pipes[0][1]);
 				// if (outfile != -1)
 				// 	close(outfile);
@@ -336,9 +339,9 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 			// set up outfile - read end of last pipe
 			if (i == num_of_p - 1)
 			{
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-				close(pipes[i - 1][0]);
-				if  (outfile != -1)
+				if (pipes[i - 1]) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
+					dup2(pipes[i - 1][0], STDIN_FILENO);
+				if (outfile > STDOUT_FILENO)
 				{
 					dup2(outfile, STDOUT_FILENO);
 					close(outfile);
@@ -357,19 +360,19 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				// if (outfile != -1)
 				// 	close(outfile);
 			}
-			printf("process %d reads from fd %d and writes to fd %d\n", i, STDIN_FILENO, STDOUT_FILENO);
+			printf("reading from: %d, writing to: %d\n", infile, outfile);
 			// close remaining pipes
 			j = 0;
 			while (j < num_of_p - 1)
 			{
 				if (j != i)
 				{
-					if (pipes[j][1] > -1)
+					if (pipes[j][1] > STDIN_FILENO)
 						close(pipes[j][1]);
 				}
 				if (j!= i - 1)
 				{
-					if (pipes[j][0] > -1)
+					if (pipes[j][0] > STDOUT_FILENO)
 						close(pipes[j][0]);
 				}
 				j++;
@@ -394,7 +397,6 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				printf("minishell: command not found: %s\n", nthcmd->cmd);
 				return (ERROR);
 			}
-			printf("executing %s from %d to %d\n", nthcmd->cmd, pipes[i - 1][0], pipes[i][1]);
 			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
 			if (execve(path, nthcmd->args, mini->env) == -1)
 			{
@@ -402,7 +404,7 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 					close(pipes[i][1]);
 				if (pipes[i - 1][0])
 					close(pipes[i - 1][0]);
-				printf("error executing command\n");
+				printf("minishell: error executing command: %s\n", nthcmd->cmd);
 				return (ERROR);
 			}
 		}
@@ -413,9 +415,9 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		wait(NULL);
 	printf("executed all\n");
 	// close in and outfiles
-	if (infile > -1)
+	if (infile > STDIN_FILENO)
 		close(infile);
-	if (outfile > -1)
+	if (outfile > STDOUT_FILENO)
 		close(outfile);
 	// close all pipes
 	i = 0;
