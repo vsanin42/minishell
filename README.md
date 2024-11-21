@@ -82,9 +82,9 @@ misc:
 - HANDLE RELATIVE PATH IN THE GET_ENV_PATH = check first if we already maybe got a relative path, if not only then continue to searching the path in $PATH
 - multiple terminals?
 - check first for builtins,then relative path(starting with ./ or ../), then check absolute path (starting with /), then check $PATH
-- cd builtin - check if path exists - relative, absolute, $PATH
-- shell cd does not work
-
+- cd builtin - check if path exists - relative, absolute, $PATH AND add error handling before
+- shell cd does not work - FIXED - did builtin
+- group the functions in files better - eg. do files starting with type_... to store functions for out files e. type_cmd will store get_cmd_count, etc.
 
 # general notes
 

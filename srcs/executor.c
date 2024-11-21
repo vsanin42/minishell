@@ -6,185 +6,11 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/21 20:05:05 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:02:55 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int	get_cmd_count(t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	while (cmd)
-	{
-		i += 1;
-		cmd = cmd->next;
-	}
-	return (i);
-
-}
-
-t_cmd *get_nth_command(t_cmd *cmdhead, int n)
-{
-	int	i;
-
-	i = 0;
-	if (!cmdhead)
-	{
-		return (NULL);
-	}
-	while (i < n && cmdhead)
-	{
-		cmdhead = cmdhead->next;
-		i++;
-	}
-	if (i == n)
-		return (cmdhead);
-	else
-		return (NULL);
-}
-
-// NOT WORKING - testing function for n pipes
-/* int	executorr(t_mini *mini, t_cmd *cmd)
-{
-	int		infile;
-	int		outfile;
-	int		i;
-	int		j;
-	t_redir	*redir;
-	pid_t	pid;
-	// (void)mini;
-	int	cmdcount = get_cmd_count(cmd);
-	int	pipes[cmdcount - 1][2];
-	char *path = NULL;
-
-	// opening all pipes - then must connect them properly
-	i = 0;
-	while (i < cmdcount - 1)
-	{
-		pipe(pipes[i]);
-		i++;
-	}
-
-	// opening files - only the last one is valid always - BUT WE HAVE TO GO THROUGH ALL REDIRS OF ALL CMDS, NOT ONLY THE FIRST ONE
-	redir = cmd->redir;
-	printf("red: %s\n", cmd->redir->file);
-	if (cmd->redir == NULL)
-		printf("redir: NULL\n");
-	else
-		printf("redirrrr\n");
-	while (redir)
-	{
-		// redir in
-		if (infile == -1 && redir->type == TOKEN_REDIRIN)
-			infile = open(redir->file, O_RDONLY);
-		else if (infile != -1 && redir->type == TOKEN_REDIRIN)
-		{
-			close(infile);
-			infile = open(redir->file, O_RDONLY);
-		}
-		// redir out
-		else if (outfile == -1 && redir->type == TOKEN_REDIROUT)
-			outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (outfile != -1 && redir->type == TOKEN_REDIROUT)
-		{
-			close(outfile);
-			outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		}
-		// redir append
-		else if (outfile == -1&& redir->type == TOKEN_APPEND)
-			outfile = open(redir->file, O_WRONLY | O_CREAT, 0644);
-		else if (outfile != -1 && redir->type == TOKEN_APPEND)
-		{
-			close(outfile);
-			outfile = open(redir->file, O_WRONLY | O_CREAT, 0644);
-		}
-		// set heredoc stream from stdin
-		redir = redir->next;
-	}
-	printf("cmd count: %d\n", cmdcount);
-	i = 0;
-	while (i < cmdcount && cmd)
-	{
-		j = 0;
-		path = get_path_env(cmd->cmd);
-		if (!path)
-		{
-			printf("%s: command not found\n", cmd->cmd);
-			return (ERROR);
-		}
-		printf("i: %d\n", i);
-		printf("cmd: %s\n", path);
-		free(path);
-		path = NULL;
-		pid = fork();
-		if (pid == 0)
-		{
-			printf("forked: child %d\n", pid);
-			// first command
-			if (i == 0 && infile)
-			{
-				dup2(infile, STDIN_FILENO);
-				close(infile);
-			}
-			// last command
-			if (i == cmdcount - 1 && outfile)
-			{
-				dup2(outfile, STDOUT_FILENO);
-				close(outfile);
-			}
-			// set pipes for all commads between pipes
-			if (i > 0 && i < cmdcount)
-				dup2(pipes[i - 1][1], STDIN_FILENO);
-			if (i < cmdcount - 1)
-				dup2(pipes[i][0], STDOUT_FILENO);
-			// close all pipes in each child
-			while (j < cmdcount - 1)
-			{
-				close(pipes[j][0]);
-				close(pipes[j - 1][1]);
-				j++;
-			}
-			// perform action
-			if (execve(path, cmd->args, mini->env) == -1)
-			{
-				printf("%s: could not execute command\n", cmd->cmd);
-				return (ERROR);
-			}
-		}
-		cmd = cmd->next;
-		i++;
-	}
-	printf("checked commands\n");
-	i = 0;
-	// parent waits for all children
-	while (i < cmdcount)
-	{
-		wait(NULL);
-		i++;
-	}
-	printf("waited for children\n");
-	// close all fds
-	if (infile)
-		close(infile);
-	printf("closed infile\n");
-	if (outfile)
-		close(outfile);
-	printf("closed outfile\n");
-	// close all pipes in parent
-	i = 0;
-	while (i < cmdcount - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
-	}
-	printf("closed pipes\n");
-
-	return (0);
-} */
 
 // works for one command without pipes -> eg. < infile.txt sort >> outfile.txt
 int	executor(t_mini *mini, t_cmd *cmd)
@@ -254,7 +80,6 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	int		j;
 	t_cmd *nthcmd;
 
-	printf("num of p: %d\n", num_of_p);
 	// open pipes between each process
 	i = 0;
 	while (i < num_of_p - 1)
@@ -296,11 +121,16 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 		// do this for every emerged child process
 		if (pids[i] == 0) // do this in each new child
 		{
-			printf("forked process %d\n", i);
 			nthcmd = get_nth_command(cmd, i);
 			if (!nthcmd)
 			{
-				// close pipes
+				i = 0;
+				while (i < num_of_p - 1)
+				{
+					close(pipes[i][1]);
+					close(pipes[i][0]);
+					i++;
+				}
 				printf("error retrieving command\n");
 				return (ERROR);
 			}
@@ -353,31 +183,35 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				close(infile);
 			if (outfile > STDOUT_FILENO)
 				close(outfile);
-			// close remaining pipes
+			// close pipes - the ones we need are dupped anyways so we do not ned them anymore
 			j = 0;
-			// while (j < num_of_p - 1)
-			// {
-			// 	if (j != i)
-			// 	{
-			// 		if (pipes[j][1] > STDIN_FILENO)
-			// 			close(pipes[j][1]);
-			// 	}
-			// 	if (j!= i - 1)
-			// 	{
-			// 		if (pipes[j][0] > STDOUT_FILENO)
-			// 			close(pipes[j][0]);
-			// 	}
-			// 	j++;
-			// }
-			// this closes all pipes since they are already dupped and we do not need them
-			for (j = 0; j < num_of_p - 1; j++) {
-				if (j != i) {
-					close(pipes[j][1]); // Close write end of unused pipes
-				}
-				if (j != i - 1) {
-					close(pipes[j][0]); // Close read end of unused pipes
-				}
+			while (j < num_of_p - 1)
+			{
+				close(pipes[j][1]); // Close write end of unused pipes
+				close(pipes[j][0]); // Close read end of unused pipes
+				j++;
 			}
+			// executing builtin functions - do function for this later
+			if (!ft_strncmp(nthcmd->cmd, "cd", 2))
+			{
+				printf("executing cd builtin\n");
+				if (nthcmd->args[2])
+					return (ERROR);
+				if (cd_builtin(nthcmd->args[1]) == ERROR)
+					return (ERROR);
+				return (0);
+			}
+			// check if the command exists - eg. lkasjkl as command cannot work
+			if (access(nthcmd->cmd, F_OK) == 0)
+			{
+				perror("minishell: command not found: ");
+				perror(nthcmd->cmd);
+				return (ERROR);
+			}
+			// check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
+
+			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
+			// check for shell commands or commands in path
 			path = get_path_env(nthcmd->cmd);
 			if (!path)
 			{
@@ -386,12 +220,11 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 				perror("\n");
 				return (ERROR);
 			}
-			// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
 			if (execve(path, nthcmd->args, mini->env) == -1)
 			{
-				perror("minishell: error executing command: ");
-				perror(nthcmd->cmd);
-				perror("\n");
+				// perror("minishell: error executing command: ");
+				// perror(nthcmd->cmd);
+				// perror("\n");
 				return (ERROR);
 			}
 		}
@@ -410,15 +243,16 @@ int	executor_mult(t_mini *mini, t_cmd *cmd)
 	// while (++i < num_of_p)
 	// 	wait(NULL);
 	int status;
-	for (i = 0; i < num_of_p; i++) {
+	i = 0;
+	while (i < num_of_p)
+	{
 		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status)) {
+		if (WIFEXITED(status))
 			printf("Process %d exited with status %d\n", pids[i], WEXITSTATUS(status));
-		} else {
+		else
 			printf("Process %d terminated abnormally\n", pids[i]);
-		}
+		i++;
 	}
 	printf("executed all\n");
-	// close all pipes
 	return (0);
 }
