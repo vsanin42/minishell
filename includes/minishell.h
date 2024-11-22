@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 22:11:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:11:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,12 @@ int		check_input(char *input);
 int		evaluator(t_mini *mini);
 
 /* executor.c */
-int		executor(t_mini *mini, t_cmd *cmd);
-int		executor_mult(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini);
 
 /* executor_utils.c */
 t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
 int		get_cmd_count(t_cmd *cmd);
+int		get_args_len(t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);

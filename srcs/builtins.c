@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/08 15:40:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:49:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	pwd_builtin()
 	cwdlen = ft_strlen(cwd);
 	write(1, cwd, cwdlen);
 	write(1, "\n", 1);
-	// free(cwd); // maybe will be don ein calling function
+	free(cwd); // maybe will be don ein calling function
 	return (0);
 }
 
