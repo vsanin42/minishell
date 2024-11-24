@@ -76,6 +76,7 @@ int main(int argc, char *argv[], char *env[])
 	mini.env = env;
 	mini.token_list = NULL;
 	mini.cmd_list = NULL;
+	mini.error_msg = NULL;
 	//init_mini(&mini);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'

@@ -6,11 +6,15 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/22 11:58:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/24 21:12:10 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+/* MANAGING FILES AND PIPES */
 
 int	close_files(int *infile, int *outfile)
 {
@@ -126,71 +130,120 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 	}
 	return (0);
 }
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int	check_builtins(t_cmd *cmd)
+/* EXECUTION */
+
+// 1. case - builtins
+// returns 0 if any builtin was excuted succesfully, 1 if not
+int exec_builtins(t_cmd *cmd)
 {
 	printf("checking builtins\n");
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
 	{
-		printf("inside cd\n");
-		printf("args[1]: %s\n", cmd->args[1]);
 		// if there is more than 1 argument return error
-		if (get_args_len(cmd)  > 2)
-			return (ERROR);
-		if (cd_builtin(cmd->args[1]) == ERROR)
-			return (ERROR);
+		if (cd_builtin(cmd) == 0)
+			return (0);
+		return (ERROR);
 	}
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
 	{
-		if (pwd_builtin() == ERROR)
-			return (ERROR);
+		if (pwd_builtin(cmd) == 0)
+			return (0);
+		return (ERROR);
 	}
-	return (0);
+	else
+	{
+		return (2); // check the rest, will not exit the calling function
+	}
 }
 
-int	execute(t_mini *mini, t_cmd *cmd)
+// 2. case - command specified by relative or absolute path
+int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
-	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path)
-	// so we put errors: for builtins command not found, for checking on opath no such file or directory, for shell executables command not found
-	char	*path;
+	printf("checking commands by paths\n");
+	char *path;
 
-	// 1. first check builtin functions - do function for this later
-	if (check_builtins(cmd) == ERROR)
+	path = cmd->cmd;
+	if (is_directory(path) != 0)
 	{
-		// but also return out if it is 0 becaue wewant ot exit this process, and builtins do not do it themselves as execve
-		return (ERROR);
+		mini->error_msg = ft_strdup("minishell: permission denied: ");
+		return (2); // return because it may be the 3rd case - shell command
 	}
-
-	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-	// 3. means that only place left to look for are the shell commands
-	// check if the command exists - eg. lkasjkl as command cannot work
-	if (access(cmd->cmd, F_OK) == 0)
+	if (is_executable_file(path) != 0)
 	{
-		perror("minishell: command not found: ");
-		perror(cmd->cmd);
-		return (ERROR);
+		if (execve(path, cmd->args, mini->env) == -1)
+		{
+			mini->error_msg = ft_strdup("minishell: No such filee or directory: ");
+			return (ERROR); // now error because it was executable path but something went wrong when executing
+		}
 	}
+	mini->error_msg = ft_strdup("minishell: permission denied: ");
+	return (2); // return because it may be the 3rd case - shell command
+}
 
-	// INSTEAD OF ONLY EXECVE FIRST CHECK ALSO FOR BUILTINS AND OTHER COMMANDS EG ENV WITH RELATIVE PATH OR EXECUTABLES THAT ARE ALWAYS ON RELATIVE PATH
-	// check for shell commands or commands in path
+// 3. case - shell commands OR commands at $PATH variable
+int exec_shell_command(t_mini *mini, t_cmd *cmd)
+{
+	printf("checking shell commands\n");
+	char	 *path;
 
 	path = get_path_env(cmd->cmd);
 	if (!path)
 	{
-		perror("minishell: command not found: ");
-		perror(cmd->cmd);
-		perror("\n");
+		mini->error_msg = ft_strdup("minishell: command not found: ");
 		return (ERROR);
 	}
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
-		perror("minishell: error executing command: ");
-		perror(cmd->cmd);
-		perror("\n");
+		mini->error_msg = ft_strdup("minishell: error executing command: ");
 		return (ERROR);
 	}
 	return (ERROR);
 }
+
+
+int	execute(t_mini *mini, t_cmd *cmd)
+{
+	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
+	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
+	// 1. first check builtin functions - do function for this later
+	int check_one = exec_builtins(cmd);
+	if (check_one == 0)
+	{
+		// but also return out if it is 0 because we want ot exit this process, and builtins do not do it themselves as execve
+		return (0);
+	}
+	else if (check_one == ERROR)
+		return (ERROR);
+	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
+	if (exec_command_by_path(mini, cmd) == ERROR)
+	{
+		perror(mini->error_msg);
+		free(mini->error_msg);
+		mini->error_msg = NULL;
+		return (ERROR);
+	}
+	// 3. means that only place left to look for are the shell commands
+	if (exec_shell_command(mini, cmd) == ERROR)
+	{
+		perror(mini->error_msg);
+		free(mini->error_msg);
+		mini->error_msg = NULL;
+		return (ERROR);
+	}
+	if (mini->error_msg)
+	{
+		perror(mini->error_msg);
+		free(mini->error_msg);
+		mini->error_msg = NULL;
+	}
+	return (ERROR);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+/* CALLING EXECUTOR FUNCTION */
 
 // create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
 // and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
@@ -237,12 +290,13 @@ int	executor(t_mini *mini)
 			// close pipes and files - the ones we need are dupped anyways so we do not need them anymore
 			close_files(&infile, &outfile);
 			close_all_pipes(pipes, num_of_p);
-			if (execute(mini, nthcmd) == 1)
-			{
-				// must free all in this process !!!
-				free_cmd_list(mini->cmd_list);
-				exit(1); // or other status code
-			}
+			int result = execute(mini, nthcmd);
+			// must free all in this process !!!
+			free_cmd_list(mini->cmd_list);
+			if (result == 0)
+				exit(0); // or other status code
+			else
+				exit(ERROR);
 		}
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/22 11:11:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/24 21:00:41 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_mini
 	char	**env;
 	t_token	*token_list;
 	t_cmd	*cmd_list;
+	char	*error_msg;
 
 }	t_mini;
 
@@ -81,8 +82,8 @@ int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
 /* builtins.c */
-int		cd_builtin(char *path);
-int		pwd_builtin(void);
+int		cd_builtin(t_cmd *cmd);
+int		pwd_builtin(t_cmd *cmd);
 void	exit_builtin(char *status);
 char	*env_builtin(char *name);
 
