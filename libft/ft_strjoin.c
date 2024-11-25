@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 14:07:05 by vsanin            #+#    #+#             */
-/*   Updated: 2024/05/22 18:08:41 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 10:35:31 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,13 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*res;
 	char	*res_orig;
 
-	if (!s1 || !s2)
+	if (!s1)
 		return (NULL);
+	if (!s2)
+	{
+		res = ft_strdup(s1);
+		return (res);
+	}
 	len = ft_strlen((char *)s1) + ft_strlen((char *)s2);
 	res = (char *)malloc(sizeof(char) * (len + 1));
 	if (!res)
@@ -34,7 +39,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 }
 
 // int main()
-// {	
+// {
 // 	char const *str1 = "Biba";
 // 	char const *str2 = "Boba";
 // 	char *result;
