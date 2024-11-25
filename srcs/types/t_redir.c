@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_redir.c                                     :+:      :+:    :+:   */
+/*   t_redir.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/20 17:40:13 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/25 20:02:06 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // checks if we encountered redirection operator and can create new redir node
 // @returns 1 if we are on operator token and have text token after it, 0 if no
@@ -84,4 +84,19 @@ t_redir	*find_redirs(t_token *token)
 		n = n->next;
 	}
 	return (head_redir);
+}
+
+// frees redir struct
+void	free_redir(t_redir *redir)
+{
+	t_redir	*temp;
+
+	while (redir)
+	{
+		temp = redir;
+		if (redir->file)
+			free(redir->file);
+		redir = redir->next;
+		free(temp);
+	}
 }

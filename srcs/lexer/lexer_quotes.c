@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/21 20:38:11 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 21:03:03 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // finds end of the substring of our text token based on delimeters
 // delimeter can be quotes or end of string
@@ -114,7 +114,7 @@ char	*str_from_array(char **head)
 	char	*temp;
 
 	if (!head || !(*head))
-		return (free_char_pp(head), NULL);
+		return (free_arr(head), NULL);
 	thead = head;
 	res = malloc(sizeof(char) * (array_char_len(thead) + 1));
 	if (!res)
@@ -128,7 +128,7 @@ char	*str_from_array(char **head)
 		thead++;
 	}
 	*str = '\0';
-	free_char_pp(head);
+	free_arr(head);
 	return (res);
 }
 
@@ -151,7 +151,7 @@ int	cnc_check(char *text, int *i)
 // we expand envs when found and store them as value of that array element
 // @returns array of strings with each "word" having trailing quotes removed
 // @params token text token to edit
-char 	**process_envs_and_quotes(t_token *token)
+char 	**process_envs_and_quotes(t_mini *mini, t_token *token)
 {
 	int		i;
 	char	*text;
@@ -166,7 +166,7 @@ char 	**process_envs_and_quotes(t_token *token)
 	{
 		if (cnc_check(text, &i) == 1)
 			continue ;
-		*text_array = exp_sub(ft_substr(text, i, find_q_or_end(text + i)));
+		*text_array = exp_sub(mini, ft_substr(text, i, find_q_or_end(text + i)));
 		if (*text_array == NULL)
 			return (NULL);
 		text_array++;

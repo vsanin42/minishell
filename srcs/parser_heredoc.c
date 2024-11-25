@@ -6,20 +6,11 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 17:02:26 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 20:53:43 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-// free with auto check in case it hasn't been malloced
-// specific case when a var is malloced as initialization
-// shoutout to Nikita
-void	free_memo(void *mem_seg)
-{
-	if (mem_seg)
-		free(mem_seg);
-}
 
 // i hate norminette so fucking much
 int	heredoc_dup(t_mini *mini)
@@ -44,36 +35,14 @@ void	heredoc_handler(int sig)
 	}
 }
 
-// performs two strjoins: s1 and s2, then the result string and \n
-// of two arguments frees ONLY S1 - to avoid using oldres and similar things
-// s2 is input and is freed later in the caller function
-// @returns: complete string with an appended new part and a newline
-char	*str_append_nl(char *s1, char *s2)
-{
-	char	*tmp;
-	char	*res;
-
-	if (!s1 || !s2)
-		return (NULL);
-	tmp = ft_strjoin(s1, s2);
-	free(s1);
-	if (!tmp)
-		return (NULL);
-	res = ft_strjoin(tmp, "\n");
-	free(tmp);
-	if (!res)
-		return (NULL);
-	return (res);
-}
-
 // takes the input from heredoc readline and expands the value
 // @returns: input with expanded variable regardless of quotes
-char	*heredoc_expand(char *str)
+char	*heredoc_expand(t_mini *mini, char *str)
 {
 	char	*tmp;
 
 	tmp = str;
-	str = get_env_value_to_process(str);
+	str = get_env_value_to_process(mini, str);
 	free(tmp);
 	return (str);
 }
@@ -115,7 +84,7 @@ char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini)
 // restores the signal handler back to normal behaviour once the input ends
 // frees the input again because readline() is the last thing in the loop
 // @returns: string of connected readline inputs joined by newlines
-char	*heredoc_readline(char *limit, int *expand_flag)
+char	*heredoc_readline(t_mini *mini, char *limit, int *expand_flag)
 {
 	char	*res;
 	char	*input;
@@ -128,7 +97,7 @@ char	*heredoc_readline(char *limit, int *expand_flag)
 	while (input && ft_strncmp(input, limit, ft_strlen(limit) + 1))
 	{
 		if (*expand_flag == EXP)
-			input = heredoc_expand(input);
+			input = heredoc_expand(mini, input);
 		res = str_append_nl(res, input);
 		if (!res)
 			return (free(input), NULL); // null or break?
@@ -189,7 +158,7 @@ int	process_heredoc(t_token *token, char *limit, t_mini *mini)
 	fd = heredoc_dup(mini);
 	new_limit = make_new_limit(limit, &expand_flag, mini);
 	free(token->value);
-	token->value = heredoc_readline(new_limit, &expand_flag);
+	token->value = heredoc_readline(mini, new_limit, &expand_flag);
 	free(new_limit);
 	if (errno == EBADF)
 	{

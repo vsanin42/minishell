@@ -3,23 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 22:39:23 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 19:48:42 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-// initializes cmd_nodes values cmd, args, redir, next to NULL
-void	init_cmd_node(t_cmd *node)
-{
-	node->cmd = NULL;
-	node->args = NULL;
-	node->redir = NULL;
-	node->next = NULL;
-}
 
 // allocates size of array of arguments collected from text strings
 // @returns the allocates array with empty spaces for arguments
@@ -39,18 +30,6 @@ char	**alloc_args(char **args, t_token *token)
 		}
 	}
 	return (args);
-}
-
-// quick init function to init node, args and head
-// @returns: 0 if malloc fails, 1 regular
-int	nc_init(t_cmd **node, char ***args, char ***ahead)
-{
-	*args = NULL;
-	*ahead = NULL;
-	*node = (t_cmd *)malloc(sizeof(t_cmd));
-	if (!*node)
-		return (0);
-	return (1);
 }
 
 // this is called at the beginning of the new cmd loop at each token
@@ -73,63 +52,6 @@ int	first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead)
 	return (0);
 }
 
-// adjusted ft_lstnew = allocates new struct cmd and assigns its values
-// collects tokens into one command until encounters end or a pipe
-// store first text token as command, then it + the rest into arguments array
-// store every text node after redir type into redir struct
-// if previous strduped *args check fails,
-// it frees cmd name, redir, collected args and node itself
-// the rest of cmd structs are cleaned outside in that case
-// @returns created cmd node in command list
-// @param token token from which we start collecting tokens into command
-// @param previous exists if we had a pipe before our command
-t_cmd	*new_cmd(t_token *token)
-{
-	t_cmd	*node;
-	char	**args;
-	char	**ahead;
-
-	if (!nc_init(&node, &args, &ahead))
-		return (NULL);
-	init_cmd_node(node);
-	node->redir = find_redirs(token);
-	while (token && token->type != TOKEN_PIPE)
-	{
-		if (first_entry(&token, &node, &args, &ahead) == ERROR)
-			return (NULL);
-		if (token->type == TOKEN_TEXT)
-			*args++ = ft_strdup(token->value);
-		if (!(*(args - 1)))
-		{
-			free(node->cmd);
-			free_char_pp(ahead);
-			free_redir(node->redir);
-			return (free(node), NULL);
-		}
-		token = token->next;
-	}
-	node->args = ahead;
-	return (node);
-}
-
-// adjusted ft_lstadd_back = appends created node to a cmd list
-void	add_back_cmd(t_cmd **lst, t_cmd *new)
-{
-	t_cmd	*temp;
-
-	if (!lst || !new)
-		return ;
-	if (*lst == NULL)
-	{
-		*lst = new;
-		return ;
-	}
-	temp = *lst;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new;
-}
-
 // collects tokens from token list into command or commands separated by pipe
 // if no new node, free all previous nodes and return error
 // if encounters pipe, starts creating new command
@@ -148,7 +70,7 @@ int	parser(t_mini *mini)
 	{
 		new_node = new_cmd(temp);
 		if (!new_node)
-		{	
+		{
 			free_cmd_list(command_list);
 			return (error_msg("Parser error", mini, 0, 0));
 		}

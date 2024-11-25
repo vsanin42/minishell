@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/25 16:19:55 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 20:46:52 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,7 @@ int exec_shell_command(t_mini *mini, t_cmd *cmd)
 	printf("checking shell commands\n");
 	char	 *path;
 
-	path = get_path_env(cmd->cmd);
+	path = get_path_env(mini, cmd->cmd);
 	if (!path)
 	{
 		set_executor_error_msg(mini, cmd->cmd, "command not found", NULL);
@@ -317,7 +317,7 @@ int	execute(t_mini *mini, t_cmd *cmd)
 		return (exec_builtins(mini, mini->cmd_list));
 	}
 	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-	if (contains_slash(cmd->cmd)) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
+	if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
 	{
 		if (exec_command_by_path(mini, cmd) == ERROR)
 		{

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/21 22:03:28 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/25 21:21:45 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+# user in shell to check for functions not linked into executable thus not ours : nm -u minishell
 RM = rm -f
 
 LIBFTDIR = libft
@@ -25,24 +26,33 @@ UNAME := $(shell uname)
 READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
-		srcs/builtins.c \
+		srcs/builtins/cd.c \
+		srcs/builtins/echo.c \
+		srcs/builtins/env.c \
+		srcs/builtins/exit.c \
+		srcs/builtins/export.c \
+		srcs/builtins/pwd.c \
+		srcs/builtins/unset.c \
+		srcs/envs/env_utils.c \
+		srcs/lexer/lexer_env.c \
+		srcs/lexer/lexer_quotes_utils.c \
+		srcs/lexer/lexer_quotes.c \
+		srcs/lexer/lexer.c \
+		srcs/types/array.c \
+		srcs/types/t_cmd.c \
+		srcs/types/t_redir.c \
+		srcs/types/t_token.c \
 		srcs/check_input.c \
 		srcs/evaluator.c \
 		srcs/executor.c \
 		srcs/executor_utils.c \
 		srcs/exit.c \
+		srcs/files.c \
 		srcs/free.c \
-		srcs/lexer.c \
-		srcs/lexer_env.c \
-		srcs/lexer_quotes.c \
-		srcs/lexer_quotes_utils.c \
 		srcs/parser_heredoc.c \
-		srcs/parser_redir.c \
 		srcs/parser.c \
-		srcs/paths.c \
 		srcs/signal.c \
 		srcs/testing.c \
-		srcs/token_list.c \
 		srcs/utils.c \
 
 OBJ = $(SRC:.c=.o)

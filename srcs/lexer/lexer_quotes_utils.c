@@ -3,38 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 19:14:24 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 20:59:39 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
-
-int	array_char_len(char **head)
-{
-	int		i;
-
-	i = 0;
-	while (head && *head)
-	{
-		i += ft_strlen(*head);
-		head++;
-	}
-	return (i);
-}
+#include "../../includes/minishell.h"
 
 // we have array of strings created from text string separated based on "/'
 // based on whether and which quote we have, we want or dont to expand envs
 // @returns expanded string if allowed to expand or the string back if in ''
-char	*exp_sub(char *str)
+char	*exp_sub(t_mini *mini, char *str)
 {
 	char	*expanded;
 
 	if (str[0] == '"' || str[0] != '\'')
 	{
-		expanded = get_env_value_to_process(str);
+		expanded = get_env_value_to_process(mini, str);
 		free(str);
 		str = NULL;
 	}

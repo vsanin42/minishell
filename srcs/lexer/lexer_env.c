@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/19 21:50:47 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 20:54:38 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // called on start of the input or after we go out of any env's scope
 // processes the text we collected before encountering $ character
@@ -48,17 +48,17 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 // after the string but it will be incremented after so we decrease by one
 // we do not decrement by 1 with {} because then the i will end up on closing }
 // which will then be incremented in loop so that is where we want the i to be
-char	*handle_env(char *res, char *text, int *i)
+char	*handle_env(t_mini *mini, char *res, char *text, int *i)
 {
 	(*i)++;
 	if (text[*i] == '{')
 	{
 		(*i)++;
-		res = handle_env_in_braces(res, text, i);
+		res = handle_env_in_braces(mini, res, text, i);
 	}
 	else
 	{
-		res = handle_env_without_braces(res, text, i);
+		res = handle_env_without_braces(mini, res, text, i);
 		(*i)--;
 	}
 	return (res);
@@ -70,7 +70,7 @@ char	*handle_env(char *res, char *text, int *i)
 // removed this from initialization as it will not be causing errors:
 //	to_append = NULL; // remove if necessary, will not be used when not found
 //	env = NULL; // remove if necessary, will not be used when not found
-char	*handle_env_in_braces(char *res, char *text, int *i)
+char	*handle_env_in_braces(t_mini *mini, char *res, char *text, int *i)
 {
 	int		len;
 	char	*env;
@@ -84,7 +84,7 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 	if (len)
 	{
 		to_append = ft_substr(text, (*i) - len, len);
-		env = process_env(to_append);
+		env = process_local_env(mini, to_append);
 		if (env)
 		{
 			res = ft_strjoin(res, env);
@@ -97,7 +97,7 @@ char	*handle_env_in_braces(char *res, char *text, int *i)
 
 // called when $ followed by alnum character is encountered in input
 // @returns allocated res appended by expanded env, nothing if could not expand
-char	*handle_env_without_braces(char *res, char *text, int *i)
+char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i)
 {
 	int		len;
 	char	*env;
@@ -113,7 +113,7 @@ char	*handle_env_without_braces(char *res, char *text, int *i)
 	if (len)
 	{
 		to_append = ft_substr(text, (*i) - len, len);
-		env = process_env(to_append);
+		env = process_local_env(mini, to_append);
 		oldres = res;
 		if (env)
 		{
@@ -133,7 +133,7 @@ char	*handle_env_without_braces(char *res, char *text, int *i)
 // if encounters $ and after it isnt alnum character/{, treats it as '$' char
 // else we know we processed entire word and there is no $ and we are at end
 // @returns allocated string back with envs expanded
-char	*get_env_value_to_process(char *text)
+char	*get_env_value_to_process(t_mini *mini, char *text)
 {
 	int		i;
 	char	*res;
@@ -146,7 +146,7 @@ char	*get_env_value_to_process(char *text)
 		res = handle_word_no_env(res, text, &i);
 		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
 		{
-			res = handle_env(res, text, &i);
+			res = handle_env(mini, res, text, &i);
 			if (!text[i])
 				break ;
 		}

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_list.c                                       :+:      :+:    :+:   */
+/*   t_token.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/08 13:57:39 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/21 17:59:24 by vsanin           ###   ########.fr       */
+/*   Created: 2024/11/25 19:43:39 by zuzanapiaro       #+#    #+#             */
+/*   Updated: 2024/11/25 20:02:21 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // adjusted ft_lstnew = allocates memory for t_token node and fills in values
 // @returns created node of the token list
@@ -63,7 +63,7 @@ t_token	*remove_null_tokens(t_token *token)
 	while (token && token->next)
 	{
 		if (!token->next->value || token->next->value[0] == '\0')
-		{	
+		{
 			temp = token->next;
 			token->next = token->next->next;
 			free(temp->value); // just in case
@@ -73,4 +73,37 @@ t_token	*remove_null_tokens(t_token *token)
 			token = token->next;
 	}
 	return (head);
+}
+
+// counts text tokens in token list after input token and before end or pipe
+// @returns number of text tokens after token from parameter
+int	get_ttokens_len(t_token	*token)
+{
+	int		i;
+	t_token	*temp;
+
+	i = 0;
+	temp = token;
+	while (temp && temp->type != TOKEN_PIPE)
+	{
+		if (temp->type == TOKEN_TEXT)
+			i++;
+		temp = temp->next;
+	}
+	return (i);
+}
+
+// frees the token list
+void	free_token_list(t_token *token)
+{
+	t_token	*temp;
+
+	while (token)
+	{
+		temp = token;
+		free(token->value);
+		token = token->next;
+		free(temp);
+	}
+	token = NULL;
 }

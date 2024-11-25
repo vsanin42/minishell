@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/25 14:12:12 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:16:17 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,24 +82,91 @@ typedef struct s_mini
 int		process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
-void	init_mini_env(t_mini *mini, char **env);
 
-/* builtins.c */
+/* builtins/~.c */
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
+char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
 void	exit_builtin(char *status);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
-int		*env_builtin(t_mini *mini, t_cmd *cmd);
+int		env_builtin(t_mini *mini, t_cmd *cmd);
+
+/* envs/env_utils.c */
+void	dup_env_to_local_array(t_mini *mini, char **env);
+char	*process_local_env(t_mini *mini, char *name);
+char	*get_path_env(t_mini *mini, char *cmd);
+int		get_env_index(char **envs, char *env_name);
+char	*getenv_local(char **envs, char *env_name);
+char	*get_env_name(char *env);
+
+/* lexer/lexer_env.c */
+
+/* lexer_env.c */
+char	*handle_word_no_env(char *res, char *text, int *i);
+char	*handle_env(t_mini *mini, char *res, char *text, int *i);
+char	*handle_env_in_braces(t_mini *mini, char *res, char *text, int *i);
+char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i);
+char	*get_env_value_to_process(t_mini *mini, char *text);
+
+/* lexer/lexer_quotes.c */
+int		cnc_check(char *text, int *i);
+int		find_q_or_end(char *text);
+int		find_words(char *text);
+char	**trim_quotes_in_array(char **head);
+char	*str_from_array(char **head);
+char	**process_envs_and_quotes(t_mini *mini, t_token *token);
+
+/* lexer/lexer_quotes_utils.c */
+char	*exp_sub(t_mini *mini, char *str);
+int		check_next_char(char c, char c2, int i);
+
+/* lexer/lexer.c */
+t_type	get_type(char *value);
+int		create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc);
+char	*process_text(char *text, int *i, int in_sq, int in_dq);
+char	*create_node_value(char *input, int *i); // move later
+void	init_gtl_vars(int *f, int *i, char **node, t_token **token);
+t_token	*get_token_list(t_mini *mini, char *input);
+int		lexer(char *input, t_mini *mini);
+
+/* types/array.c */
+void	free_arr(char **arr);
+int		array_char_len(char **head);
+int		get_arr_len(char **arr);
+char	**add_back_array(char **arr, char *new_el);
+char	**change_arr_element(char **arr, char *new_el, int	index);
+
+/* types/t_cmd.c */
+void	init_cmd_node(t_cmd *node);
+int		nc_init(t_cmd **node, char ***args, char ***ahead);
+t_cmd	*new_cmd(t_token *token);
+void	add_back_cmd(t_cmd **lst, t_cmd *new);
+void	free_cmd_list(t_cmd *node);
+
+/* types/t_redir.c */
+int		new_redir_condition(t_token *token);
+t_redir	*create_redir(t_type type, char *value);
+void	add_back_redir(t_redir **lst, t_redir *new);
+t_redir	*find_redirs(t_token *token);
+void	free_redir(t_redir *redir);
+
+/* types/t_token.c */
+t_token	*new_token(char *value, t_type type);
+void	add_back_token(t_token **lst, t_token *new);
+t_token	*remove_null_tokens(t_token *token);
+int		get_ttokens_len(t_token	*token);
+void	free_token_list(t_token *token);
 
 /* check_input.c */
-int		isbq(char *input); // move this later
 int		check_braces_alnum(char *input, int start);
 int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
+int		isbq(char *input); // move this later
 int		check_input(char *input);
 
 /* evaluator.c */
+int		validate_files(t_mini *mini);
 int		evaluator(t_mini *mini);
 
 /* executor.c */
@@ -117,78 +184,34 @@ int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
 
-/* heredoc.c */
-char	*heredoc_input(char *delimeter);
-
-/* free.c */
-void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
-void	free_token_list(t_token *token);
-void	free_char_pp(char **arr);
-void	free_redir(t_redir *redir);
-void	free_cmd_list(t_cmd *node);
-
-/* lexer.c */
-void	init_gtl_vars(int *f, int *i, char **node, t_token **token);
-char	*create_node_value(char *input, int *i); // move later
-t_type	get_type(char *value);
-int		create_and_add_tok(char *node_value, t_token **token_list, int *hdoc);
-char	*process_text(char *text, int *i, int in_sq, int in_dq);
-t_token	*get_token_list(char *input);
-int		lexer(char *input, t_mini *mini);
-
-/* lexer_env.c */
-char	*handle_word_no_env(char *res, char *text, int *i);
-char	*handle_env(char *res, char *text, int *i);
-char	*handle_env_in_braces(char *res, char *text, int *i);
-char	*handle_env_without_braces(char *res, char *text, int *i);
-char	*get_env_value_to_process(char *text);
-
-/* lexer_quotes.c */
-int		cnc_check(char *text, int *i);
-int		find_q_or_end(char *text);
-int		find_words(char *text);
-char	**trim_quotes_in_array(char **head);
-char	*str_from_array(char **head);
-char	**process_envs_and_quotes(t_token *token);
-
-/* lexer_quotes_utils.c */
-int		array_char_len(char **head);
-char	*exp_sub(char *str);
-int		check_next_char(char c, char c2, int i);
-
-/* parser_heredoc.c */
-char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini);
-char	*heredoc_expand(char *str);
-int		heredoc_dup(t_mini *mini);
-char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini);
-void	heredoc_handler(int sig); // move to signal.c
-char	*str_append_nl(char *s1, char *s2);
-char	*heredoc_readline(char *limit, int *expand_flag);
-void	free_memo(void *mem_seg);
-int		process_heredoc(t_token *token, char *limit, t_mini *mini);
-int		parser_heredoc(t_mini *mini);
-
-/* parser_redir.c */
-void	add_back_redir(t_redir **lst, t_redir *new);
-t_redir	*create_redir(t_type type, char *value);
-t_redir	*find_redirs(t_token *token);
-
-/* parser.c */
-int		first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead);
-int		nc_init(t_cmd **node, char ***args, char ***args_head);
-void	init_cmd_node(t_cmd *node);
-char	**alloc_args(char **args, t_token *token);
-void	add_back_cmd(t_cmd **lst, t_cmd *new);
-t_cmd	*new_cmd(t_token *token);
-int		parser(t_mini *mini);
-
-/* paths.c */
+/* files.c */
 char	*get_current_directory(void);
-char	*get_path_env(char *cmd);
 int		is_directory(const char *path);
 int		is_executable_file(const char *path);
 int		is_readable_file(const char *path);
 int		is_writable_file(const char *path);
+
+/* free.c */
+void	free_memo(void *mem_seg);
+void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
+
+/* heredoc.c */
+char	*heredoc_input(t_mini *mini, char *delimeter); // not used yet ?
+
+/* parser_heredoc.c */
+int		heredoc_dup(t_mini *mini);
+void	heredoc_handler(int sig);
+char	*heredoc_expand(t_mini *mini, char *str);
+char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini);
+char	*heredoc_readline(t_mini *mini, char *limit, int *expand_flag);
+char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini);
+int		process_heredoc(t_token *token, char *limit, t_mini *mini);
+int		parser_heredoc(t_mini *mini);
+
+/* parser.c */
+char	**alloc_args(char **args, t_token *token);
+int		first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead);
+int		parser(t_mini *mini);
 
 /* signal.c */
 void	sig_handler(int sig);
@@ -205,7 +228,6 @@ t_token	*remove_null_tokens(t_token *token);
 /* utils.c */
 int		iswhitespace(char c);
 int		is_alnum(char *str);
-char	*process_env(char *name);
-int		get_ttokens_len(t_token	*token);
+char	*str_append_nl(char *s1, char *s2);
 
 #endif

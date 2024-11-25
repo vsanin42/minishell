@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 16:48:15 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:17:17 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	process_input(char *input, t_mini *mini)
 	if (lexer(input, mini) == ERROR)
 		return (ERROR);
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
-	print_token_list(mini);
+	//print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
 		return (ERROR);
 	if (parser(mini) == ERROR)
@@ -65,35 +65,6 @@ void	set_termios() // terminal config editing to revent '^\' from being printed
 		exit(1);
 }
 
-void	init_mini_env(t_mini *mini, char **env)
-{
-	int		i;
-	int		j;
-	char	**envs;
-
-	i = 0;
-	while (env[i])
-		i++;
-	envs = malloc(sizeof(char *) * (i + 1));
-	if (!envs)
-		return ;
-	j = -1;
-	while (++j < i)
-	{
-		envs[j] = ft_strdup(env[j]);
-		if (!envs[j])
-		{
-			while (j > 0)
-				free(envs[--j]);
-			free(envs);
-			envs = NULL;
-			return ;
-		}
-	}
-	envs[j] = NULL;
-	mini->env = envs;
-}
-
 int main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
@@ -101,8 +72,8 @@ int main(int argc, char *argv[], char *env[])
 	mini.token_list = NULL;
 	mini.cmd_list = NULL;
 	mini.error_msg = NULL;
-	mini.env = NULL;
-	init_mini_env(&mini, env);
+	//mini.env =
+	dup_env_to_local_array(&mini, env);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
 	(void)argv; (void)env;
@@ -112,7 +83,7 @@ int main(int argc, char *argv[], char *env[])
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 		{
-			free_char_pp(mini.env);
+			free_arr(mini.env);
 			break ;
 		}
 	rl_clear_history();

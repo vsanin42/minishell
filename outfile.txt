@@ -1,18 +1,9 @@
 checking shell commands
+$
+a $
+abcd$
 checking shell commands
-drwxr-xr-x 12 zpiarova 2024_prague    4096 Oct 29 17:34 ..
-drwxr-xr-x  2 zpiarova 2024_prague    4096 Nov 25 16:39 includes
-drwxr-xr-x  2 zpiarova 2024_prague    4096 Nov 25 16:39 libft
-drwxr-xr-x  2 zpiarova 2024_prague    4096 Nov 25 16:48 srcs
-drwxr-xr-x  2 zpiarova 2024_prague    4096 Nov  4 17:34 .vscode
-drwxr-xr-x  7 zpiarova 2024_prague    4096 Nov 25 16:48 .
-drwxr-xr-x  8 zpiarova 2024_prague    4096 Nov 25 16:39 .git
--rw-r--r--  1 zpiarova 2024_prague    2261 Nov 25 16:39 Makefile
--rw-r--r--  1 zpiarova 2024_prague      56 Nov 25 16:39 infile.txt
--rw-r--r--  1 zpiarova 2024_prague    7023 Nov 25 16:39 README.md
--rw-r--r--  1 zpiarova 2024_prague      89 Nov 25 16:50 outfile.txt
--rw-r--r--  1 zpiarova 2024_prague       8 Nov 25 16:39 in.txt
--rwxr-xr-x  1 zpiarova 2024_prague 1436008 Nov 25 16:48 minishell
--rwxr-xr-x  1 zpiarova 2024_prague      17 Nov 25 16:39 cat
--rwxr-xr-x  1 zpiarova 2024_prague      78 Nov 25 16:39 cat.c
-total 1464
+hello bye$
+hello world bye$
+helo world$
+world bye$

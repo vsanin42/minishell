@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/14 16:55:34 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 20:03:20 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,40 +38,24 @@ int	is_alnum(char *str)
 	return (1);
 }
 
-// receives string value WITHOUT $ that should be checked if it exists as env
-// @returns expanded allocated value if found, NULL if not found,
-// or allocated "$" if no value to check
-char	*process_env(char *name)
+// performs two strjoins: s1 and s2, then the result string and \n
+// of two arguments frees ONLY S1 - to avoid using oldres and similar things
+// s2 is input and is freed later in the caller function
+// @returns: complete string with an appended new part and a newline
+char	*str_append_nl(char *s1, char *s2)
 {
+	char	*tmp;
 	char	*res;
 
-	if (!name)
-		res = ft_strdup("$");
-	else if (getenv(name))
-	{
-		res = ft_strdup(getenv(name));
-		if (!res)
-			return (NULL);
-	}
-	else
-		res = NULL;
+	if (!s1 || !s2)
+		return (NULL);
+	tmp = ft_strjoin(s1, s2);
+	free(s1);
+	if (!tmp)
+		return (NULL);
+	res = ft_strjoin(tmp, "\n");
+	free(tmp);
+	if (!res)
+		return (NULL);
 	return (res);
-}
-
-// counts text tokens in token list after input token and before end or pipe
-// @returns number of text tokens after token from parameter
-int	get_ttokens_len(t_token	*token)
-{
-	int		i;
-	t_token	*temp;
-
-	i = 0;
-	temp = token;
-	while (temp && temp->type != TOKEN_PIPE)
-	{
-		if (temp->type == TOKEN_TEXT)
-			i++;
-		temp = temp->next;
-	}
-	return (i);
 }

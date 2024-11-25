@@ -5,41 +5,10 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-
-# november 14 add-ins by Vlad
-- braces after $ and unclosed quotes are handled right after receiving input and before passing to lexer - keeping it for now or until we find a safe way of doing it in a heredoc style
-
-# november 18 add-ins by Vlad
-main things:
-- started working on heredoc: major question is how and when it's called. i think our initial idea was to call it before lexer - probably impossible because it hasn't been tokenized yet and although it could work, it's hard when working with only a string of input. the catch is with the quotes (reasoning a couple bullets below): for the heredoc to process quotes around delimiter and to decide whether or not to expand the following $, it has to, well, have the quotes. since we trim the quotes and expand during lexer, we also need to start handling heredoc during lexer. we cannot take the result of lexer, traverse it and check for quotes simply because there are no quotes. we can't do the whole heredoc yet, the idea for now is to make the exception for the token that follows << that would ignore the quotes
-- UPDATE: this idea currently works, any text token that's after << does not get expanded or get its quotes trimmed. now this can go into further processing
-- WIP: main heredoc implementation
-
-specifics and edge cases:
-- "<< DELIMITER" should work even though it doesn't consider << a command (not a text type). in the token list it shows as << type 6, DELIMITER type 0, in the command the cmd name is null, and the DELIMITER is the redir file. DELIMITER being a redir file doesn't make sense, but we can use it to extract its value to compare against in the heredoc loop. it just has to do nothing since no command is specified, even if a command is inside the heredoc loop. so gotta handle this specific case
-- "ls << EOF -la" will also apply the flags afterwards so << DELIMITER doesn't have to be the last thing it does
-- << '$USER' and << "$USER" DON'T EXPAND from what i tried - BOTH as COMMANDS inside the heredoc loop AND DELIMITERS. examples at the bottom of readme
-- for validator/evaluator, << cannot be followed by any redirs, pipes or nothing/newlines (tested in bash), seems to only work with a string delimiter which is nice
-- there can, however, be several sequences of << delimiter << delimiter ... which is not nice
-- heredoc not only reads regular input but can also read from scripts/files.. - non-interactive and we should use get next line for that, so two separate approaches
-
-
-# november 19 by Vlad
-- heredoc generally works by overwriting the value of token after << with a colleceted string - GREAT (Zuzana)
-- lexer get_token_list edits and fixes
-
-# november 20 by Vlad
-- heredoc seems to work, signal handling realized, double free issues avoided
-- just need to move some functions to other files
-- tried to comment all functions so it's understandable later
-
-# november 21 - Vlad
-- went over most of our paths for returning errors to verify it all makes sense
-- regarding error handling: we don't really need a function that will return a prompt at the moment when an error condition is found - ideally it should create a cascade of returns with errors/nulls so that it reaches the initial caller functions which would finally break the process_input() function and give us another prompt
-- changed the return values of lexer, parser, etc. to reflect normal state or ERROR, so far all assignments were happening without checking if the return values are ok
-- fixed the main argc != 1 case where it would print extra prompt, error_msg() is not needed at that point yet
-- removed check for unclosed quotes in lexer quote handling, it's done in check_input(), shouldn't matter anyway
-- did a lot of cleaning, protecting memory, etc - potential pain points are new_cmd() and exp_sub() but so far so good
+# nov 25. addins by Zuzka
+- main thing is i restructured the folders a bit to group functionality - added types dolder in srcs folder where functions that manipulate that data type are stores, feel free to restructure as u need, for me this made sense, is not done yet, just to make it a bit cleaner
+- passes mini struct to a lot of functions because we could ont use the getenv function - since we have local array copy of envs, and here we add/remove new envs, the ghetenv onlky manipulated the system env array without our addins or changes - did getenv_local fucntion that has the same functionality
+- so far it executes all ok, just prints one more error message line from the system together with our error from executor, must find hopw to stop it 
 
 # TODO
 - major free function + error handling at all times
@@ -61,7 +30,35 @@ specifics and edge cases:
 - cat -n leaks
 - commands not found leak
 - passing environment variable as first token big error eg. $BLA
-- error when we have infile - invalid reads
+- now we keep local array copy of envs, but we have to store it also to the shell envs as command may use it
+// all builtins return 0 on success and 1 on error
+// they do not quit the program in error, mut be handled by caller function
+// TODO: must update exit status at end of each of these functions
+- todo Zuzka: now we store envs as array, it will be much easier if we store them as linked list - redo export.c, env.c, and create getenv_local which we will use instead of getenv = not for future self: ACTUALLY NO BECAUSE EXECVE ACCEPTS AN ARRAY - KEEP IT IN ARRAY
+
+
+
+
+# HEREDOC MAIN THINGS - VLAD
+main things:
+- started working on heredoc: major question is how and when it's called. i think our initial idea was to call it before lexer - probably impossible because it hasn't been tokenized yet and although it could work, it's hard when working with only a string of input. the catch is with the quotes (reasoning a couple bullets below): for the heredoc to process quotes around delimiter and to decide whether or not to expand the following $, it has to, well, have the quotes. since we trim the quotes and expand during lexer, we also need to start handling heredoc during lexer. we cannot take the result of lexer, traverse it and check for quotes simply because there are no quotes. we can't do the whole heredoc yet, the idea for now is to make the exception for the token that follows << that would ignore the quotes
+- UPDATE: this idea currently works, any text token that's after << does not get expanded or get its quotes trimmed. now this can go into further processing
+- WIP: main heredoc implementation
+
+specifics and edge cases:
+- "<< DELIMITER" should work even though it doesn't consider << a command (not a text type). in the token list it shows as << type 6, DELIMITER type 0, in the command the cmd name is null, and the DELIMITER is the redir file. DELIMITER being a redir file doesn't make sense, but we can use it to extract its value to compare against in the heredoc loop. it just has to do nothing since no command is specified, even if a command is inside the heredoc loop. so gotta handle this specific case
+- "ls << EOF -la" will also apply the flags afterwards so << DELIMITER doesn't have to be the last thing it does
+- << '$USER' and << "$USER" DON'T EXPAND from what i tried - BOTH as COMMANDS inside the heredoc loop AND DELIMITERS. examples at the bottom of readme
+- for validator/evaluator, << cannot be followed by any redirs, pipes or nothing/newlines (tested in bash), seems to only work with a string delimiter which is nice
+- there can, however, be several sequences of << delimiter << delimiter ... which is not nice
+- heredoc not only reads regular input but can also read from scripts/files.. - non-interactive and we should use get next line for that, so two separate approaches
+
+- heredoc generally works by overwriting the value of token after << with a colleceted string - GREAT (Zuzana)
+- lexer get_token_list edits and fixes
+
+- heredoc seems to work, signal handling realized, double free issues avoided
+- just need to move some functions to other files
+- tried to comment all functions so it's understandable later - <3 Zuzka
 
 # general notes
 

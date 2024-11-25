@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 20:41:39 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/25 21:02:43 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // based on received token finds its type
 // if no token type is found, then it is text token
@@ -42,7 +42,7 @@ t_type	get_type(char *value)
 // expands envs and removes trailing quotes from start/end
 // only if the previous token is not heredoc based on hdoc flag
 // @returns 1 on success, 0 on error
-int	create_and_add_tok(char *node_value, t_token **token_list, int *hdoc)
+int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc)
 {
 	char	*new_value;
 	t_token	*new_tok;
@@ -58,7 +58,7 @@ int	create_and_add_tok(char *node_value, t_token **token_list, int *hdoc)
 	// printf("hdoc: %d\n\n", *hdoc);
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
-		new_value = str_from_array(process_envs_and_quotes(new_tok));
+		new_value = str_from_array(process_envs_and_quotes(mini, new_tok));
 		if (!new_value)
 			return (0);
 		free(new_tok->value);
@@ -146,7 +146,7 @@ void init_gtl_vars(int *f, int *i, char **node, t_token **token)
 // and therefore don't enter the expanding/trimming functions
 // stores received value as tokens value and appends it to end of token list
 // @returns head of token_list
-t_token	*get_token_list(char *input)
+t_token	*get_token_list(t_mini *mini, char *input)
 {
 	int		hdoc_flag;
 	int		i;
@@ -161,7 +161,7 @@ t_token	*get_token_list(char *input)
 		node_value = create_node_value(input, &i);
 		if (node_value)
 		{
-			if (!create_and_add_tok(node_value, &token_list, &hdoc_flag))
+			if (!create_and_add_tok(mini, node_value, &token_list, &hdoc_flag))
 				return (NULL);
 			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
 			{
@@ -178,7 +178,7 @@ int	lexer(char *input, t_mini *mini)
 {
 	t_token	*token_list;
 
-	token_list = get_token_list(input);
+	token_list = get_token_list(mini, input);
 	if (!token_list)
 		return (error_msg("Lexer error", mini, 0, 0));
 	free(input);
