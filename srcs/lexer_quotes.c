@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/14 17:11:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/21 20:38:11 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ char	*str_from_array(char **head)
 	char	**thead;
 	char	*temp;
 
-	if (!head || !(*head)) // added this, now doesnt pass norm, check pls if needed, if sure we do not need can remove
-		return (NULL);
+	if (!head || !(*head))
+		return (free_char_pp(head), NULL);
 	thead = head;
 	res = malloc(sizeof(char) * (array_char_len(thead) + 1));
 	if (!res)
@@ -124,16 +124,25 @@ char	*str_from_array(char **head)
 	{
 		temp = *thead;
 		while (*temp)
-		{
-			*str = *temp;
-			str++;
-			temp++;
-		}
+			*str++ = *temp++;
 		thead++;
 	}
 	*str = '\0';
 	free_char_pp(head);
 	return (res);
+}
+
+int	cnc_check(char *text, int *i)
+{
+	if (text[*i] == '"' || text[*i] == '\'')
+	{
+		if (check_next_char(text[*i], text[*i + 1], *i) > *i)
+		{
+			*i = check_next_char(text[*i], text[*i + 1], *i);
+			return (1);
+		}
+	}
+	return (0);
 }
 
 // in text token, removes unnecessary quotes and expands envs where needed
@@ -155,15 +164,11 @@ char 	**process_envs_and_quotes(t_token *token)
 	head = text_array;
 	while (text[i])
 	{
-		if (text[i] == '"' || text[i] == '\'')
-		{
-			if (check_next_char(text[i], text[i + 1], i) > i)
-			{
-				i = check_next_char(text[i], text[i + 1], i);
-				continue ;
-			}
-		}
+		if (cnc_check(text, &i) == 1)
+			continue ;
 		*text_array = exp_sub(ft_substr(text, i, find_q_or_end(text + i)));
+		if (*text_array == NULL)
+			return (NULL);
 		text_array++;
 		i += find_q_or_end(text + i);
 	}

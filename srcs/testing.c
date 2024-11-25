@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/18 15:47:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/21 20:49:14 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	print_command_list(t_mini *mini)
 	printf("\ncommands:\n");
 	while (temp)
 	{
-		printf("cmd name:\t%s\n", temp->cmd);
+		if (temp->cmd)
+			printf("cmd name:\t%s\n", temp->cmd);
 		atemp2 = temp->args;
 		aredir = temp->redir;
 		while (atemp2 && *atemp2)

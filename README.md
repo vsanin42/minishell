@@ -33,6 +33,14 @@ specifics and edge cases:
 - just need to move some functions to other files
 - tried to comment all functions so it's understandable later
 
+# november 21 - Vlad
+- went over most of our paths for returning errors to verify it all makes sense
+- regarding error handling: we don't really need a function that will return a prompt at the moment when an error condition is found - ideally it should create a cascade of returns with errors/nulls so that it reaches the initial caller functions which would finally break the process_input() function and give us another prompt
+- changed the return values of lexer, parser, etc. to reflect normal state or ERROR, so far all assignments were happening without checking if the return values are ok
+- fixed the main argc != 1 case where it would print extra prompt, error_msg() is not needed at that point yet
+- removed check for unclosed quotes in lexer quote handling, it's done in check_input(), shouldn't matter anyway
+- did a lot of cleaning, protecting memory, etc - potential pain points are new_cmd() and exp_sub() but so far so good
+
 # TODO
 - major free function + error handling at all times
 - handle heredoc <<

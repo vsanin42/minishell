@@ -16,9 +16,11 @@ int	process_input(char *input, t_mini *mini)
 {
 	mini->token_list = lexer(input);
 	mini->token_list = remove_null_tokens(mini->token_list);
-	//print_token_list(mini);
-	parser_heredoc(mini);
 	mini->cmd_list =  parser(mini);
+	if (parser_heredoc(mini) == ERROR)
+		return (ERROR);
+	if (parser(mini) == ERROR)
+		return (ERROR);
 	free_token_list(mini->token_list);
 	//print_command_list(mini);
 	if (evaluator(mini) == 0)
@@ -105,7 +107,7 @@ int main(int argc, char *argv[], char *env[])
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
-		error_msg("Too many arguments. Use: ./minishell", NULL, NULL, NULL);
+		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 		{
