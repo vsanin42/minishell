@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 09:21:38 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/25 10:00:23 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	is_directory(const char *path)
 }
 
 // checks if file is a regular file and if it is executable file
-// @returns non-zero if it's regular file with execute permission, 0 if not
+// @returns > 0 if it's regular file with execute permission, 0 if not, -1 if not found
 int is_executable_file(const char *path)
 {
 	struct stat	sb;
@@ -56,7 +56,7 @@ int is_executable_file(const char *path)
 	{
 		return (-1);
 	}
-	return (/* S_ISREG(sb.st_mode) &&  */(sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)));
+	return (S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)));
 }
 
 // checks if file is a regular file and if it is readable

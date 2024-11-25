@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/22 11:55:12 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 12:17:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,18 @@ int	get_args_len(t_cmd *cmd)
 		i++;
 	}
 	return (i);
+}
+
+int	contains_slash(char *cmd)
+{
+	char	*temp;
+
+	temp = cmd;
+	while (*temp != '\0')
+	{
+		if (*temp == '/')
+			return (1);
+		temp++;
+	}
+	return (0);
 }

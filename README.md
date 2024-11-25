@@ -53,6 +53,7 @@ specifics and edge cases:
 - cat -n leaks
 - commands not found leak
 - passing environment variable as first token big error eg. $BLA
+- cd only changes cwd in child process
 
 # general notes
 

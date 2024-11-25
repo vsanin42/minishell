@@ -3,14 +3,89 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/24 23:17:51 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/25 16:19:55 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+/* ERROR MESSAGE */
+
+void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third)
+{
+	char *msg;
+	char *old_msg;
+	char *new_part;
+
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	msg = ft_strdup("minishell: ");
+	if (first)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(first);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	if (second)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(second);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	if (third)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(third);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	mini->error_msg = msg;
+}
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -136,26 +211,53 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 
 // 1. case - builtins
 // returns 0 if any builtin was excuted succesfully, 1 if not
-int exec_builtins(t_cmd *cmd)
+int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
 	printf("checking builtins\n");
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
 	{
 		// if there is more than 1 argument return error
-		if (cd_builtin(cmd) == 0)
-			return (0);
-		return (ERROR);
+		if (cd_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true because we did the action and can exit
+		}
+		set_executor_error_msg(mini, "cd", cmd->cmd, "No such file or directory");
+		return (ERROR); // error because we found the command, there was just error while executing it
 	}
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
 	{
-		if (pwd_builtin(cmd) == 0)
-			return (0);
-		return (ERROR);
+		if (pwd_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true becasue we did the action and can exit
+		}
+		return (ERROR); // error because we found the command, there was just error while executing it
+	}
+	else if (!ft_strncmp(cmd->cmd, "env", 3))
+	{
+		if (env_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true becasue we did the action and can exit
+		}
+		return (ERROR); // error because we found the command, there was just error while executing it
+	}
+	else if (!ft_strncmp(cmd->cmd, "export", 6))
+	{
+		if (export_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true becasue we did the action and can exit
+		}
+		return (ERROR); // error because we found the command, there was just error while executing it
 	}
 	else
-	{
-		return (2); // check the rest, will not exit the calling function
-	}
+		return (ERROR);
 }
 
 // 2. case - command specified by relative or absolute path
@@ -165,21 +267,22 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 	char *path;
 
 	path = cmd->cmd;
-	if (is_executable_file(path) != 0)
+	if (is_executable_file(path) > 0) // is ececutable file and we found it
 	{
-		printf("running exec on pathname\n");
 		if (execve(path, cmd->args, mini->env) == -1)
 		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			mini->error_msg = ft_strdup("minishell: No such filee or directory: ");
-			return (ERROR); // now error because it was executable path but something went wrong when executing
+			set_executor_error_msg(mini, path, "Exec format error", NULL);
+			return (ERROR); // ERROR because we found it and it was executable path but something went wrong when executing
 		}
 	}
-	free(mini->error_msg);
-	mini->error_msg = NULL;
-	mini->error_msg = ft_strdup("minishell: permission denied: ");
-	return (2); // return because it may be the 3rd case - shell command
+	else if (!is_executable_file(path))
+	{
+		set_executor_error_msg(mini, path, "Permission denied", NULL);
+		return (2); /// CONTINUE because it it not executable file on this path but can be shell command
+	}
+	// if we get here is_executable_file returned < 0 which means it was not found
+	set_executor_error_msg(mini, path, "No such file or directory", NULL);
+	return (2); // CONTINUE because it it not found by is_executable file but it can be shell command
 }
 
 // 3. case - shell commands OR commands at $PATH variable
@@ -191,16 +294,13 @@ int exec_shell_command(t_mini *mini, t_cmd *cmd)
 	path = get_path_env(cmd->cmd);
 	if (!path)
 	{
-		free(mini->error_msg);
-		mini->error_msg = NULL;
-		mini->error_msg = ft_strdup("minishell: command not found: ");
+		set_executor_error_msg(mini, cmd->cmd, "command not found", NULL);
 		return (ERROR);
 	}
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
-		free(mini->error_msg);
-		mini->error_msg = NULL;
-		mini->error_msg = ft_strdup("minishell: error executing command: ");
+		printf("doing execve for shell commands\n");
+		set_executor_error_msg(mini, path, "Exec format error", NULL);
 		return (ERROR);
 	}
 	return (ERROR);
@@ -212,33 +312,25 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
-	printf("executing\n");
-	int check_one = exec_builtins(cmd);
-	if (check_one == 0)
-		return (0); // go out because we found and did wht we needed to do, but the process will continue, unlike with execve
-	else if (check_one == ERROR)
-		return (ERROR);
-	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-	if (exec_command_by_path(mini, cmd) == ERROR)
+	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)))
 	{
-		perror(mini->error_msg);
-		free(mini->error_msg);
-		mini->error_msg = NULL;
-		return (ERROR);
+		return (exec_builtins(mini, mini->cmd_list));
+	}
+	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
+	if (contains_slash(cmd->cmd)) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
+	{
+		if (exec_command_by_path(mini, cmd) == ERROR)
+		{
+			return (ERROR);
+		}
 	}
 	// 3. means that only place left to look for are the shell commands
-	if (exec_shell_command(mini, cmd) == ERROR)
+	else
 	{
-		perror(mini->error_msg);
-		free(mini->error_msg);
-		mini->error_msg = NULL;
-		return (ERROR);
-	}
-	if (mini->error_msg)
-	{
-		perror(mini->error_msg);
-		free(mini->error_msg);
-		mini->error_msg = NULL;
+		if (exec_shell_command(mini, cmd) == ERROR)
+		{
+			return (ERROR);
+		}
 	}
 	return (ERROR);
 }
@@ -259,11 +351,23 @@ int	executor(t_mini *mini)
 	int		i;
 	t_cmd	*nthcmd;
 
+	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)))
+	{
+		i = exec_builtins(mini, mini->cmd_list);
+		if (i == ERROR)
+		{
+			perror(mini->error_msg);
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (ERROR);
+		}
+		free(mini->error_msg);
+		mini->error_msg = NULL;
+		return (0);
+	}
 	// open pipes between each process
 	if (open_pipes(pipes, num_of_p) == ERROR)
-	{
 		return (ERROR);
-	}
 	i = 0;
 	while (i < num_of_p)
 	{
@@ -272,7 +376,7 @@ int	executor(t_mini *mini)
 		if (pids[i] == -1)
 		{
 			close_all_pipes(pipes, num_of_p);
-			printf("error forking processes\n");
+			perror("error forking processes\n");
 			return (ERROR);
 		}
 		// do this for every emerged child process
@@ -282,7 +386,7 @@ int	executor(t_mini *mini)
 			if (!nthcmd)
 			{
 				close_all_pipes(pipes, num_of_p);
-				printf("error retrieving command\n");
+				perror("error retrieving command\n");
 				return (ERROR);
 			}
 			// for each process set the infile and outfile to the ones from its redir struct, if there is any
@@ -296,9 +400,18 @@ int	executor(t_mini *mini)
 			// must free all in this process !!!
 			free_cmd_list(mini->cmd_list);
 			if (result == 0)
+			{
+				free(mini->error_msg);
+				mini->error_msg = NULL;
 				exit(0); // or other status code
+			}
 			else
+			{
+				perror(mini->error_msg);
+				free(mini->error_msg);
+				mini->error_msg = NULL;
 				exit(ERROR);
+			}
 		}
 		i++;
 	}
@@ -310,10 +423,10 @@ int	executor(t_mini *mini)
 	while (i < num_of_p)
 	{
 		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status))
-			printf("Process %d exited with status %d\n", pids[i], WEXITSTATUS(status)); // then we will set status of our program
-		else
-			printf("Process %d terminated abnormally\n", pids[i]); // then we will set status of our program
+		// if (WIFEXITED(status))
+		// 	printf("Process %d exited with status %d\n", pids[i], WEXITSTATUS(status)); // then we will set status of our program
+		// else
+		// 	printf("Process %d terminated abnormally\n", pids[i]); // then we will set status of our program
 		i++;
 	}
 	return (0);

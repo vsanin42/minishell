@@ -1,1 +1,4 @@
-/nfs/homes/zpiarova      a'
+checking shell commands
+a 
+abcd
+checking shell commands

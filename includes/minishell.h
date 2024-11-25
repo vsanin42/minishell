@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/24 21:00:41 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:12:12 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,14 @@ typedef struct s_mini
 int		process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
 void	set_termios(void);
+void	init_mini_env(t_mini *mini, char **env);
 
 /* builtins.c */
-int		cd_builtin(t_cmd *cmd);
-int		pwd_builtin(t_cmd *cmd);
+int		cd_builtin(t_mini *mini, t_cmd *cmd);
+int		pwd_builtin(t_mini *mini, t_cmd *cmd);
 void	exit_builtin(char *status);
-char	*env_builtin(char *name);
+int		export_builtin(t_mini *mini, t_cmd *cmd);
+int		*env_builtin(t_mini *mini, t_cmd *cmd);
 
 /* check_input.c */
 int		isbq(char *input); // move this later
@@ -101,12 +103,14 @@ int		check_input(char *input);
 int		evaluator(t_mini *mini);
 
 /* executor.c */
+void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
 int		executor(t_mini *mini);
 
 /* executor_utils.c */
 t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
 int		get_cmd_count(t_cmd *cmd);
 int		get_args_len(t_cmd *cmd);
+int		contains_slash(char *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
