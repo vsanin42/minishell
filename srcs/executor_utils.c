@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/21 22:12:16 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:55:12 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,20 @@ t_cmd	*get_nth_command(t_cmd *cmdhead, int n)
 		return (cmdhead);
 	else
 		return (NULL);
+}
+
+int	get_args_len(t_cmd *cmd)
+{
+	int		i;
+	char	**args;
+
+	if (!cmd->args || !(*cmd->args))
+		return (0);
+	args = cmd->args;
+	i = 0;
+	while (args[i])
+	{
+		i++;
+	}
+	return (i);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/20 20:54:50 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/24 22:51:43 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	free_memo(void *mem_seg)
 		free(mem_seg);
 }
 
-// i hate norminette so fucking much 
+// i hate norminette so fucking much
 int	heredoc_dup(t_mini *mini)
 {
 	int	fd;
@@ -151,7 +151,7 @@ char	*heredoc_readline(char *limit, int *expand_flag)
 char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini)
 {
 	char	*new;
-	
+
 	if (limit[0] == '\'' || limit[0] == '"')
 	{
 		while ((limit[0] == '\'' || limit[0] == '"') && ft_strlen(limit) > 1)
@@ -212,9 +212,7 @@ int	parser_heredoc(t_mini *mini)
 	t_token	*temp;
 	t_token	*limit_token;
 	char	*limit;
-	int		trim;
 
-	trim = 0;
 	temp = mini->token_list;
 	while (temp)
 	{
@@ -223,7 +221,7 @@ int	parser_heredoc(t_mini *mini)
 			limit_token = temp->next;
 			if (!limit_token)
 				return (error_msg("Error: expected delimiter after <<", mini, 0, 0)); // handle
-			limit = ft_strdup(limit_token->value); 
+			limit = ft_strdup(limit_token->value);
 			process_heredoc(limit_token, limit, mini);
 			//free_memo((void *)limit);
 		}

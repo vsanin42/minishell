@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/21 22:11:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/24 21:00:41 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ typedef struct s_mini
 	char	**env;
 	t_token	*token_list;
 	t_cmd	*cmd_list;
+	char	*error_msg;
 
 }	t_mini;
 
@@ -83,8 +84,8 @@ int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
 /* builtins.c */
-int		cd_builtin(char *path);
-int		pwd_builtin(void);
+int		cd_builtin(t_cmd *cmd);
+int		pwd_builtin(t_cmd *cmd);
 void	exit_builtin(char *status);
 char	*env_builtin(char *name);
 
@@ -100,12 +101,12 @@ int		check_input(char *input);
 int		evaluator(t_mini *mini);
 
 /* executor.c */
-int		executor(t_mini *mini, t_cmd *cmd);
-int		executor_mult(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini);
 
 /* executor_utils.c */
 t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
 int		get_cmd_count(t_cmd *cmd);
+int		get_args_len(t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);

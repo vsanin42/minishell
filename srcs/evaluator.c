@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   evaluator.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/19 21:50:10 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 09:22:32 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,37 @@ int	validate_files(t_mini *mini)
 }
 
 // evaluate COMMANDS/EXECUTABLES - if exist and have correct permissions
+// !!!! NOT GOOD VERSION,M STILL TRYING HOW TO DO IT !!!!!
+int	validate_commands(t_mini *mini)
+{
+	t_cmd	*cmd;
+	char	*path;
+
+	cmd = mini->cmd_list;
+	while (cmd)
+	{
+		path = get_path_env(cmd->cmd);
+		if (is_directory(cmd->cmd))
+		{
+			validator_msg(mini, cmd->cmd, "is a directory");
+			return (ERROR);
+		}
+		else if (is_executable_file(cmd->cmd) != 0)
+		{
+			validator_msg(mini, cmd->cmd, "Permission denied");
+			return (ERROR);
+		}
+		else if (!path)
+		{
+			validator_msg(mini, cmd->cmd, "command not found");
+			return (ERROR);
+		}
+		free(path);
+		path = NULL;
+		cmd = cmd->next;
+	}
+	return (0);
+}
 
 // remove NULLs from not-expanded envs in args arrays - DONE ?
 

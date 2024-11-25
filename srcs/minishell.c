@@ -23,7 +23,7 @@ int	process_input(char *input, t_mini *mini)
 	print_command_list(mini);
 	if (evaluator(mini) == 0)
 	{
-		if (executor_mult(mini, mini->cmd_list) == ERROR)
+		if (executor(mini) == ERROR)
 			return (ERROR);
 	}
 	free_cmd_list(mini->cmd_list);
@@ -75,6 +75,7 @@ int main(int argc, char *argv[], char *env[])
 	mini.env = env;
 	mini.token_list = NULL;
 	mini.cmd_list = NULL;
+	mini.error_msg = NULL;
 	//init_mini(&mini);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
