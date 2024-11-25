@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 13:57:58 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:48:15 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 int	process_input(char *input, t_mini *mini)
 {
-	mini->token_list = lexer(input);
-	mini->token_list = remove_null_tokens(mini->token_list);
-	mini->cmd_list =  parser(mini);
+	if (lexer(input, mini) == ERROR)
+		return (ERROR);
+	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
+	print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
 		return (ERROR);
 	if (parser(mini) == ERROR)
