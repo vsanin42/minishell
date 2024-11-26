@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/26 12:10:17 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:53:19 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ char	*create_node_value(char *input, int *i)
 	node_value =  NULL;
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 			&& input[*i + 1] == '<'))
-		node_value = ft_substr(input, *i, 2); // (*i)++
+		node_value = ft_substr(input, (*i)++, 2); // (*i)++
 	else if (input[*i] == '|' || input[*i] == '>' || input[*i] == '<')
 		node_value = ft_substr(input, *i, 1);
 	else

@@ -4,6 +4,7 @@
 		"libft.h": "c",
 		"histedit.h": "c",
 		"readline.h": "c",
-		"minishell.h": "c"
+		"minishell.h": "c",
+		"functional": "c"
 	}
 }

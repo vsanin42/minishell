@@ -5,7 +5,7 @@ hello bye
 
 abcd
 a
-hi    ho hu klka
+hi ho hu klka
 aha hi   ho hua
 hi   o
 hi  p

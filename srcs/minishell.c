@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 12:06:59 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/26 15:16:25 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,24 @@ int	process_input(char *input, t_mini *mini)
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
 	print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
+	{
+		free_token_list(mini->token_list);
 		return (ERROR);
+	}
 	if (parser(mini) == ERROR)
+	{
+		free_token_list(mini->token_list);
 		return (ERROR);
+	}
 	free_token_list(mini->token_list);
 	print_command_list(mini);
 	if (evaluator(mini) == 0)
 	{
 		if (executor(mini) == ERROR)
+		{
+			free_cmd_list(mini->cmd_list);
 			return (ERROR);
+		}
 	}
 	free_cmd_list(mini->cmd_list);
 	return (0);
@@ -49,7 +58,7 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input) == 1)
 		return (free(input), 1);
-	process_input(input, mini); // called without assigning, just for testing
+	process_input(input, mini); // called without assigning, just for testing, can return 0 or ERROR
 
 	return (1);
 }

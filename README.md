@@ -5,10 +5,12 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-# nov 25. addins by Zuzka
+# nov 25.+26. addins by Zuzka
+- did builtins: cd, pwd, env, export, unset, left: echo -n, exit is started but it has to accept a status code which we could keep stored somewhere but do not know how yet. and maybe set some signals idk you could have a look at it pls:D
 - main thing is I restructured the folders a bit to group functionality - added types folder in srcs folder where functions that manipulate that data type are stores, feel free to restructure as u need, for me this made sense, is not done yet, just to make it a bit cleaner
 - passed mini struct to a lot of functions because we could not use the getenv function - since we have local array copy of envs, and here we add/remove new envs, the getenv only manipulated the system env array without our addins or changes - did getenv_local function that has the same functionality as getenv but operates on our mini->env array
-- so far it executes all ok, just prints one more error message line from the system together with our error from executor, must find how to stop it
+- generally works, just prints one more error message line from the system together with our error from executor, must find how to stop it
+- muat do norm, now it is really bad:D and decide how to handle errors once and for all when we are together
 
 # TODO
 - major free function + error handling at all times
@@ -26,8 +28,10 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - MAYBE?? for grep and possibly some other commands the trailing "" should stay as it then interprets it as a phrase
 // TODO: must update exit status at end of each of these functions
 - signals error: when we run a command that waits for input eg. cat or sort, and press ^C, it will go bask to start of minishell IN THAT PROCESS so we get minishell > minishell >
-- invalid read: < infile.txt grep "hi ho hu"
-- handle flags ?? if there are some, 
+- handle flags ?? if there are some, move it to shell implementation, if not use
+-  < iaasdas alksdj  leaks
+- when we have << at end it giver error "expected delimeter.." but it keeps the process opened and ^D does exit the innet one and the
+- two pipes after each other leak in the child process
 
 
 # HEREDOC MAIN THINGS - VLAD

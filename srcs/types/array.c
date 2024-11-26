@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   array.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:30:33 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 21:18:20 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 14:27:34 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 11:51:23 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:15:28 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int	get_env_index(char **envs, char *env_name)
 	char	*curr_env_name;
 
 	if (!envs || !(*envs) || !env_name)
-		return (ERROR);
+		return (-1);
 	i = 0;
 	while (envs[i])
 	{

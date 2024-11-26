@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:46:42 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 20:01:46 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 15:12:43 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,6 @@ void	free_cmd_list(t_cmd *node)
 		node = node->next;
 		free(temp);
 	}
+	node = NULL;
+	temp = NULL;
 }

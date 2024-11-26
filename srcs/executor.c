@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/25 20:46:52 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 14:45:16 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,6 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 // returns 0 if any builtin was excuted succesfully, 1 if not
 int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
-	printf("checking builtins\n");
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
 	{
 		// if there is more than 1 argument return error
@@ -256,6 +255,16 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 		}
 		return (ERROR); // error because we found the command, there was just error while executing it
 	}
+	else if (!ft_strncmp(cmd->cmd, "unset", 5))
+	{
+		if (unset_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true becasue we did the action and can exit
+		}
+		return (ERROR); // error because we found the command, there was just error while executing it
+	}
 	else
 		return (ERROR);
 }
@@ -263,7 +272,6 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 // 2. case - command specified by relative or absolute path
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
-	printf("checking commands by paths\n");
 	char *path;
 
 	path = cmd->cmd;
@@ -288,7 +296,6 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 // 3. case - shell commands OR commands at $PATH variable
 int exec_shell_command(t_mini *mini, t_cmd *cmd)
 {
-	printf("checking shell commands\n");
 	char	 *path;
 
 	path = get_path_env(mini, cmd->cmd);
@@ -299,7 +306,6 @@ int exec_shell_command(t_mini *mini, t_cmd *cmd)
 	}
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
-		printf("doing execve for shell commands\n");
 		set_executor_error_msg(mini, path, "Exec format error", NULL);
 		return (ERROR);
 	}
@@ -312,7 +318,8 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
-	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)))
+	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
 	{
 		return (exec_builtins(mini, mini->cmd_list));
 	}
@@ -351,7 +358,8 @@ int	executor(t_mini *mini)
 	int		i;
 	t_cmd	*nthcmd;
 
-	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)))
+	if (!mini->cmd_list->next && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
 	{
 		i = exec_builtins(mini, mini->cmd_list);
 		if (i == ERROR)
@@ -399,6 +407,7 @@ int	executor(t_mini *mini)
 			int result = execute(mini, nthcmd);
 			// must free all in this process !!!
 			free_cmd_list(mini->cmd_list);
+			free_arr(mini->env);
 			if (result == 0)
 			{
 				free(mini->error_msg);

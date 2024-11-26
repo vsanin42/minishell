@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_token.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:43:39 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 20:02:21 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 15:13:56 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void	free_token_list(t_token *token)
 		free(token->value);
 		token = token->next;
 		free(temp);
+		temp = NULL;
 	}
 	token = NULL;
 }

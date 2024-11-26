@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_redir.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/25 20:02:06 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 15:13:21 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,6 @@ void	free_redir(t_redir *redir)
 		redir = redir->next;
 		free(temp);
 	}
+	temp = NULL;
+	redir = NULL;
 }
