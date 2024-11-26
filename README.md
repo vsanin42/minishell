@@ -6,9 +6,9 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
 # nov 25. addins by Zuzka
-- main thing is i restructured the folders a bit to group functionality - added types dolder in srcs folder where functions that manipulate that data type are stores, feel free to restructure as u need, for me this made sense, is not done yet, just to make it a bit cleaner
-- passes mini struct to a lot of functions because we could ont use the getenv function - since we have local array copy of envs, and here we add/remove new envs, the ghetenv onlky manipulated the system env array without our addins or changes - did getenv_local fucntion that has the same functionality
-- so far it executes all ok, just prints one more error message line from the system together with our error from executor, must find hopw to stop it 
+- main thing is I restructured the folders a bit to group functionality - added types folder in srcs folder where functions that manipulate that data type are stores, feel free to restructure as u need, for me this made sense, is not done yet, just to make it a bit cleaner
+- passed mini struct to a lot of functions because we could not use the getenv function - since we have local array copy of envs, and here we add/remove new envs, the getenv only manipulated the system env array without our addins or changes - did getenv_local function that has the same functionality as getenv but operates on our mini->env array
+- so far it executes all ok, just prints one more error message line from the system together with our error from executor, must find how to stop it
 
 # TODO
 - major free function + error handling at all times
@@ -35,7 +35,6 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 // they do not quit the program in error, mut be handled by caller function
 // TODO: must update exit status at end of each of these functions
 - todo Zuzka: now we store envs as array, it will be much easier if we store them as linked list - redo export.c, env.c, and create getenv_local which we will use instead of getenv = not for future self: ACTUALLY NO BECAUSE EXECVE ACCEPTS AN ARRAY - KEEP IT IN ARRAY
-
 
 
 
