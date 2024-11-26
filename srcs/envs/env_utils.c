@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 21:27:53 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 11:51:23 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// called to initialize
+// called to initialize our env array that will be stored in the mini struct
+// @returns alocated array of strings representing one env with name and value
 void	dup_env_to_local_array(t_mini *mini, char **env)
 {
 	int		i;
@@ -53,7 +54,7 @@ char	*process_local_env(t_mini *mini, char *name)
 		res = ft_strdup("$");
 	else
 	{
-		res = ft_strdup(getenv_local(mini->env, name));
+		res = getenv_local(mini->env, name);
 		if (!res)
 			return (NULL);
 	}
@@ -85,6 +86,7 @@ char	*get_path_env(t_mini *mini, char *cmd)
 	paths = ft_split(env_path, ':');
 	if (!paths)
 		return (NULL);
+	free(env_path);
 	i = 0;
 	while (paths[i])
 	{

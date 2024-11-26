@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 21:24:47 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 11:42:15 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,11 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 			return (ERROR);
 		}
 		if (chdir(home) == 0)
+		{
+			free(home);
 			return (0);
+		}
+		free(home);
 		set_executor_error_msg(mini, "cd", "Error changing directory", NULL);
 		return (ERROR);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 21:17:17 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 12:06:59 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ int	process_input(char *input, t_mini *mini)
 	if (lexer(input, mini) == ERROR)
 		return (ERROR);
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
-	//print_token_list(mini);
+	print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
 		return (ERROR);
 	if (parser(mini) == ERROR)
 		return (ERROR);
 	free_token_list(mini->token_list);
-	//print_command_list(mini);
+	print_command_list(mini);
 	if (evaluator(mini) == 0)
 	{
 		if (executor(mini) == ERROR)

@@ -1,9 +1,3 @@
 checking shell commands
-$
-a $
-abcd$
-checking shell commands
-hello bye$
-hello world bye$
-helo world$
-world bye$
+abcd
+a 

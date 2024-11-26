@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/25 21:02:43 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/26 12:10:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,8 @@ int	lexer(char *input, t_mini *mini)
 
 	token_list = get_token_list(mini, input);
 	if (!token_list)
-		return (error_msg("Lexer error", mini, 0, 0));
+		return (ERROR);
+		//return (error_msg("Lexer error", mini, 0, 0));
 	free(input);
 	input = NULL;
 	mini->token_list = token_list;

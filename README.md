@@ -20,22 +20,14 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - also now when we have unclosed quotes or braces or non-alnum char in braces we exit the program but we could just print the error message and continue with waiting for input
 - make it accept not only readline input but also get next line for reading from something - that's the non-interactive part. no idea how to test. isatty() function is used
 - must check for pipes at start/end before starting to process input
-- HANDLE RELATIVE PATH IN THE GET_ENV_PATH = check first if we already maybe got a relative path, if not only then continue to searching the path in $PATH
 - multiple terminals?
-- check first for builtins,then relative path(starting with ./ or ../), then check absolute path (starting with /), then check $PATH
-- cd builtin - check if path exists - relative, absolute, $PATH AND add error handling before
-- group the functions in files better - eg. do files starting with type_... to store functions for out files e. type_cmd will store get_cmd_count, etc.
+- static mode ?
 - heredoc: error handling, handle case with nothing after <<
 - MAYBE?? for grep and possibly some other commands the trailing "" should stay as it then interprets it as a phrase
-- cat -n leaks
-- commands not found leak
-- passing environment variable as first token big error eg. $BLA
-- now we keep local array copy of envs, but we have to store it also to the shell envs as command may use it
-// all builtins return 0 on success and 1 on error
-// they do not quit the program in error, mut be handled by caller function
 // TODO: must update exit status at end of each of these functions
-- todo Zuzka: now we store envs as array, it will be much easier if we store them as linked list - redo export.c, env.c, and create getenv_local which we will use instead of getenv = not for future self: ACTUALLY NO BECAUSE EXECVE ACCEPTS AN ARRAY - KEEP IT IN ARRAY
-
+- signals error: when we run a command that waits for input eg. cat or sort, and press ^C, it will go bask to start of minishell IN THAT PROCESS so we get minishell > minishell >
+- invalid read: < infile.txt grep "hi ho hu"
+- handle flags ?? if there are some, 
 
 
 # HEREDOC MAIN THINGS - VLAD
