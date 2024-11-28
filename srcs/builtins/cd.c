@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 15:17:31 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 16:56:15 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 	char	*home;
 	char	*path;
 
-	printf("executing cd builtin\n");
 	path = cmd->args[1];
 	if (path == NULL || !ft_strncmp(path, "~", 1))
 	{
@@ -38,6 +37,11 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 		free(home);
 		set_executor_error_msg(mini, "cd", "Error changing directory", NULL);
 		return (ERROR);
+	}
+	if (!ft_strncmp(path, "-", 1))
+	{
+		chdir("..");
+		return(0);
 	}
 	if (get_arr_len(cmd->args) > 2)
 	{

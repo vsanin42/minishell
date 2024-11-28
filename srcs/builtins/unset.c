@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 14:39:38 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 13:13:18 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	**remove_arr_element(char **env, int index) // env, 0, len=3
+// env, 0, len=3
+char	**remove_arr_element(char **env, int index)
 {
 	char	**result;
 	int		i;

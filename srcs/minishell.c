@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 15:16:25 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 16:25:29 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 
 int	process_input(char *input, t_mini *mini)
 {
+	printf("process input start\n");
 	if (lexer(input, mini) == ERROR)
 		return (ERROR);
+	//print_token_list(mini);
+	printf("lexer done\n");
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
 	print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
@@ -58,7 +61,10 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input) == 1)
 		return (free(input), 1);
-	process_input(input, mini); // called without assigning, just for testing, can return 0 or ERROR
+	if (process_input(input, mini) == ERROR) // called without assigning, just for testing, can return 0 or ERROR
+	{
+		
+	}
 
 	return (1);
 }
@@ -88,13 +94,16 @@ int main(int argc, char *argv[], char *env[])
 	(void)argv; (void)env;
 	set_termios();
 	if (argc != 1)
+	{
+		free_arr(mini.env);
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
+	}
 	while (1)
 		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
 		{
-			free_arr(mini.env);
 			break ;
 		}
+	free_arr(mini.env);
 	rl_clear_history();
 	return (0);
 }

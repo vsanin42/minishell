@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/26 14:53:19 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 16:28:15 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_type	get_type(char *value)
 // frees node_value it received, value of token is newly malloced
 // expands envs and removes trailing quotes from start/end
 // only if the previous token is not heredoc based on hdoc flag
-// @returns 1 on success, 0 on error
+// @returns 1 on success, 0 on error - BECAUSE OF NORM IN CALLER :D
 int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc)
 {
 	char	*new_value;
@@ -119,6 +119,11 @@ char	*create_node_value(char *input, int *i)
 	char	*node_value;
 
 	node_value =  NULL;
+	if (input[*i] == '\0')
+	{
+		--(*i);
+		return (NULL);
+	}
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 			&& input[*i + 1] == '<'))
 		node_value = ft_substr(input, (*i)++, 2); // (*i)++
@@ -179,11 +184,11 @@ int	lexer(char *input, t_mini *mini)
 	t_token	*token_list;
 
 	token_list = get_token_list(mini, input);
+	free(input);
+	input = NULL;
 	if (!token_list)
 		return (ERROR);
 		//return (error_msg("Lexer error", mini, 0, 0));
-	free(input);
-	input = NULL;
 	mini->token_list = token_list;
 	return (0);
 }
