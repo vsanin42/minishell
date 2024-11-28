@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 17:47:34 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 23:03:19 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,21 @@ int		get_env_index(char **envs, char *env_name);
 char	*getenv_local(char **envs, char *env_name);
 char	*get_env_name(char *env);
 
+/* evaluators/input-evaluator.c */
+int		check_braces_alnum(char *input, int start);
+int		check_curly_braces(char *input);
+int		check_next_quote(char *input, int i);
+int		check_quotes(char *input);
+int		isbq(char *input); // move this later
+int		check_input(char *input);
+
+/* evaluators/cmd_evaluator.c */
+int		validate_files(t_mini *mini);
+int		evaluator(t_mini *mini);
+
+/* evaluators/token_evaluator.c */
+int	token_evaluator(t_mini *mini);
+
 /* lexer/lexer_env.c */
 
 /* lexer_env.c */
@@ -155,20 +170,6 @@ void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
 void	free_token_list(t_token *token);
-
-/* evaluators/input-evaluator.c */
-int		check_braces_alnum(char *input, int start);
-int		check_curly_braces(char *input);
-int		check_next_quote(char *input, int i);
-int		check_quotes(char *input);
-int		isbq(char *input); // move this later
-int		check_input(char *input);
-
-/* evaluators/cmd_evaluator.c */
-int		validate_files(t_mini *mini);
-int		evaluator(t_mini *mini);
-
-/* evaluators/token_evaluator.c */
 
 /* executor.c */
 void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);

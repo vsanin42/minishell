@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/28 16:25:29 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/28 23:16:15 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,13 @@ int	process_input(char *input, t_mini *mini)
 	printf("process input start\n");
 	if (lexer(input, mini) == ERROR)
 		return (ERROR);
-	//print_token_list(mini);
 	printf("lexer done\n");
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
+	if (token_evaluator(mini) == 1)
+	{
+		free_token_list(mini->token_list);
+		return (ERROR);
+	}
 	print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
 	{
@@ -63,7 +67,7 @@ int	show_prompt(t_mini *mini)
 		return (free(input), 1);
 	if (process_input(input, mini) == ERROR) // called without assigning, just for testing, can return 0 or ERROR
 	{
-		
+
 	}
 
 	return (1);

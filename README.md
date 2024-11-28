@@ -31,11 +31,10 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - handle flags ?? if there are some, move it to shell implementation, if not use
 -  < iaasdas alksdj  leaks
 - when we have << at end it giver error "expected delimeter.." but it keeps the process opened and ^D does exit the innet one and the
-- two pipes after each other leak in the child process
 - sc error message shows cd and then cd again nstead of the non-existing folder
-- check if there is actual cmd->cmd in cmd
+- check if there is actual cmd->cmd in cmd (the name/path o cmd)
 - before evey exit free token list, cmd list, error message, mini->env
-- append does not append 
+- append does not append
 
 - signal handling mini inside mini
 ## test cases

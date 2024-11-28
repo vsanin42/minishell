@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 17:50:43 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 23:04:45 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	s_error_msg(char *msg)
 	printf("%s\n", msg);
 }
 
-void	validator_msg(t_mini *mini, char *object, char *msg, char c)
+void	validator_msg(t_mini *mini, char *object, char *msg)
 {
 	(void)mini;
 	printf("minishell: %s: %s\n", object, msg);
