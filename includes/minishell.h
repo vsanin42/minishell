@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 17:22:07 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/28 18:39:30 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		env_builtin(t_mini *mini, t_cmd *cmd);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
 int		echo_builtin(t_mini *mini, t_cmd *cmd);
+char	*echo_builder(char **args);
 
 /* envs/env_utils.c */
 void	dup_env_to_local_array(t_mini *mini, char **env);
@@ -231,5 +232,6 @@ t_token	*remove_null_tokens(t_token *token);
 int		iswhitespace(char c);
 int		is_alnum(char *str);
 char	*str_append_nl(char *s1, char *s2);
+char	*str_append_space(char *s1, char *s2);
 
 #endif

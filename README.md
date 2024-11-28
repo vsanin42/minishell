@@ -35,6 +35,8 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - sc error message shows cd and then cd again nstead of the non-existing folder 
 - check if there is actual cmd->cmd in cmd 
 - before evey exit free token list, cmd list, error message, mini->env
+- add input and output redirection when calling just one builtin
+
 - signal handling mini inside mini
 ## test cases
 echo -nnnnnnnnnnnnnn hello

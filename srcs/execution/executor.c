@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/28 17:23:14 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/28 17:35:38 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,16 +264,16 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 		}
 		return (ERROR); // error because we found the command, there was just error while executing it
 	}
-	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
-	// {
-	// 	if (echo_builtin(mini, cmd) == 0)
-	// 	{
-	// 		free(mini->error_msg);
-	// 		mini->error_msg = NULL;
-	// 		return (0); // return true becasue we did the action and can exit
-	// 	}
-	// 	return (ERROR); // error because we found the command, there was just error while executing it
-	// }
+	else if (!ft_strncmp(cmd->cmd, "echo", 4))
+	{
+		if (echo_builtin(mini, cmd) == 0)
+		{
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			return (0); // return true becasue we did the action and can exit
+		}
+		return (ERROR); // error because we found the command, there was just error while executing it
+	}
 	else
 		return (ERROR);
 }
@@ -328,7 +328,7 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
 	if (mini->cmd_list && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "echo", 4)))
 	{
 		return (exec_builtins(mini, mini->cmd_list));
 	}
@@ -370,7 +370,7 @@ int	executor(t_mini *mini)
 	t_cmd	*nthcmd;
 
 	if (mini->cmd_list && !mini->cmd_list->next && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "echo", 4)))
 	{
 		i = exec_builtins(mini, mini->cmd_list);
 		if (i == ERROR)
