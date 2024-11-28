@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 14:15:28 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 12:02:38 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,9 +153,9 @@ char	*getenv_local(char **envs, char *env_name)
 	while (envs[++i])
 	{
 		curr_env_name = get_env_name(envs[i]);
-		name_len = ft_strlen(curr_env_name);
 		if (!curr_env_name)
 			return (NULL);
+		name_len = ft_strlen(curr_env_name);
 		if (!ft_strncmp(curr_env_name, env_name, name_len))
 		{
 			value = ft_substr(envs[i], name_len + 1, (ft_strlen(envs[i]) - name_len - 1));
