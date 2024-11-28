@@ -6,33 +6,11 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:32:23 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/19 19:25:21 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/28 17:41:27 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-// handle pipe RD at first node of command list or pipe WR at last node
-// if there is RD pipe at first node, it is error
-// if there is WR pipe at the last node, it is error
-// @returns 0 if all was good, 1 if there were pipes where they shouldnt be
-// -------   REDO   ------------------
-/* int	check_pipes(t_mini *mini)
-{
-	t_cmd *cmd;
-
-	cmd = mini->cmd_list;
-	if (cmd)
-	{
-		if (cmd->redir && cmd->redir->type == TOKEN_PIPE_RD)
-			return (validator_msg(mini, "syntax error near unexpected token", "'|'"), ERROR);
-		while (cmd->next)
-			cmd = cmd->next;
-		if (cmd->redir && cmd->redir->type == TOKEN_PIPE_WR)
-			return (validator_msg(mini, "parse error:", "cannot end in '|'"), ERROR);
-	}
-	return (0);
-} */
 
 int check_braces_alnum(char *input, int start)
 {

@@ -6,7 +6,7 @@
 #    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/28 11:04:57 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/28 17:45:51 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,9 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/unset.c \
 		srcs/envs/env_utils.c \
+		srcs/evaluators/cmd_evaluator.c \
+		srcs/evaluators/input_evaluator.c \
+		srcs/evaluators/token_evaluator.c \
 		srcs/lexer/lexer_env.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
@@ -42,10 +45,8 @@ SRC  =  srcs/minishell.c \
 		srcs/types/t_cmd.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
-		srcs/execution/evaluator.c \
 		srcs/execution/executor.c \
 		srcs/execution/executor_utils.c \
-		srcs/check_input.c \
 		srcs/exit.c \
 		srcs/files.c \
 		srcs/free.c \

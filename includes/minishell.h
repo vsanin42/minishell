@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 17:22:07 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/28 17:47:34 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,12 @@
 typedef enum e_token_type
 {
 	TOKEN_TEXT, // text must stay at position 0 !!!
-	TOKEN_ARG,
 	TOKEN_PIPE, // |
 	TOKEN_REDIRIN, // <
 	TOKEN_REDIROUT, // >
 	TOKEN_APPEND, // >>
 	TOKEN_HEREDOC, // <<
-	TOKEN_FILE,
-	TOKEN_PIPE_RD,
-	TOKEN_PIPE_WR
+	TOKEN_FILE
 }	t_type;
 
 typedef struct s_redir
@@ -159,7 +156,7 @@ t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
 void	free_token_list(t_token *token);
 
-/* check_input.c */
+/* evaluators/input-evaluator.c */
 int		check_braces_alnum(char *input, int start);
 int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
@@ -167,9 +164,11 @@ int		check_quotes(char *input);
 int		isbq(char *input); // move this later
 int		check_input(char *input);
 
-/* evaluator.c */
+/* evaluators/cmd_evaluator.c */
 int		validate_files(t_mini *mini);
 int		evaluator(t_mini *mini);
+
+/* evaluators/token_evaluator.c */
 
 /* executor.c */
 void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
@@ -178,8 +177,6 @@ int		executor(t_mini *mini);
 /* executor_utils.c */
 t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
 int		get_cmd_count(t_cmd *cmd);
-int		get_args_len(t_cmd *cmd);
-int		contains_slash(char *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
