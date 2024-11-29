@@ -6,7 +6,7 @@
 #    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/28 17:45:51 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/29 10:58:16 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,7 @@ SRC  =  srcs/minishell.c \
 		srcs/execution/executor.c \
 		srcs/execution/executor_utils.c \
 		srcs/exit.c \
-		srcs/files.c \
+		srcs/file_permissions.c \
 		srcs/free.c \
 		srcs/parser_heredoc.c \
 		srcs/parser.c \

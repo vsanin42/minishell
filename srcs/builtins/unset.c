@@ -3,46 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/28 13:13:18 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 10:32:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// env, 0, len=3
-char	**remove_arr_element(char **env, int index)
-{
-	char	**result;
-	int		i;
-	int		len;
-
-	i = 0;
-	len = get_arr_len(env);
-	if (index >= len)
-		return (env);
-	result = malloc(sizeof(char *) * len);
-	if (!result)
-		return (NULL);
-	while (env[i] && i < index)
-	{
-		result[i] = ft_strdup(env[i]);
-		if (!result)
-			return (NULL);
-		i++;
-	}
-	while (env[i + 1] && i < len - 1)
-	{
-		result[i] = ft_strdup(env[i + 1]);
-		if (!result)
-			return (NULL);
-		i++;
-	}
-	result[i] = NULL;
-	return (result);
-}
 
 // i starts at 1 because the 0th argument is the command itself
 int	unset_builtin(t_mini *mini, t_cmd *cmd)

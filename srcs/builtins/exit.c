@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 19:24:13 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/29 09:50:14 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,19 @@
 // exit status 0 indicates success, other indicate error or abnormal termination
 // if no argument is provided to exit, the default exit status is that of the last executed command.
 // WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
-void	exit_builtin(char *status)
+void	exit_builtin(t_mini *mini)
 {
 	int	exit_status;
 
-	if (status == NULL) // if status is not specified, exit with the most recent status code of the program  - CHANGE from 0
+	write(1, "exit\n", 5);
+	if (!mini)
 		exit(0);
-	exit_status = ft_atoi(status);
-	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255, else exit as error
+	free_arr(mini->env);
+	free_token_list(mini->token_list);
+	free_cmd_list(mini->cmd_list);
+	free(mini->error_msg);
+	exit_status = mini->exit_status;
+	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255
 		exit(exit_status % 256);
 	exit(exit_status);
 }

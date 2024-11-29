@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/28 17:23:14 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 10:29:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,11 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	// 	}
 	// 	return (ERROR); // error because we found the command, there was just error while executing it
 	// }
+	else if (!ft_strncmp(cmd->cmd, "exit", 4))
+	{
+		exit_builtin(mini);
+		return (ERROR);
+	}
 	else
 		return (ERROR);
 }
@@ -328,17 +333,15 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
 	if (mini->cmd_list && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "exit", 4)))
 	{
 		return (exec_builtins(mini, mini->cmd_list));
 	}
 	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
 	if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
 	{
-		printf("executing here\n");
 		if (exec_command_by_path(mini, cmd) == ERROR)
 		{
-			printf("execution had error here\n");
 			return (ERROR);
 		}
 	}
@@ -370,7 +373,7 @@ int	executor(t_mini *mini)
 	t_cmd	*nthcmd;
 
 	if (mini->cmd_list && !mini->cmd_list->next && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5)))
+		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "exit", 4)))
 	{
 		i = exec_builtins(mini, mini->cmd_list);
 		if (i == ERROR)
@@ -415,14 +418,12 @@ int	executor(t_mini *mini)
 			// close pipes and files - the ones we need are dupped anyways so we do not need them anymore
 			close_files(&infile, &outfile);
 			close_all_pipes(pipes, num_of_p);
-			int result = -1;
+			// maybe assign execute funciton result to mini->exit_status
+	/* 		int result = -1;
 			if (nthcmd->cmd)
-			{
 				result = execute(mini, nthcmd);
-				// must free all in this process !!!
-			}
 			free_cmd_list(mini->cmd_list);
-			free_arr(mini->env);	
+			free_arr(mini->env);
 			if (result == 0)
 			{
 				free(mini->error_msg);
@@ -436,22 +437,27 @@ int	executor(t_mini *mini)
 				free(mini->error_msg);
 				mini->error_msg = NULL;
 				exit(ERROR);
-			}
+			} */
+			if (nthcmd->cmd)
+				mini->exit_status = execute(mini, nthcmd);
+			free_cmd_list(mini->cmd_list);
+			free_arr(mini->env);
+			if (mini->exit_status != 0 && mini->error_msg)
+				printf("%s\n", mini->error_msg);
+			free(mini->error_msg);
+			mini->error_msg = NULL;
+			exit(mini->exit_status);
 		}
 		i++;
 	}
 	pids[i] = '\0';
 	close_all_pipes(pipes, num_of_p);
-	// parent waits for all children
 	int status;
 	i = 0;
 	while (i < num_of_p)
 	{
 		waitpid(pids[i], &status, 0);
-		// if (WIFEXITED(status))
-		// 	printf("Process %d exited with status %d\n", pids[i], WEXITSTATUS(status)); // then we will set status of our program
-		// else
-		// 	printf("Process %d terminated abnormally\n", pids[i]); // then we will set status of our program
+		mini->exit_status = WIFEXITED(status);
 		i++;
 	}
 	return (0);

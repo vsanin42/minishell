@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 14:54:42 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 10:59:55 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ char	**alloc_args(char **args, t_token *token)
 // @returns: 0 on regular flow, ERROR on failed allocations
 int	first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead)
 {
-	printf("type: %d\n", (*token)->type);
 	if ((*token)->type == TOKEN_TEXT && !(*node)->cmd)
 	{
 		(*node)->cmd = ft_strdup((*token)->value);

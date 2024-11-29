@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 23:04:45 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/29 10:10:57 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,7 @@ int	error_msg(char *msg, t_mini *mini, char *str_to_free_1, char *str_to_free_2)
 	str_to_free_2 = NULL;
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
-	//show_prompt(mini);
-
 	return (ERROR);
-	//exit(1);
 }
 
 void	s_error_msg(char *msg)

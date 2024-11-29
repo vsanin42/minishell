@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_evaluator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 17:38:45 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/28 23:14:09 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/29 09:16:58 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ int	check_unexpected_tokens(t_mini *mini)
 		return (validator_msg(mini, "syntax error near unexpected token", temp->value), ERROR);
 	while (temp)
 	{
-		if (temp->type == TOKEN_PIPE && temp->next->type != TOKEN_PIPE)
+		if (temp->type == TOKEN_PIPE && temp->next && temp->next->type != TOKEN_PIPE)
 		{
 			temp = temp->next;
 			continue ;
 		}
-		else if (temp->type == TOKEN_PIPE && !temp->next)
+		else if (temp->type == TOKEN_PIPE && (!temp->next || temp->next->type == TOKEN_PIPE))
 			return (validator_msg(mini, "syntax error near unexpected token", temp->value), ERROR);
 		else if (temp->type != TOKEN_TEXT && !temp->next)
 			return (validator_msg(mini, "syntax error near unexpected token", "`newline'"), ERROR);

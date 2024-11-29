@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/28 23:16:15 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/29 10:30:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,43 @@
 
 int	process_input(char *input, t_mini *mini)
 {
-	printf("process input start\n");
 	if (lexer(input, mini) == ERROR)
+	{
+		free_token_list(mini->token_list);
+		mini->token_list = NULL;
 		return (ERROR);
-	printf("lexer done\n");
+	}
 	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
 	if (token_evaluator(mini) == 1)
 	{
 		free_token_list(mini->token_list);
+		mini->token_list = NULL;
 		return (ERROR);
 	}
-	print_token_list(mini);
+	// print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
 	{
 		free_token_list(mini->token_list);
+		mini->token_list = NULL;
 		return (ERROR);
 	}
 	if (parser(mini) == ERROR)
 	{
 		free_token_list(mini->token_list);
+		mini->token_list = NULL;
+		free_cmd_list(mini->cmd_list);
+		mini->cmd_list = NULL;
 		return (ERROR);
 	}
 	free_token_list(mini->token_list);
-	print_command_list(mini);
+	mini->token_list = NULL;
+	//print_command_list(mini);
 	if (evaluator(mini) == 0)
 	{
 		if (executor(mini) == ERROR)
 		{
 			free_cmd_list(mini->cmd_list);
+			mini->cmd_list = NULL;
 			return (ERROR);
 		}
 	}
@@ -91,7 +100,7 @@ int main(int argc, char *argv[], char *env[])
 	mini.token_list = NULL;
 	mini.cmd_list = NULL;
 	mini.error_msg = NULL;
-	//mini.env =
+	mini.exit_status = 0;
 	dup_env_to_local_array(&mini, env);
 	signal(SIGINT, sig_handler); // ctrl c
 	signal(SIGQUIT, sig_handler); // ctrl '\'
@@ -107,7 +116,8 @@ int main(int argc, char *argv[], char *env[])
 		{
 			break ;
 		}
+	write(1, "exit\n", 5);
 	free_arr(mini.env);
 	rl_clear_history();
-	return (0);
+	return (mini.exit_status);
 }

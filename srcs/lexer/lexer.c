@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 16:28:15 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 10:56:45 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int
 	node_value = NULL;
 	if (!new_tok)
 		return (0);
-	// printf("initial value: %s\n", new_tok->value);
-	// printf("type: %d\n", new_tok->type);
-	// printf("hdoc: %d\n\n", *hdoc);
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
 		new_value = str_from_array(process_envs_and_quotes(mini, new_tok));
 		if (!new_value)
+		{
+			free(new_tok);
 			return (0);
+		}
 		free(new_tok->value);
 		new_tok->value = new_value;
 	}
@@ -121,12 +121,12 @@ char	*create_node_value(char *input, int *i)
 	node_value =  NULL;
 	if (input[*i] == '\0')
 	{
-		--(*i);
+		//--(*i);
 		return (NULL);
 	}
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 			&& input[*i + 1] == '<'))
-		node_value = ft_substr(input, (*i)++, 2); // (*i)++
+		node_value = ft_substr(input, (*i)++, 2);
 	else if (input[*i] == '|' || input[*i] == '>' || input[*i] == '<')
 		node_value = ft_substr(input, *i, 1);
 	else
@@ -167,13 +167,19 @@ t_token	*get_token_list(t_mini *mini, char *input)
 		if (node_value)
 		{
 			if (!create_and_add_tok(mini, node_value, &token_list, &hdoc_flag))
+			{
+				free_token_list(token_list);
+				token_list = NULL;
 				return (NULL);
+			}
 			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
 			{
 				hdoc_flag = 1;
 				i++;
 			}
 		}
+		else
+			return (NULL);
 	}
 	return (token_list);
 }
