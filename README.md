@@ -13,7 +13,6 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - static mode ?
 - signals error: when we run a command that waits for input eg. cat or sort, and press ^C, it will go bask to start of minishell IN THAT PROCESS so we get minishell > minishell >
 - handle flags ?? if there are some, move it to shell implementation, if not use
-- SPACE AT END STILL LEAKS 	EG. < iaasdas alksdj  leaks - with space at end
 - sc error message shows cd and then cd again nstead of the non-existing folder
 - check if there is actual cmd->cmd in cmd (the name/path o cmd)
 

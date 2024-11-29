@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 10:56:45 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 11:34:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,10 +120,7 @@ char	*create_node_value(char *input, int *i)
 
 	node_value =  NULL;
 	if (input[*i] == '\0')
-	{
-		//--(*i);
 		return (NULL);
-	}
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
 			&& input[*i + 1] == '<'))
 		node_value = ft_substr(input, (*i)++, 2);
@@ -188,10 +185,16 @@ t_token	*get_token_list(t_mini *mini, char *input)
 int	lexer(char *input, t_mini *mini)
 {
 	t_token	*token_list;
+	char	*input_trimmed_whitespaces;
 
-	token_list = get_token_list(mini, input);
+	input_trimmed_whitespaces = ft_strtrim(input, " \t\n\r\v\f"); 
 	free(input);
 	input = NULL;
+	if (!input_trimmed_whitespaces)
+		return (ERROR);
+	token_list = get_token_list(mini, input_trimmed_whitespaces);
+	free(input_trimmed_whitespaces);
+	input_trimmed_whitespaces = NULL;
 	if (!token_list)
 		return (ERROR);
 		//return (error_msg("Lexer error", mini, 0, 0));
