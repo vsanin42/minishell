@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:46:42 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/26 15:12:43 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:44:37 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,30 @@ void	add_back_cmd(t_cmd **lst, t_cmd *new)
 }
 
 // frees the command list
-void	free_cmd_list(t_cmd *node)
+void	free_cmd_list(t_mini *mini)
+{
+	t_cmd	*temp;
+	t_cmd	*node;
+
+	node = mini->cmd_list;
+	while (node)
+	{
+		temp = node;
+		if (node->cmd)
+			free(node->cmd);
+		if (node->args)
+			free_arr(node->args);
+		if (node->redir)
+			free_redir(node->redir);
+		node = node->next;
+		free(temp);
+	}
+	node = NULL;
+	temp = NULL;
+	mini->cmd_list = NULL;
+}
+
+void	free_cmd_nodes(t_cmd *node)
 {
 	t_cmd	*temp;
 

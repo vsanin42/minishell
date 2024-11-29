@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/29 10:29:09 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 13:39:56 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,15 +133,15 @@ int	open_pipes(int pipes[][2], int process_count)
 	return (0);
 }
 
-int	set_ins_outs(int i, int pipes[][2], int *infile, int *outfile, int num_of_p)
+int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 {
 	if (i == 0)
 	{
-		dup2(*infile, STDIN_FILENO);
+		dup2(files[0], STDIN_FILENO);
 		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
 		{
-			if (*outfile > STDOUT_FILENO)
-				dup2(*outfile, STDOUT_FILENO);
+			if (files[1] > STDOUT_FILENO)
+				dup2(files[1], STDOUT_FILENO);
 			else
 				dup2(pipes[0][1], STDOUT_FILENO);
 		}
@@ -149,12 +149,12 @@ int	set_ins_outs(int i, int pipes[][2], int *infile, int *outfile, int num_of_p)
 	// set ends of pipes to middle processes
 	if (i > 0 && i < num_of_p - 1)
 	{
-		if (*infile > STDIN_FILENO)
-			dup2(*infile, STDIN_FILENO);
+		if (files[0] > STDIN_FILENO)
+			dup2(files[0], STDIN_FILENO);
 		else
 			dup2(pipes[i - 1][0], STDIN_FILENO);
-		if (*outfile > STDOUT_FILENO)
-			dup2(*outfile, STDOUT_FILENO);
+		if (files[1] > STDOUT_FILENO)
+			dup2(files[1], STDOUT_FILENO);
 		else
 			dup2(pipes[i][1], STDOUT_FILENO);
 	}
@@ -163,12 +163,12 @@ int	set_ins_outs(int i, int pipes[][2], int *infile, int *outfile, int num_of_p)
 	{
 		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
 		{
-			if (*infile > STDIN_FILENO)
-				dup2(*infile, STDIN_FILENO);
+			if (files[0] > STDIN_FILENO)
+				dup2(files[0], STDIN_FILENO);
 			else
 				dup2(pipes[i - 1][0], STDIN_FILENO);
 		}
-		dup2(*outfile, STDOUT_FILENO);
+		dup2(files[1], STDOUT_FILENO);
 	}
 	return (0);
 }
@@ -214,73 +214,24 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
-	{
-		// if there is more than 1 argument return error
-		if (cd_builtin(mini, cmd) == 0)
-		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (0); // return true because we did the action and can exit
-		}
-		return (ERROR); // error because we found the command, there was just error while executing it
-	}
+		mini->exit_status = cd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
-	{
-		if (pwd_builtin(mini, cmd) == 0)
-		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (0); // return true becasue we did the action and can exit
-		}
-		return (ERROR); // error because we found the command, there was just error while executing it
-	}
+		mini->exit_status = pwd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "env", 3))
-	{
-		if (env_builtin(mini, cmd) == 0)
-		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (0); // return true becasue we did the action and can exit
-		}
-		return (ERROR); // error because we found the command, there was just error while executing it
-	}
+		mini->exit_status = env_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
-	{
-		if (export_builtin(mini, cmd) == 0)
-		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (0); // return true becasue we did the action and can exit
-		}
-		return (ERROR); // error because we found the command, there was just error while executing it
-	}
+		mini->exit_status = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
-	{
-		if (unset_builtin(mini, cmd) == 0)
-		{
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (0); // return true becasue we did the action and can exit
-		}
-		return (ERROR); // error because we found the command, there was just error while executing it
-	}
+		mini->exit_status = unset_builtin(mini, cmd);
 	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
-	// {
-	// 	if (echo_builtin(mini, cmd) == 0)
-	// 	{
-	// 		free(mini->error_msg);
-	// 		mini->error_msg = NULL;
-	// 		return (0); // return true becasue we did the action and can exit
-	// 	}
-	// 	return (ERROR); // error because we found the command, there was just error while executing it
-	// }
+	// 	mini->exit_status = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-	{
-		exit_builtin(mini);
-		return (ERROR);
-	}
-	else
-		return (ERROR);
+		return (exit_builtin(mini), ERROR);
+	if (mini->exit_status != 0 && mini->error_msg)
+		printf("%s\n", mini->error_msg);
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	return (mini->exit_status);
 }
 
 // 2. case - command specified by relative or absolute path
@@ -360,40 +311,31 @@ int	execute(t_mini *mini, t_cmd *cmd)
 
 /* CALLING EXECUTOR FUNCTION */
 
+// check if builtin & 1 comand - not open any processes, must be done in main
 // create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
 // and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
+// for each process set the infile and outfile to the ones from its redir struct, if there is any
+// set STDIN and STDOUT of each process to correcsponding pipe or file
+// close pipes and files - the ones we need are dupped anyways so we do not need them anymore
+// execute - if the process condinues, mans if failed or it was a builtin
 int	executor(t_mini *mini)
 {
-	int		infile = STDIN_FILENO;
-	int		outfile = STDOUT_FILENO;
+	int		files[2];
 	int		num_of_p = get_cmd_count(mini->cmd_list);
 	int		pids[num_of_p + 1];
 	int		pipes[num_of_p - 1][2];
 	int		i;
 	t_cmd	*nthcmd;
 
-	if (mini->cmd_list && !mini->cmd_list->next && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "exit", 4)))
-	{
-		i = exec_builtins(mini, mini->cmd_list);
-		if (i == ERROR)
-		{
-			printf("%s\n", mini->error_msg);
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			return (ERROR);
-		}
-		free(mini->error_msg);
-		mini->error_msg = NULL;
-		return (0);
-	}
-	// open pipes between each process
+	files[0] = STDIN_FILENO;
+	files[1] = STDOUT_FILENO;
+	if (is_builtin(mini))
+		return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
 		return (ERROR);
 	i = 0;
 	while (i < num_of_p)
 	{
-		// maybe here before forking add statement that if pid[i - 1] status code is 0 we can execute this, set status code of pid[0] to 0
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
@@ -401,7 +343,6 @@ int	executor(t_mini *mini)
 			perror("error forking processes\n");
 			return (ERROR);
 		}
-		// do this for every emerged child process
 		if (pids[i] == 0)
 		{
 			nthcmd = get_nth_command(mini->cmd_list, i);
@@ -411,53 +352,30 @@ int	executor(t_mini *mini)
 				perror("error retrieving command\n");
 				return (ERROR);
 			}
-			// for each process set the infile and outfile to the ones from its redir struct, if there is any
-			set_files(nthcmd, &infile, &outfile);
-			// set up first process
-			set_ins_outs(i, pipes, &infile, &outfile, num_of_p);
-			// close pipes and files - the ones we need are dupped anyways so we do not need them anymore
-			close_files(&infile, &outfile);
+			set_files(nthcmd, &files[0], &files[1]);
+			set_ins_outs(i, pipes, files, num_of_p);
+			close_files(&files[0], &files[1]);
 			close_all_pipes(pipes, num_of_p);
-			// maybe assign execute funciton result to mini->exit_status
-	/* 		int result = -1;
-			if (nthcmd->cmd)
-				result = execute(mini, nthcmd);
-			free_cmd_list(mini->cmd_list);
-			free_arr(mini->env);
-			if (result == 0)
-			{
-				free(mini->error_msg);
-				mini->error_msg = NULL;
-				exit(0); // or other status code
-			}
-			else
-			{
-				if (mini->error_msg)
-					printf("%s\n", mini->error_msg);
-				free(mini->error_msg);
-				mini->error_msg = NULL;
-				exit(ERROR);
-			} */
 			if (nthcmd->cmd)
 				mini->exit_status = execute(mini, nthcmd);
-			free_cmd_list(mini->cmd_list);
+			free_cmd_list(mini);
 			free_arr(mini->env);
 			if (mini->exit_status != 0 && mini->error_msg)
 				printf("%s\n", mini->error_msg);
 			free(mini->error_msg);
 			mini->error_msg = NULL;
+			//return (mini->exit_status);
 			exit(mini->exit_status);
 		}
 		i++;
 	}
 	pids[i] = '\0';
 	close_all_pipes(pipes, num_of_p);
-	int status;
 	i = 0;
 	while (i < num_of_p)
 	{
-		waitpid(pids[i], &status, 0);
-		mini->exit_status = WIFEXITED(status);
+		waitpid(pids[i], &mini->exit_status, 0);
+		mini->exit_status = WIFEXITED(mini->exit_status);
 		i++;
 	}
 	return (0);

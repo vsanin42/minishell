@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 11:34:35 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:34:22 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,8 +165,8 @@ t_token	*get_token_list(t_mini *mini, char *input)
 		{
 			if (!create_and_add_tok(mini, node_value, &token_list, &hdoc_flag))
 			{
-				free_token_list(token_list);
-				token_list = NULL;
+				free_token_list(mini);
+				//token_list = NULL;
 				return (NULL);
 			}
 			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
@@ -187,7 +187,7 @@ int	lexer(char *input, t_mini *mini)
 	t_token	*token_list;
 	char	*input_trimmed_whitespaces;
 
-	input_trimmed_whitespaces = ft_strtrim(input, " \t\n\r\v\f"); 
+	input_trimmed_whitespaces = ft_strtrim(input, " \t\n\r\v\f");
 	free(input);
 	input = NULL;
 	if (!input_trimmed_whitespaces)

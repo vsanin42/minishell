@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:43:39 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 10:01:30 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:22:42 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,12 @@ int	get_ttokens_len(t_token	*token)
 }
 
 // frees the token list
-void	free_token_list(t_token *token)
+void	free_token_list(t_mini *mini)
 {
 	t_token	*temp;
+	t_token	*token;
 
+	token = mini->token_list;
 	while (token)
 	{
 		temp = token;
@@ -107,4 +109,5 @@ void	free_token_list(t_token *token)
 		temp = NULL;
 	}
 	token = NULL;
+	mini->token_list = NULL;
 }

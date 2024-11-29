@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 10:59:55 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:46:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ int	parser(t_mini *mini)
 		new_node = new_cmd(temp);
 		if (!new_node)
 		{
-			free_cmd_list(command_list);
+			free_cmd_nodes(command_list);
+			command_list = NULL;
 			return (error_msg("Parser error", mini, 0, 0));
 		}
 		add_back_cmd(&command_list, new_node);

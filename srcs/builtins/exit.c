@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 09:50:14 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:46:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void	exit_builtin(t_mini *mini)
 	if (!mini)
 		exit(0);
 	free_arr(mini->env);
-	free_token_list(mini->token_list);
-	free_cmd_list(mini->cmd_list);
+	free_token_list(mini);
+	free_cmd_list(mini);
 	free(mini->error_msg);
 	exit_status = mini->exit_status;
 	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255

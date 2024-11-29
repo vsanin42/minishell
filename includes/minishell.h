@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 10:59:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 13:33:49 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
 /* builtins/~.c */
+int		is_builtin(t_mini *mini);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
@@ -92,7 +93,6 @@ int		unset_builtin(t_mini *mini, t_cmd *cmd);
 int		echo_builtin(t_mini *mini, t_cmd *cmd);
 
 /* envs/env_utils.c */
-void	dup_env_to_local_array(t_mini *mini, char **env);
 char	*process_local_env(t_mini *mini, char *name);
 char	*get_path_env(t_mini *mini, char *cmd);
 int		get_env_index(char **envs, char *env_name);
@@ -109,7 +109,7 @@ int		check_input(char *input);
 
 /* evaluators/cmd_evaluator.c */
 int		validate_files(t_mini *mini);
-int		evaluator(t_mini *mini);
+int		cmd_evaluator(t_mini *mini);
 
 /* evaluators/token_evaluator.c */
 int		token_evaluator(t_mini *mini);
@@ -145,6 +145,7 @@ t_token	*get_token_list(t_mini *mini, char *input);
 int		lexer(char *input, t_mini *mini);
 
 /* types/array.c */
+char	**dup_array(char **arr);
 void	free_arr(char **arr);
 int		array_char_len(char **head);
 int		get_arr_len(char **arr);
@@ -157,7 +158,8 @@ void	init_cmd_node(t_cmd *node);
 int		nc_init(t_cmd **node, char ***args, char ***ahead);
 t_cmd	*new_cmd(t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
-void	free_cmd_list(t_cmd *node);
+void	free_cmd_list(t_mini *mini);
+void	free_cmd_nodes(t_cmd *cmd);
 
 /* types/t_redir.c */
 int		new_redir_condition(t_token *token);
@@ -171,7 +173,7 @@ t_token	*new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
-void	free_token_list(t_token *token);
+void	free_token_list(t_mini *mini);
 
 /* executor.c */
 void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
@@ -196,6 +198,7 @@ int		is_writable_file(const char *path);
 /* free.c */
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
+void	free_mini_without_env(t_mini *mini);
 
 /* parser_heredoc.c */
 int		heredoc_dup(t_mini *mini);

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:30:33 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 10:35:08 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 11:54:07 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,4 +148,35 @@ char	**remove_arr_element(char **arr, int index)
 	}
 	result[i] = NULL;
 	return (result);
+}
+
+// called to initialize our env array that will be stored in the mini struct
+// @returns alocated array of strings representing one env with name and value
+char	**dup_array(char **arr)
+{
+	int		i;
+	int		j;
+	char	**res;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	res = malloc(sizeof(char *) * (i + 1));
+	if (!res)
+		return (NULL);
+	j = -1;
+	while (++j < i)
+	{
+		res[j] = ft_strdup(arr[j]);
+		if (!res[j])
+		{
+			while (j > 0)
+				free(res[--j]);
+			free(res);
+			res = NULL;
+			return (NULL);
+		}
+	}
+	res[j] = NULL;
+	return (res);
 }

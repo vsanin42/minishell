@@ -6,116 +6,107 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 10:30:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:57:26 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+// executes lexer->parser->executor with checks between each phase
+// @returns 0 on SUCESS, 1 on ERROR
 int	process_input(char *input, t_mini *mini)
 {
 	if (lexer(input, mini) == ERROR)
-	{
-		free_token_list(mini->token_list);
-		mini->token_list = NULL;
-		return (ERROR);
-	}
-	mini->token_list = remove_null_tokens(mini->token_list); // should be safe but possible issues
-	if (token_evaluator(mini) == 1)
-	{
-		free_token_list(mini->token_list);
-		mini->token_list = NULL;
-		return (ERROR);
-	}
+		return (free_token_list(mini), ERROR);
+	mini->token_list = remove_null_tokens(mini->token_list);
+	if (token_evaluator(mini) == ERROR)
+		return (free_token_list(mini), ERROR);
 	// print_token_list(mini);
 	if (parser_heredoc(mini) == ERROR)
-	{
-		free_token_list(mini->token_list);
-		mini->token_list = NULL;
-		return (ERROR);
-	}
+		return (free_token_list(mini), ERROR);
 	if (parser(mini) == ERROR)
-	{
-		free_token_list(mini->token_list);
-		mini->token_list = NULL;
-		free_cmd_list(mini->cmd_list);
-		mini->cmd_list = NULL;
-		return (ERROR);
-	}
-	free_token_list(mini->token_list);
-	mini->token_list = NULL;
+		return (free_token_list(mini), free_cmd_list(mini), ERROR);
+	free_token_list(mini);
 	//print_command_list(mini);
-	if (evaluator(mini) == 0)
+	if (cmd_evaluator(mini) == 0)
 	{
 		if (executor(mini) == ERROR)
-		{
-			free_cmd_list(mini->cmd_list);
-			mini->cmd_list = NULL;
-			return (ERROR);
-		}
+			return (free_cmd_list(mini), ERROR);
 	}
-	free_cmd_list(mini->cmd_list);
+	free_cmd_list(mini);
 	return (0);
 }
 
 // called in loop to show a prompt and process input
+// @returns 1 so the calling loop can continue, 0 on error so loop breaks
+// (!input) = called when ^C was pressed - no input was received
+// input[0] == '\0' - input was empty or just enter
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
 
 	input = readline("\033[32mminishell \033[37m> ");
-	if (!input) // if ctrl d was pressed, exit the process
-		return (0); // needs proper exit in the future
-	if (input[0] == '\0') // if empty input/enter
+	if (!input)
+		return (0);
+	if (input[0] == '\0')
 	{
 		free(input);
-		return (1); // if enter (empty input) was pressed, continue to the next iteration
+		input = NULL;
+		return (1);
 	}
 	add_history(input);
 	if (check_input(input) == 1)
 		return (free(input), 1);
-	if (process_input(input, mini) == ERROR) // called without assigning, just for testing, can return 0 or ERROR
-	{
-
-	}
-
+	process_input(input, mini);
 	return (1);
 }
 
-void	set_termios() // terminal config editing to revent '^\' from being printed
+// terminal config editing to revent '^\' from being printed
+// tcgetattr gets stdin settings, exits if fail
+// termios.c_cc[VQUIT]=_POSIX_VDISABLE only blocks '\' -ctrlC prints ^C in bash
+// tcsetattr sets stdin settings immediately
+void	set_termios(void)
 {
 	struct termios	termios;
 
-	if (tcgetattr(0, &termios) == -1) // gets stdin settings, exits if fail
-		exit(1);
-	termios.c_cc[VQUIT] = _POSIX_VDISABLE; // only blocks '\' bc ctrl c prints ^C in bash
-	if ((tcsetattr(0, TCSANOW, &termios)) == -1) // sets stdin settings immediately
-		exit(1);
+	if (tcgetattr(0, &termios) == -1)
+		exit(ERROR);
+	termios.c_cc[VQUIT] = _POSIX_VDISABLE;
+	if ((tcsetattr(0, TCSANOW, &termios)) == -1)
+		exit(ERROR);
 }
 
-int main(int argc, char *argv[], char *env[])
+void	init_mini(t_mini *mini, char **env)
+{
+	// mini = (t_mini *)malloc(sizeof(t_mini)); // ??? why this causes leaks
+	// if (!mini)
+	// 	return ;
+	mini->token_list = NULL;
+	mini->cmd_list = NULL;
+	mini->error_msg = NULL;
+	mini->exit_status = 0;
+	mini->env = dup_array(env);
+}
+
+// SIGINT ctrl '\'
+// SIGQUIT ctrl 'C'
+// if ctrl D or program returns 0, break the loop, clear history and return
+int	main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
 
-	mini.token_list = NULL;
-	mini.cmd_list = NULL;
-	mini.error_msg = NULL;
-	mini.exit_status = 0;
-	dup_env_to_local_array(&mini, env);
-	signal(SIGINT, sig_handler); // ctrl c
-	signal(SIGQUIT, sig_handler); // ctrl '\'
-	(void)argv; (void)env;
+	(void)argv;
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
 	set_termios();
 	if (argc != 1)
-	{
-		free_arr(mini.env);
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
-	}
+	init_mini(&mini, env);
 	while (1)
-		if (show_prompt(&mini) == 0) // if ctrl d, break the loop, clear history and return
-		{
+	{
+		if (show_prompt(&mini) == 0)
 			break ;
-		}
+	}
 	write(1, "exit\n", 5);
 	free_arr(mini.env);
 	rl_clear_history();

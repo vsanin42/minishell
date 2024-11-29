@@ -5,6 +5,12 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still fou
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+29.11 addins by Zuzka
+- when program exits it prints exit like bash
+- strtrim whitespaces from nput at beginning of lexer
+- starting with norm
+-
+
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token
 - set error codes properly - implement errno && must update exit status at end of each of these functions
@@ -14,7 +20,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - signals error: when we run a command that waits for input eg. cat or sort, and press ^C, it will go bask to start of minishell IN THAT PROCESS so we get minishell > minishell >
 - handle flags ?? if there are some, move it to shell implementation, if not use
 - sc error message shows cd and then cd again nstead of the non-existing folder
-- check if there is actual cmd->cmd in cmd (the name/path o cmd)
+- expand $?
 
 ## test cases
 echo -nnnnnnnnnnnnnn hello

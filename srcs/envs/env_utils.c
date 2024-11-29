@@ -3,45 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/28 12:02:38 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 11:55:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// called to initialize our env array that will be stored in the mini struct
-// @returns alocated array of strings representing one env with name and value
-void	dup_env_to_local_array(t_mini *mini, char **env)
-{
-	int		i;
-	int		j;
-	char	**envs;
-
-	i = 0;
-	while (env[i])
-		i++;
-	envs = malloc(sizeof(char *) * (i + 1));
-	if (!envs)
-		return ;
-	j = -1;
-	while (++j < i)
-	{
-		envs[j] = ft_strdup(env[j]);
-		if (!envs[j])
-		{
-			while (j > 0)
-				free(envs[--j]);
-			free(envs);
-			envs = NULL;
-			return ;
-		}
-	}
-	envs[j] = NULL;
-	mini->env = envs;
-}
 
 // receives string value WITHOUT $ that should be checked if it exists as env
 // @returns expanded allocated value if found, NULL if not found,

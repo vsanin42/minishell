@@ -6,7 +6,7 @@
 #    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/29 10:58:16 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/29 13:35:54 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ UNAME := $(shell uname)
 READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
+		srcs/builtins/builtins.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/echo.c \
 		srcs/builtins/env.c \
