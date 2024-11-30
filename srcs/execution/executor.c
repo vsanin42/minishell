@@ -3,213 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/29 13:39:56 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:15:09 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+// A B B A
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/* ERROR MESSAGE */
-
-void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third)
-{
-	char *msg;
-	char *old_msg;
-	char *new_part;
-
-	free(mini->error_msg);
-	mini->error_msg = NULL;
-	msg = ft_strdup("minishell: ");
-	if (first)
-	{
-		old_msg = msg;
-		new_part = ft_strdup(first);
-		if (new_part)
-		{
-			msg = ft_strjoin(msg, new_part);
-			free(new_part);
-			new_part = NULL;
-			free(old_msg);
-			old_msg = NULL;
-		}
-	}
-	if (second)
-	{
-		old_msg = msg;
-		new_part = ft_strdup(": ");
-		if (new_part)
-		{
-			msg = ft_strjoin(msg, new_part);
-			free(new_part);
-			new_part = NULL;
-			free(old_msg);
-			old_msg = NULL;
-		}
-		old_msg = msg;
-		new_part = ft_strdup(second);
-		if (new_part)
-		{
-			msg = ft_strjoin(msg, new_part);
-			free(new_part);
-			new_part = NULL;
-			free(old_msg);
-			old_msg = NULL;
-		}
-	}
-	if (third)
-	{
-		old_msg = msg;
-		new_part = ft_strdup(": ");
-		if (new_part)
-		{
-			msg = ft_strjoin(msg, new_part);
-			free(new_part);
-			new_part = NULL;
-			free(old_msg);
-			old_msg = NULL;
-		}
-		old_msg = msg;
-		new_part = ft_strdup(third);
-		if (new_part)
-		{
-			msg = ft_strjoin(msg, new_part);
-			free(new_part);
-			new_part = NULL;
-			free(old_msg);
-			old_msg = NULL;
-		}
-	}
-	mini->error_msg = msg;
-}
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/* MANAGING FILES AND PIPES */
-
-int	close_files(int *infile, int *outfile)
-{
-	if (*infile > STDIN_FILENO)
-		close(*infile);
-	if (*outfile > STDOUT_FILENO)
-		close(*outfile);
-	// can closing go wrong?
-	return (0);
-}
-
-int	close_all_pipes(int pipes[][2], int pipe_count)
-{
-	int i;
-
-	i = 0;
-	while (i < pipe_count - 1)
-	{
-		close(pipes[i][1]);
-		close(pipes[i][0]);
-		i++;
-	}
-	return (0);
-}
-
-int	open_pipes(int pipes[][2], int process_count)
-{
-	int	i;
-
-	i = 0;
-	while (i < process_count - 1)
-	{
-		if (pipe(pipes[i]) == -1)
-		{
-			printf("error creating pipes");
-			close_all_pipes(pipes, i);
-			return (ERROR);
-		}
-		i++;
-	}
-	return (0);
-}
-
-int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
-{
-	if (i == 0)
-	{
-		dup2(files[0], STDIN_FILENO);
-		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
-		{
-			if (files[1] > STDOUT_FILENO)
-				dup2(files[1], STDOUT_FILENO);
-			else
-				dup2(pipes[0][1], STDOUT_FILENO);
-		}
-	}
-	// set ends of pipes to middle processes
-	if (i > 0 && i < num_of_p - 1)
-	{
-		if (files[0] > STDIN_FILENO)
-			dup2(files[0], STDIN_FILENO);
-		else
-			dup2(pipes[i - 1][0], STDIN_FILENO);
-		if (files[1] > STDOUT_FILENO)
-			dup2(files[1], STDOUT_FILENO);
-		else
-			dup2(pipes[i][1], STDOUT_FILENO);
-	}
-	// set up outfile - read end of last pipe
-	if (i == num_of_p - 1)
-	{
-		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
-		{
-			if (files[0] > STDIN_FILENO)
-				dup2(files[0], STDIN_FILENO);
-			else
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-		}
-		dup2(files[1], STDOUT_FILENO);
-	}
-	return (0);
-}
-
-int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
-{
-	t_redir	*redir;
-
-	redir = nthcmd->redir;
-	while (redir)
-	{
-		if (redir->type == TOKEN_REDIRIN)
-		{
-			if (*infile > STDIN_FILENO)
-				close(*infile);
-			*infile = open(redir->file, O_RDONLY);
-			// it can go wrong? maybe set errorcode and return it
-		}
-		else if (redir->type == TOKEN_REDIROUT)
-		{
-			if (*outfile > STDOUT_FILENO)
-				close(*outfile);
-			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			// it can go wrong? maybe set errorcode and return it
-		}
-		else if (redir->type == TOKEN_APPEND)
-		{
-			if (*outfile > STDOUT_FILENO)
-				close(*outfile);
-			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			// it can go wrong? maybe set errorcode and return it
-		}
-		redir = redir->next;
-	}
-	return (0);
-}
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/* EXECUTION */
-
-// 1. case - builtins
+// checks if command is one of builtins and executes it
 // returns 0 if any builtin was excuted succesfully, 1 if not
 int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
@@ -234,49 +38,39 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	return (mini->exit_status);
 }
 
-// 2. case - command specified by relative or absolute path
+// checks if command is specified by relative or absolute path
+//  if is_executable > 0 means it is executable file and we found it
+// if is_executable > 0 means we found it but it doesnt have execute permisions
+// if we get to end, is_executable_file returned < 0 meaning file was not found
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
-	char *path;
+	char	*path;
+	int		is_executable;
 
 	path = cmd->cmd;
-	if (is_executable_file(path) > 0) // is ececutable file and we found it
+	is_executable = is_executable_file(path);
+	if (is_executable > 0)
 	{
 		if (execve(path, cmd->args, mini->env) == -1)
-		{
-			set_executor_error_msg(mini, path, "Exec format error", NULL);
-			return (ERROR); // ERROR because we found it and it was executable path but something went wrong when executing
-		}
+			return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
 	}
-	else if (!is_executable_file(path))
-	{
-		set_executor_error_msg(mini, path, "Permission denied", NULL);
-		return (2); /// CONTINUE because it it not executable file on this path but can be shell command
-	}
-	// if we get here is_executable_file returned < 0 which means it was not found
-	set_executor_error_msg(mini, path, "No such file or directory", NULL);
-	return (2); // CONTINUE because it it not found by is_executable file but it can be shell command
+	else if (is_executable == 0)
+		return (set_executor_error_msg(mini, path, "Permission denied", NULL), 0);
+	return (0);
 }
 
-// 3. case - shell commands OR commands at $PATH variable
-int exec_shell_command(t_mini *mini, t_cmd *cmd)
+// checks if command is shell command (=command at $PATH variable)
+int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 {
 	char	 *path;
 
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-	{
-		set_executor_error_msg(mini, cmd->cmd, "command not found", NULL);
-		return (ERROR);
-	}
+		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), ERROR);
 	if (execve(path, cmd->args, mini->env) == -1)
-	{
-		set_executor_error_msg(mini, path, "Exec format error", NULL);
-		return (ERROR);
-	}
-	return (ERROR);
+		return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
+	return (0);
 }
-
 
 int	execute(t_mini *mini, t_cmd *cmd)
 {
@@ -306,10 +100,6 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	}
 	return (ERROR);
 }
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/* CALLING EXECUTOR FUNCTION */
 
 // check if builtin & 1 comand - not open any processes, must be done in main
 // create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0

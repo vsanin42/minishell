@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 13:33:49 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:58:58 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,23 @@ int		cmd_evaluator(t_mini *mini);
 /* evaluators/token_evaluator.c */
 int		token_evaluator(t_mini *mini);
 
+/* execution/executor.c */
+int		exec_builtins(t_mini *mini, t_cmd *cmd);
+int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
+int		exec_shell_command(t_mini *mini, t_cmd *cmd);
+int		execute(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini);
+
+/* execution/executor_utils.c */
+void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
+
+/* execution/executor_files_pipes.c */
+int	close_files(int *infile, int *outfile);
+int	close_all_pipes(int pipes[][2], int pipe_count);
+int	open_pipes(int pipes[][2], int process_count);
+int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
+int	set_files(t_cmd *nthcmd, int *infile, int *outfile);
+
 /* lexer/lexer_env.c */
 
 /* lexer_env.c */
@@ -160,6 +177,8 @@ t_cmd	*new_cmd(t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
 void	free_cmd_list(t_mini *mini);
 void	free_cmd_nodes(t_cmd *cmd);
+t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
+int		get_cmd_count(t_cmd *cmd);
 
 /* types/t_redir.c */
 int		new_redir_condition(t_token *token);
@@ -174,14 +193,6 @@ void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
 void	free_token_list(t_mini *mini);
-
-/* executor.c */
-void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
-int		executor(t_mini *mini);
-
-/* executor_utils.c */
-t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
-int		get_cmd_count(t_cmd *cmd);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);

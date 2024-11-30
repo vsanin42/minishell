@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/29 13:35:54 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/29 15:51:43 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,7 @@ SRC  =  srcs/minishell.c \
 		srcs/types/t_token.c \
 		srcs/execution/executor.c \
 		srcs/execution/executor_utils.c \
+		srcs/execution/executor_files_pipes.c \
 		srcs/exit.c \
 		srcs/file_permissions.c \
 		srcs/free.c \

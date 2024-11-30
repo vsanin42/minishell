@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:46:42 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 12:44:37 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:49:47 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,4 +138,38 @@ void	free_cmd_nodes(t_cmd *node)
 	}
 	node = NULL;
 	temp = NULL;
+}
+
+int	get_cmd_count(t_cmd *cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd)
+	{
+		i += 1;
+		cmd = cmd->next;
+	}
+	return (i);
+
+}
+
+t_cmd	*get_nth_command(t_cmd *cmdhead, int n)
+{
+	int	i;
+
+	i = 0;
+	if (!cmdhead)
+	{
+		return (NULL);
+	}
+	while (i < n && cmdhead)
+	{
+		cmdhead = cmdhead->next;
+		i++;
+	}
+	if (i == n)
+		return (cmdhead);
+	else
+		return (NULL);
 }
