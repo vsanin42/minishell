@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/29 17:15:09 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/30 08:50:49 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
 	// 	mini->exit_status = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-		return (exit_builtin(mini), ERROR);
+		exit_builtin(mini);
+	else
+		mini->exit_status = 0;
 	if (mini->exit_status != 0 && mini->error_msg)
 		printf("%s\n", mini->error_msg);
 	free(mini->error_msg);
@@ -77,10 +79,9 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
-	if (mini->cmd_list && mini->cmd_list->cmd && (!ft_strncmp(mini->cmd_list->cmd, "cd", 2) || !ft_strncmp(mini->cmd_list->cmd, "pwd", 3) || !ft_strncmp(mini->cmd_list->cmd, "env", 3) || !ft_strncmp(mini->cmd_list->cmd, "export", 6)
-		|| !ft_strncmp(mini->cmd_list->cmd, "unset", 5) || !ft_strncmp(mini->cmd_list->cmd, "exit", 4)))
+	if (exec_builtins(mini, mini->cmd_list) != 0)
 	{
-		return (exec_builtins(mini, mini->cmd_list));
+		return (mini->exit_status);
 	}
 	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
 	if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
