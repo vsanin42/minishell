@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/28 18:39:30 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/03 16:31:04 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,15 @@ char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
 void	exit_builtin(char *status);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
+int		export_get_index(t_mini *mini, char **vars, int i);
+int		export_add_back(t_mini *mini, char* env);
 int		env_builtin(t_mini *mini, t_cmd *cmd);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
+char	**unset_arr_element(char **env, int index, int len);
+int		unset_strdup(char **result, char **env, int *i, int flag);
 int		echo_builtin(t_mini *mini, t_cmd *cmd);
 char	*echo_builder(char **args);
+int		echo_n_option(char **args);
 
 /* envs/env_utils.c */
 void	dup_env_to_local_array(t_mini *mini, char **env);

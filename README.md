@@ -38,8 +38,12 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - add input and output redirection when calling just one builtin
 
 - signal handling mini inside mini
+
+- echo $USERaaa prints only user name, should print nothing/newline. ${USER}aaa works fine
+- signal handling of processes like cat that wait for input
+
 ## test cases
-echo -nnnnnnnnnnnnnn hello
+echo -nnnnnnnnnnnnnn hello - WORKS -Vlad
 
 # HEREDOC MAIN THINGS - VLAD
 main things:

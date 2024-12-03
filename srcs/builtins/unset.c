@@ -6,21 +6,37 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/28 13:13:18 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/03 16:33:18 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+int	unset_strdup(char **result, char **env, int *i, int flag)
+{
+	if (flag == 1)
+		result[*i] = ft_strdup(env[*i]);
+	else if (flag == 2)
+		result[*i] = ft_strdup(env[*i + 1]);
+	if (!result[*i])
+		return (ERROR);
+	(*i)++;
+	return (0);
+}
+
 // env, 0, len=3
-char	**remove_arr_element(char **env, int index)
+// removes an array element by duplicating it and skipping said element
+// ?????????????: if (!result) in while loops - did you mean if (!result[i])?
+// changed it if it's not intended
+// @returns allocated array without removed element
+// old array is freed in the caller
+char	**unset_arr_element(char **env, int index, int len)
 {
 	char	**result;
 	int		i;
 	int		len;
 
 	i = 0;
-	len = get_arr_len(env);
 	if (index >= len)
 		return (env);
 	result = malloc(sizeof(char *) * len);
@@ -28,44 +44,38 @@ char	**remove_arr_element(char **env, int index)
 		return (NULL);
 	while (env[i] && i < index)
 	{
-		result[i] = ft_strdup(env[i]);
-		if (!result)
+		if (unset_strdup(result, env, &i, 1) == ERROR)
 			return (NULL);
-		i++;
 	}
 	while (env[i + 1] && i < len - 1)
 	{
-		result[i] = ft_strdup(env[i + 1]);
-		if (!result)
+		if (unset_strdup(result, env, &i, 2) == ERROR)
 			return (NULL);
-		i++;
 	}
 	result[i] = NULL;
 	return (result);
 }
 
-// i starts at 1 because the 0th argument is the command itself
+// unsets an env variable
+// @returns: ERROR if index was not found - same logic as export
+// @returns: 0 if successfully removed the variable and updated env list
 int	unset_builtin(t_mini *mini, t_cmd *cmd)
 {
 	int		i;
 	char	**vars;
-	char 	**res;
-	char	*env_name;
+	char	**res;
 	int		index;
 
 	i = 0;
 	vars = cmd->args;
 	while (vars[++i])
 	{
-		env_name = get_env_name(vars[i]);
-		if (!env_name)
+		index = export_get_index(mini, vars, i);
+		if (index == -2)
 			return (ERROR);
-		index = get_env_index(mini->env, env_name);
-		free(env_name);
-		env_name = NULL;
 		if (index > -1)
 		{
-			res = remove_arr_element(mini->env, index);
+			res = unset_arr_element(mini->env, index, get_arr_len(mini->env));
 			if (!res)
 				return (ERROR);
 			free_arr(mini->env);
