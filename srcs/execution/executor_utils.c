@@ -3,45 +3,86 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/28 13:29:31 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 15:50:19 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	get_cmd_count(t_cmd *cmd)
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+/* ERROR MESSAGE */
+
+void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third)
 {
-	int	i;
+	char *msg;
+	char *old_msg;
+	char *new_part;
 
-	i = 0;
-	while (cmd)
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	msg = ft_strdup("minishell: ");
+	if (first)
 	{
-		i += 1;
-		cmd = cmd->next;
+		old_msg = msg;
+		new_part = ft_strdup(first);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
 	}
-	return (i);
-
-}
-
-t_cmd	*get_nth_command(t_cmd *cmdhead, int n)
-{
-	int	i;
-
-	i = 0;
-	if (!cmdhead)
+	if (second)
 	{
-		return (NULL);
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(second);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
 	}
-	while (i < n && cmdhead)
+	if (third)
 	{
-		cmdhead = cmdhead->next;
-		i++;
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(third);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
 	}
-	if (i == n)
-		return (cmdhead);
-	else
-		return (NULL);
+	mini->error_msg = msg;
 }

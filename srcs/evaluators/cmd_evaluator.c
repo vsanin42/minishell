@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   evaluator.c                                        :+:      :+:    :+:   */
+/*   cmd_evaluator.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/28 15:11:20 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/11/29 12:48:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	validate_files(t_mini *mini)
 
 // checks all received parameters and only if OK program continues to execution
 // @returns 0 if all is OK, 1 on error
-int	evaluator(t_mini *mini)
+int	cmd_evaluator(t_mini *mini)
 {
 	if (validate_files(mini) == 0)
 		return (0);

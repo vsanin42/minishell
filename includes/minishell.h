@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/03 16:31:04 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/04 10:55:19 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,13 @@
 
 typedef enum e_token_type
 {
-	TOKEN_TEXT, // text must stay at position 0 !!!
-	TOKEN_ARG,
+	TOKEN_TEXT, // text must stay at position 0
 	TOKEN_PIPE, // |
 	TOKEN_REDIRIN, // <
 	TOKEN_REDIROUT, // >
 	TOKEN_APPEND, // >>
 	TOKEN_HEREDOC, // <<
-	TOKEN_FILE,
-	TOKEN_PIPE_RD,
-	TOKEN_PIPE_WR
+	TOKEN_FILE
 }	t_type;
 
 typedef struct s_redir
@@ -52,7 +49,7 @@ typedef struct s_redir
 	t_type			type;
 	char			*file;
 	struct s_redir	*next;
-}	t_redir;
+}					t_redir;
 
 typedef struct s_cmd
 {
@@ -60,7 +57,7 @@ typedef struct s_cmd
 	char			**args;
 	t_redir			*redir;
 	struct s_cmd	*next;
-}			t_cmd;
+}					t_cmd;
 
 typedef struct s_token
 {
@@ -71,12 +68,13 @@ typedef struct s_token
 
 typedef struct s_mini
 {
-	char	**env;
-	t_token	*token_list;
-	t_cmd	*cmd_list;
-	char	*error_msg;
+	char			**env;
+	t_token			*token_list;
+	t_cmd			*cmd_list;
+	char			*error_msg;
+	int				exit_status;
 
-}	t_mini;
+}					t_mini;
 
 /* minishell.c */
 int		process_input(char *input, t_mini *mini); // should be void, testing
@@ -84,10 +82,11 @@ int		show_prompt(t_mini *mini);
 void	set_termios(void);
 
 /* builtins/~.c */
+int		is_builtin(t_mini *mini);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
-void	exit_builtin(char *status);
+void	exit_builtin(t_mini *mini);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		export_get_index(t_mini *mini, char **vars, int i);
 int		export_add_back(t_mini *mini, char* env);
@@ -100,12 +99,43 @@ char	*echo_builder(char **args);
 int		echo_n_option(char **args);
 
 /* envs/env_utils.c */
-void	dup_env_to_local_array(t_mini *mini, char **env);
 char	*process_local_env(t_mini *mini, char *name);
 char	*get_path_env(t_mini *mini, char *cmd);
 int		get_env_index(char **envs, char *env_name);
 char	*getenv_local(char **envs, char *env_name);
 char	*get_env_name(char *env);
+
+/* evaluators/input-evaluator.c */
+int		check_braces_alnum(char *input, int start);
+int		check_curly_braces(char *input);
+int		check_next_quote(char *input, int i);
+int		check_quotes(char *input);
+int		isbq(char *input); // move this later
+int		check_input(char *input);
+
+/* evaluators/cmd_evaluator.c */
+int		validate_files(t_mini *mini);
+int		cmd_evaluator(t_mini *mini);
+
+/* evaluators/token_evaluator.c */
+int		token_evaluator(t_mini *mini);
+
+/* execution/executor.c */
+int		exec_builtins(t_mini *mini, t_cmd *cmd);
+int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
+int		exec_shell_command(t_mini *mini, t_cmd *cmd);
+int		execute(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini);
+
+/* execution/executor_utils.c */
+void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
+
+/* execution/executor_files_pipes.c */
+int	close_files(int *infile, int *outfile);
+int	close_all_pipes(int pipes[][2], int pipe_count);
+int	open_pipes(int pipes[][2], int process_count);
+int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
+int	set_files(t_cmd *nthcmd, int *infile, int *outfile);
 
 /* lexer/lexer_env.c */
 
@@ -138,18 +168,23 @@ t_token	*get_token_list(t_mini *mini, char *input);
 int		lexer(char *input, t_mini *mini);
 
 /* types/array.c */
+char	**dup_array(char **arr);
 void	free_arr(char **arr);
 int		array_char_len(char **head);
 int		get_arr_len(char **arr);
 char	**add_back_array(char **arr, char *new_el);
 char	**change_arr_element(char **arr, char *new_el, int	index);
+char	**remove_arr_element(char **arr, int index);
 
 /* types/t_cmd.c */
 void	init_cmd_node(t_cmd *node);
 int		nc_init(t_cmd **node, char ***args, char ***ahead);
 t_cmd	*new_cmd(t_token *token);
 void	add_back_cmd(t_cmd **lst, t_cmd *new);
-void	free_cmd_list(t_cmd *node);
+void	free_cmd_list(t_mini *mini);
+void	free_cmd_nodes(t_cmd *cmd);
+t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
+int		get_cmd_count(t_cmd *cmd);
 
 /* types/t_redir.c */
 int		new_redir_condition(t_token *token);
@@ -163,29 +198,7 @@ t_token	*new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
-void	free_token_list(t_token *token);
-
-/* check_input.c */
-int		check_braces_alnum(char *input, int start);
-int		check_curly_braces(char *input);
-int		check_next_quote(char *input, int i);
-int		check_quotes(char *input);
-int		isbq(char *input); // move this later
-int		check_input(char *input);
-
-/* evaluator.c */
-int		validate_files(t_mini *mini);
-int		evaluator(t_mini *mini);
-
-/* executor.c */
-void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
-int		executor(t_mini *mini);
-
-/* executor_utils.c */
-t_cmd	*get_nth_command(t_cmd *cmdhead, int n);
-int		get_cmd_count(t_cmd *cmd);
-int		get_args_len(t_cmd *cmd);
-int		contains_slash(char *cmd);
+void	free_token_list(t_mini *mini);
 
 /* exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
@@ -202,9 +215,7 @@ int		is_writable_file(const char *path);
 /* free.c */
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
-
-/* heredoc.c */
-char	*heredoc_input(t_mini *mini, char *delimeter); // not used yet ?
+void	free_mini_without_env(t_mini *mini);
 
 /* parser_heredoc.c */
 int		heredoc_dup(t_mini *mini);

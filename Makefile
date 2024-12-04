@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/28 11:04:57 by zpiarova         ###   ########.fr        #
+#    Updated: 2024/11/29 15:51:43 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ UNAME := $(shell uname)
 READLINE_DIR = /usr/local/opt/readline
 
 SRC  =  srcs/minishell.c \
+		srcs/builtins/builtins.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/echo.c \
 		srcs/builtins/env.c \
@@ -34,6 +35,9 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/unset.c \
 		srcs/envs/env_utils.c \
+		srcs/evaluators/cmd_evaluator.c \
+		srcs/evaluators/input_evaluator.c \
+		srcs/evaluators/token_evaluator.c \
 		srcs/lexer/lexer_env.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
@@ -42,12 +46,11 @@ SRC  =  srcs/minishell.c \
 		srcs/types/t_cmd.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
-		srcs/execution/evaluator.c \
 		srcs/execution/executor.c \
 		srcs/execution/executor_utils.c \
-		srcs/check_input.c \
+		srcs/execution/executor_files_pipes.c \
 		srcs/exit.c \
-		srcs/files.c \
+		srcs/file_permissions.c \
 		srcs/free.c \
 		srcs/parser_heredoc.c \
 		srcs/parser.c \

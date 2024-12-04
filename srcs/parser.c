@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/03 14:00:13 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/04 10:54:53 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ char	**alloc_args(char **args, t_token *token)
 // @returns: 0 on regular flow, ERROR on failed allocations
 int	first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead)
 {
-	//printf("type: %d\n", (*token)->type);
 	if ((*token)->type == TOKEN_TEXT && !(*node)->cmd)
 	{
 		(*node)->cmd = ft_strdup((*token)->value);
@@ -72,7 +71,8 @@ int	parser(t_mini *mini)
 		new_node = new_cmd(temp);
 		if (!new_node)
 		{
-			free_cmd_list(command_list);
+			free_cmd_nodes(command_list);
+			command_list = NULL;
 			return (error_msg("Parser error", mini, 0, 0));
 		}
 		add_back_cmd(&command_list, new_node);
