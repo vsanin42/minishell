@@ -1,7 +1,7 @@
 # minishell
 
 42 project by vsanin & zpiarova - work in progress
-NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still found a mistake here:D - whitespace(s) at end of input leaks
+NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
@@ -31,9 +31,10 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - two pipes after each other leak in the child process
 - sc error message shows cd and then cd again nstead of the non-existing folder
 - check if there is actual cmd->cmd in cmd
-- before evey exit free token list, cmd list, error message, mini->env
+- before evey exit free token list, cmd list, error message
 - add input and output redirection when calling just one builtin
 - signal handling mini inside mini
+-exec_command_by_path executes also files without permissions
 
 - echo $USERaaa prints only user name, should print nothing/newline. ${USER}aaa works fine
 - signal handling of processes like cat that wait for input

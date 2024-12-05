@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 16:11:59 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 18:20:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,6 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
 		result = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
-/* <<<<<<< HEAD
-		result = unset_builtin(mini, cmd);
-	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
-	// 	result = echo_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-		exit_builtin(mini);
-	if (result > 0 && mini->error_msg)
-		printf("%s\n", mini->error_msg);
-	free(mini->error_msg);
-	mini->error_msg = NULL;
-	return (result);
-======= */
 		mini->exit_status = unset_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "echo", 4))
 		mini->exit_status = echo_builtin(mini, cmd);
@@ -67,11 +55,12 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 
 	path = cmd->cmd;
 	is_executable = is_executable_file(path);
-	write(1, "here1", 5);
+	//write(1, "here1", 5);
 	if (is_executable == 0)
 	{
-		write(1, "here2", 5);
 		perror_msg(path);
+		write(1, "here2", 5);
+		printf("errno2: %d\n", errno);
 		return (ERROR);
 	}
 	//return (set_executor_error_msg(mini, path, "Permission denied", NULL), 9);
@@ -79,7 +68,7 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 	{
 		if (execve(path, cmd->args, mini->env) == -1)
 		{
-			write(1, "here3", 5);
+			//write(1, "here3", 5);
 			perror_msg(path);
 			return (ERROR);
 		}
@@ -88,7 +77,7 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 	}
 	else
 	{
-		write(1, "here4", 5);
+		//write(1, "here4", 5);
 		perror_msg(path);
 		return (ERROR);
 	}
@@ -134,7 +123,6 @@ int	execute(t_mini *mini, t_cmd *cmd)
 		printf("%s\n", mini->error_msg);
 	free(mini->error_msg);
 	mini->error_msg = NULL;
-	printf("result1: %d\n", result);
 	mini->exit_status = result;
 	exit(mini->exit_status);
 }
