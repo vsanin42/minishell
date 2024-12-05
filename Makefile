@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/12/01 17:45:18 by zuzanapiaro      ###   ########.fr        #
+#    Updated: 2024/12/05 15:14:02 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,6 +52,7 @@ SRC  =  srcs/minishell.c \
 		srcs/exit.c \
 		srcs/file_permissions.c \
 		srcs/free.c \
+		srcs/messages.c \
 		srcs/parser_heredoc.c \
 		srcs/parser.c \
 		srcs/signal.c \

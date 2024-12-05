@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 13:37:16 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 15:58:59 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	open_pipes(int pipes[][2], int process_count)
 	{
 		if (pipe(pipes[i]) == -1)
 		{
-			printf("error creating pipes");
+			perror("minishell");
 			close_all_pipes(pipes, i);
 			return (ERROR);
 		}
@@ -59,7 +59,8 @@ int	open_pipes(int pipes[][2], int process_count)
 
 // sets STDIN and STDOUT of each child process to pipes/files, if there are any
 // 1st process: STDIN is infile, STDOUT is first pipe or outfile if n = 1
-// middle processes: pipe[wr]
+// mid processes: STDIN, STDOUT are pipe[n-1][1](rd) and pipe[n][0](wr) resp.
+// last process: STDIN is pipe of last process/redir if specified or infile if n = 1, STDOUT is STDOUT/outfile if specified
 // !if there is redir file specified for process, it uses this instead of pipe
 int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 {
@@ -95,6 +96,7 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 			else
 				dup2(pipes[i - 1][0], STDIN_FILENO);
 		}
+		//printf("setting %s as stdout\n", );
 		dup2(files[1], STDOUT_FILENO);
 	}
 	return (0);
@@ -114,16 +116,28 @@ int	set_files(t_cmd *nthcmd, int *in, int *out)
 			if (*in > STDIN_FILENO)
 				close(*in);
 			*in = open(redir->file, O_RDONLY);
+			printf("opening %s as infile\n", redir->file);
+			if (*in == -1)
+			{
+				perror_msg(redir->file);
+				return (ERROR);
+			}
 			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_REDIROUT || redir->type == TOKEN_APPEND)
 		{
+			printf("opening %s as outfile\n", redir->file);
 			if (*out > STDOUT_FILENO)
 				close(*out);
 			if (redir->type == TOKEN_REDIROUT)
 				*out = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			else if (redir->type == TOKEN_APPEND)
 				*out = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (*out == -1)
+			{
+				perror_msg(redir->file);
+				return (ERROR);
+			}
 			// it can go wrong? maybe set errorcode and return it
 		}
 		// else if (redir->type == TOKEN_REDIROUT)

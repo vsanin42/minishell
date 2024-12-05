@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 12:27:08 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 16:11:59 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,26 +67,49 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 
 	path = cmd->cmd;
 	is_executable = is_executable_file(path);
+	write(1, "here1", 5);
 	if (is_executable == 0)
-		return (set_executor_error_msg(mini, path, "Permission denied", NULL), 9);
+	{
+		write(1, "here2", 5);
+		perror_msg(path);
+		return (ERROR);
+	}
+	//return (set_executor_error_msg(mini, path, "Permission denied", NULL), 9);
 	else if (is_executable > 0)
 	{
 		if (execve(path, cmd->args, mini->env) == -1)
-			return (set_executor_error_msg(mini, path, "Exec format error", NULL), 10);
+		{
+			write(1, "here3", 5);
+			perror_msg(path);
+			return (ERROR);
+		}
+		return (0);
+		//return (set_executor_error_msg(mini, path, "Exec format error", NULL), 10);
 	}
-	return (set_executor_error_msg(mini, path, "No such file or directory", NULL), 11);
+	else
+	{
+		write(1, "here4", 5);
+		perror_msg(path);
+		return (ERROR);
+	}
 }
 
 // checks if command is shell command (=command at $PATH variable)
 int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 {
-	char	 *path;
+	char	*path;
 
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), 12);
+		return (ERROR);
+		//return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), 12);
 	if (execve(path, cmd->args, mini->env) == -1)
-		return (set_executor_error_msg(mini, path, "Exec format error", NULL), 13);
+	{
+		printf("here ");
+		perror_msg(path);
+		return (ERROR);
+	}
+		//return (set_executor_error_msg(mini, path, "Exec format error", NULL), 13);
 	return (14);
 }
 
@@ -116,6 +139,31 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	exit(mini->exit_status);
 }
 
+int perform_child(t_mini *mini, int i, int num_of_p, int pipes[][2])
+{
+	t_cmd	*nthcmd;
+	int		files[2];
+
+	files[0] = STDIN_FILENO;
+	files[1] = STDOUT_FILENO;
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	set_termios(0);
+	nthcmd = get_nth_command(mini->cmd_list, i);
+	if (!nthcmd)
+	{
+		close_all_pipes(pipes, num_of_p);
+		return (ERROR);
+	}
+	set_files(nthcmd, &files[0], &files[1]);
+	set_ins_outs(i, pipes, files, num_of_p);
+	close_files(&files[0], &files[1]);
+	close_all_pipes(pipes, num_of_p);
+	if (nthcmd->cmd)
+		mini->exit_status = execute(mini, nthcmd);
+	return (0);
+}
+
 // check if builtin & 1 command - not open any processes, must be done in main
 // create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
 // and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
@@ -123,17 +171,25 @@ int	execute(t_mini *mini, t_cmd *cmd)
 // set STDIN and STDOUT of each process to corresponding pipe or file
 // close pipes and files - the ones we need are dupped anyways so we do not need them anymore
 // execute - if the process continues, mans if failed or it was a builtin
+// BEFORE FORK:
+// 	ERROR - PERROR AND RETURNS ERROR TO CALLER FUNCTION PROCESS_INPUT
+// 	SUCCESS - CONTINUES TO CHILD CREATION OR RETURNS 0 TO CALLER IN CASE OF SINGLE BUILTIN
+// AFTER FORK = IN CHILD PROCESSES:
+// 	SUCCESS:
+// 		- FOR BUILTIN: RETURNS 0 TO CALLER
+// 		- FOR OTHERS: EXECUTION HAPPENS, NOTHING TO BE DONE
+// 	ERROR: ALWAYS FREE && EACH CHILD MUST EXIT OR END IN EXECVE
+// 		- FOR BUILTIN: PERROR, FREE ALL AND RETURN 1 TO CALLER,
+// 		- FOR OTHERS: PERROR, FREE ALL AND RETURN 1 TO CALLER
 int	executor(t_mini *mini)
 {
-	int		files[2];
 	int		num_of_p = get_cmd_count(mini->cmd_list);
-	int		pids[num_of_p]; // if we don't null terminate then no +1
+	int		pids[num_of_p];
 	int		pipes[num_of_p - 1][2];
 	int		i;
-	t_cmd	*nthcmd;
 
-	files[0] = STDIN_FILENO;
-	files[1] = STDOUT_FILENO;
+	if (validate_files(mini) == 1)
+		return (ERROR);
 	if (is_builtin(mini))
 		return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
@@ -145,28 +201,13 @@ int	executor(t_mini *mini)
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
+			perror("minishell");
 			close_all_pipes(pipes, num_of_p);
-			perror("error forking processes\n");
 			return (ERROR);
 		}
 		if (pids[i] == 0)
 		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			set_termios(0);
-			nthcmd = get_nth_command(mini->cmd_list, i);
-			if (!nthcmd)
-			{
-				close_all_pipes(pipes, num_of_p);
-				perror("error retrieving command\n");
-				return (ERROR);
-			}
-			set_files(nthcmd, &files[0], &files[1]);
-			set_ins_outs(i, pipes, files, num_of_p);
-			close_files(&files[0], &files[1]);
-			close_all_pipes(pipes, num_of_p);
-			if (nthcmd->cmd)
-				mini->exit_status = execute(mini, nthcmd);
+			perform_child(mini, i, num_of_p, pipes);
 		}
 		i++;
 	}

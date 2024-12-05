@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/05 01:32:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 15:13:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,6 +217,9 @@ int		is_writable_file(const char *path);
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 void	free_mini_without_env(t_mini *mini);
+
+/* messages.c */
+void perror_msg(char *el);
 
 /* parser_heredoc.c */
 int		heredoc_dup(t_mini *mini);

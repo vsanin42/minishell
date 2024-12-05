@@ -33,7 +33,6 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - check if there is actual cmd->cmd in cmd
 - before evey exit free token list, cmd list, error message, mini->env
 - add input and output redirection when calling just one builtin
-
 - signal handling mini inside mini
 
 - echo $USERaaa prints only user name, should print nothing/newline. ${USER}aaa works fine

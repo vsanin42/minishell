@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 14:01:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 15:13:15 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,40 @@ int	validate_files(t_mini *mini)
 		red = cmd->redir;
 		while (red)
 		{
+			// temp ="minishell: ";
+			// if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno == ENOENT)
+			// {
+			// 	//write(2, "minishell: \0", 12);
+			// 	//printf("errno: %d\n", errno);
+			// 	temp = ft_strjoin(temp, red->file);
+			// 	perror(temp);
+			// 	free(temp);
+			// 	temp = NULL;
+			// 	return (ERROR);
+			// 	//return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
+			// }
+			// else if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno != ENOENT)
+			// 	return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
+			// else if (red->type == TOKEN_REDIRIN && (is_readable_file(red->file) == 0))
+			// 	return (validator_msg(mini, red->file, "Permission denied"), ERROR);
+			// else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND) && is_writable_file(red->file) == -1 && errno != ENOENT)
+			// 	return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
+			// else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND)  && (is_writable_file(red->file) == 0))
+			// 	return (validator_msg(mini, red->file, "Permission denied"), ERROR);
 			temp ="minishell: ";
-			if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno == ENOENT)
+			if (((red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1) && errno == ENOENT)
+				|| (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno != ENOENT)
+				|| (red->type == TOKEN_REDIRIN && (is_readable_file(red->file) == 0))
+				|| ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND) && (is_writable_file(red->file) == -1)  && errno != ENOENT)
+				|| ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND)  && (is_writable_file(red->file) == 0)))
 			{
-				//write(2, "minishell: \0", 12);
-				//printf("errno: %d\n", errno);
-				temp = ft_strjoin(temp, red->file);
-				perror(temp);
-				free(temp);
-				temp = NULL;
+				// temp = ft_strjoin(temp, red->file);
+				// perror(temp);
+				// free(temp);
+				// temp = NULL;
+				perror_msg(red->file);
 				return (ERROR);
-				//return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
 			}
-			else if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno != ENOENT)
-				return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
-			else if (red->type == TOKEN_REDIRIN && (is_readable_file(red->file) == 0))
-				return (validator_msg(mini, red->file, "Permission denied"), ERROR);
-			else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND) && is_writable_file(red->file) == -1 && errno != ENOENT)
-				return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
-			else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND)  && (is_writable_file(red->file) == 0))
-				return (validator_msg(mini, red->file, "Permission denied"), ERROR);
 			red = red->next;
 		}
 		cmd = cmd->next;
