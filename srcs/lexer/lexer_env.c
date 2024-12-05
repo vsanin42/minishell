@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/26 11:51:15 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 01:29:09 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,33 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 	return (res);
 }
 
+char	*handle_question(t_mini *mini, char *res, char *text, int *i)
+{
+	char	*oldres;
+	char	*status;
+
+	if (text[*i - 1] == '{')
+	{
+		while (text[*i] && text[*i] != '}')
+			(*i)++;
+		if (text[*i] == '}')
+			(*i)++;
+	}
+	else
+		(*i)++;
+	// or simply (*i)++ once
+	oldres = res;
+	status = ft_itoa(mini->exit_status);
+	if (!status)
+		return (res);
+	res = ft_strjoin(res, status);
+	if (!res)
+		return (free(status), oldres);
+	free(oldres);
+	free(status);
+	return (res);
+}
+
 // called when we encounter $ in input, i is at $ at start so we move it by one
 // if there are braces { we move i one more character forward
 // @returns expanded res, or the original res if could not expand
@@ -54,11 +81,17 @@ char	*handle_env(t_mini *mini, char *res, char *text, int *i)
 	if (text[*i] == '{')
 	{
 		(*i)++;
-		res = handle_env_in_braces(mini, res, text, i);
+		if (text[*i] == '?')
+			res = handle_question(mini, res, text, i);
+		else
+			res = handle_env_in_braces(mini, res, text, i);
 	}
 	else
 	{
-		res = handle_env_without_braces(mini, res, text, i);
+		if (text[*i] == '?')
+			res = handle_question(mini, res, text, i);
+		else
+			res = handle_env_without_braces(mini, res, text, i);
 		(*i)--;
 	}
 	return (res);
@@ -125,6 +158,18 @@ char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i)
 	return (res);
 }
 
+char	*quickjoin(char *res)
+{
+	char	*oldres;
+
+	oldres = res;
+	res = ft_strjoin(res, "$");
+	if (!res)
+		return (NULL);
+	free(oldres);
+	return (res);
+}
+
 // get string with or without ""/'' at  ends, quotes  in middle are non-special
 // doesnt take into consderation if it is between "/', expands always
 // thus check for whether it should be expanded must be in the calling function
@@ -137,25 +182,22 @@ char	*get_env_value_to_process(t_mini *mini, char *text)
 {
 	int		i;
 	char	*res;
-	char	*oldres;
 
 	i = -1;
 	res = ft_strdup("");
 	while (text[++i])
 	{
 		res = handle_word_no_env(res, text, &i);
-		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '{'))
+		if (text[i] == '$' && (ft_isalnum(text[i + 1])
+			|| text[i + 1] == '{' || text[i + 1] == '?'))
 		{
 			res = handle_env(mini, res, text, &i);
 			if (!text[i])
 				break ;
 		}
-		else if (text[i] == '$' && (!text[i + 1] || ((text[i + 1] && !ft_isalnum(text[i + 1])))))
-		{
-			oldres = res;
-			res = ft_strjoin(res, "$");
-			free_four_mallocs(oldres, NULL, NULL, NULL);
-		}
+		else if (text[i] == '$' && (!text[i + 1]
+			|| ((text[i + 1] && !ft_isalnum(text[i + 1])))))
+			res = quickjoin(res);
 		else
 			break ;
 	}

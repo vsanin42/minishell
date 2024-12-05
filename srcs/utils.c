@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/25 20:03:20 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/11/28 18:21:39 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,24 @@ char	*str_append_nl(char *s1, char *s2)
 	if (!tmp)
 		return (NULL);
 	res = ft_strjoin(tmp, "\n");
+	free(tmp);
+	if (!res)
+		return (NULL);
+	return (res);
+}
+
+char	*str_append_space(char *s1, char *s2)
+{
+	char	*tmp;
+	char	*res;
+
+	if (!s1 || !s2)
+		return (NULL);
+	tmp = ft_strjoin(s1, s2);
+	free(s1);
+	if (!tmp)
+		return (NULL);
+	res = ft_strjoin(tmp, " ");
 	free(tmp);
 	if (!res)
 		return (NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 12:57:26 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/04 14:51:23 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ int	show_prompt(t_mini *mini)
 {
 	char	*input;
 
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
+	set_termios(1);
 	input = readline("\033[32mminishell \033[37m> ");
 	if (!input)
 		return (0);
@@ -63,15 +66,19 @@ int	show_prompt(t_mini *mini)
 
 // terminal config editing to revent '^\' from being printed
 // tcgetattr gets stdin settings, exits if fail
-// termios.c_cc[VQUIT]=_POSIX_VDISABLE only blocks '\' -ctrlC prints ^C in bash
+// termios.c_cc[VQUIT]=_POSIX_VDISABLE disables ctrl '\'
+// if mode is 0, it enables ctrl '\' - for child processes
 // tcsetattr sets stdin settings immediately
-void	set_termios(void)
+void	set_termios(int mode)
 {
 	struct termios	termios;
 
 	if (tcgetattr(0, &termios) == -1)
 		exit(ERROR);
-	termios.c_cc[VQUIT] = _POSIX_VDISABLE;
+	if (mode)
+		termios.c_cc[VQUIT] = _POSIX_VDISABLE;
+	else
+		termios.c_cc[VQUIT] = 28;
 	if ((tcsetattr(0, TCSANOW, &termios)) == -1)
 		exit(ERROR);
 }
@@ -96,9 +103,6 @@ int	main(int argc, char *argv[], char *env[])
 	t_mini	mini;
 
 	(void)argv;
-	signal(SIGINT, sig_handler);
-	signal(SIGQUIT, sig_handler);
-	set_termios();
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);

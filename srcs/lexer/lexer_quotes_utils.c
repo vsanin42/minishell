@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/25 20:59:39 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/04 21:52:43 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

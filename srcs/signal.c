@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:40:14 by vsanin            #+#    #+#             */
-/*   Updated: 2024/10/31 16:17:02 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/04 16:14:00 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,17 @@ void	sig_handler(int sig)
 		rl_redisplay(); // display the line again
 		g_sig_received = 0; // reset
 	}
-	else if (sig == SIGQUIT) // ctrl '\' - same here but no newline
-	{
-		rl_on_new_line();
-		rl_replace_line(rl_line_buffer, 0); // same but keeps what has been written so far
-		rl_redisplay();
-		g_sig_received = 0; // reset
-	}
+	// else if (sig == SIGQUIT) // ctrl '\' - same here but no newline
+	// {
+	// 	rl_on_new_line();
+	// 	rl_replace_line(rl_line_buffer, 0); // same but keeps what has been written so far
+	// 	rl_redisplay();
+	// 	g_sig_received = 0; // reset
+	// }
+}
+
+void	sigint_void(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
 }
