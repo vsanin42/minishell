@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:19:33 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/29 13:34:10 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 19:01:47 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	is_builtin(t_mini *mini)
 			|| !ft_strncmp(cmd->cmd, "env", 3)
 			|| !ft_strncmp(cmd->cmd, "export", 6)
 			|| !ft_strncmp(cmd->cmd, "unset", 5)
+			|| !ft_strncmp(cmd->cmd, "echo", 4)
 			|| !ft_strncmp(cmd->cmd, "exit", 4)))
 		return (1);
 	return (0);

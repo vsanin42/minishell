@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 02:17:10 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 19:50:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,57 +47,71 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
 	char	*path;
-	int		is_executable;
+	int		result;
 
+	result = 0;
 	path = cmd->cmd;
-	is_executable = is_executable_file(path);
-	if (is_executable > 0)
+	if (is_executable_file(path) == -1)
+	{
+		perror("minishell");
+		result = errno;
+		return (result);
+	}
+	else
 	{
 		if (execve(path, cmd->args, mini->env) == -1)
-			return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
+		{
+			result = errno;
+			perror("minishell");
+			return (result);
+		}
+
 	}
-	else if (is_executable == 0)
-		return (set_executor_error_msg(mini, path, "Permission denied", NULL), 0);
-	return (0);
+	return (result);
 }
 
 // checks if command is shell command (=command at $PATH variable)
 int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 {
 	char	 *path;
+	int		result;
 
+	result = 0;
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
 		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), ERROR);
 	if (execve(path, cmd->args, mini->env) == -1)
-		return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
+	{
+		result = errno;
+		perror("minishell");
+		return (result);
+	}
 	return (0);
 }
 
+// we have to understand we call it command but it can also be path
+// it actually always is path to the executable file -> command
+// 1. first check builtin functions - do function for this later
+// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path containing / - absolute or relative
+// 3. means that only place left to look for are the commands at $PATH
 int	execute(t_mini *mini, t_cmd *cmd)
 {
-	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
-	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
-	// 1. first check builtin functions - do function for this later
-	if (exec_builtins(mini, mini->cmd_list) == ERROR) // if nothing matched, try these:
-	{	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-		if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
-		{
-			if (exec_command_by_path(mini, cmd) == ERROR)
-			{
-				return (ERROR);
-			}
-		}
-		// 3. means that only place left to look for are the shell commands
-		else
-		{
-			if (exec_shell_command(mini, cmd) == ERROR)
-			{
-				return (ERROR);
-			}
-		}
-	}
-	return (ERROR); // why does it return error by default?
+	int	result;
+
+	result = 0;
+	if (is_builtin(mini))
+		result = exec_builtins(mini, mini->cmd_list);
+	else if (ft_strchr(cmd->cmd, '/'))
+		result = exec_command_by_path(mini, cmd);
+	else
+		result = exec_shell_command(mini, cmd);
+	free_cmd_list(mini);
+	//free_arr(mini->env);
+	if (result != 0 && mini->error_msg)
+		printf("%s\n", mini->error_msg);
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	exit(result);
 }
 
 // check if builtin & 1 comand - not open any processes, must be done in main
@@ -118,6 +132,7 @@ int	executor(t_mini *mini)
 
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
+	// !!! ADD REDIRECTIONS WHEN WE HAVE SINGLE BUILTIN !!!
 	if (is_builtin(mini))
 		return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
@@ -172,7 +187,7 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 {
 	int	i;
 	int	status;
-	
+
 	i = 0;
 	status = 0;
 	while (i < num_of_p)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_files_pipes.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 15:51:19 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 19:58:15 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,18 @@ int	close_all_pipes(int pipes[][2], int pipe_count)
 int	open_pipes(int pipes[][2], int process_count)
 {
 	int	i;
+	int result;
 
 	i = 0;
+	result = 0;
 	while (i < process_count - 1)
 	{
 		if (pipe(pipes[i]) == -1)
 		{
-			printf("error creating pipes");
+			result = errno;
+			perror("minishell");
 			close_all_pipes(pipes, i);
-			return (ERROR);
+			return (result);
 		}
 		i++;
 	}
@@ -97,7 +100,11 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
+	char	*buffer;
+	int temp_pipe[2];
+	int result;
 
+	result = 0;
 	redir = nthcmd->redir;
 	while (redir)
 	{
@@ -107,6 +114,17 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
 			// it can go wrong? maybe set errorcode and return it
+		}
+		else if (redir->type == TOKEN_HEREDOC)
+		{
+			if (pipe(temp_pipe) == -1)
+			{
+				result = errno;
+				perror("minishell");
+				return(result);
+			}
+			while (1)
+
 		}
 		else if (redir->type == TOKEN_REDIROUT)
 		{
