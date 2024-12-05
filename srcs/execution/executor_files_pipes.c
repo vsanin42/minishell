@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 19:58:15 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/05 20:25:58 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,17 +115,16 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			*infile = open(redir->file, O_RDONLY);
 			// it can go wrong? maybe set errorcode and return it
 		}
-		else if (redir->type == TOKEN_HEREDOC)
-		{
-			if (pipe(temp_pipe) == -1)
-			{
-				result = errno;
-				perror("minishell");
-				return(result);
-			}
-			while (1)
+		// else if (redir->type == TOKEN_HEREDOC)
+		// {
+		// 	if (pipe(temp_pipe) == -1)
+		// 	{
+		// 		result = errno;
+		// 		perror("minishell");
+		// 		return(result);
+		// 	}
 
-		}
+		// }
 		else if (redir->type == TOKEN_REDIROUT)
 		{
 			if (*outfile > STDOUT_FILENO)
