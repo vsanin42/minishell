@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 12:57:26 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/01 17:46:26 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 // @returns 0 on SUCESS, 1 on ERROR
 int	process_input(char *input, t_mini *mini)
 {
+	mini->exit_status = 0;
 	if (lexer(input, mini) == ERROR)
 		return (free_token_list(mini), ERROR);
 	mini->token_list = remove_null_tokens(mini->token_list);
@@ -33,6 +34,8 @@ int	process_input(char *input, t_mini *mini)
 		if (executor(mini) == ERROR)
 			return (free_cmd_list(mini), ERROR);
 	}
+	else
+		return (free_cmd_list(mini), ERROR);
 	free_cmd_list(mini);
 	return (0);
 }
@@ -110,5 +113,5 @@ int	main(int argc, char *argv[], char *env[])
 	write(1, "exit\n", 5);
 	free_arr(mini.env);
 	rl_clear_history();
-	return (mini.exit_status);
+	return (0);
 }

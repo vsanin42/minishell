@@ -6,7 +6,7 @@
 #    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/29 15:51:43 by zuzanapiaro      ###   ########.fr        #
+#    Updated: 2024/12/01 17:45:18 by zuzanapiaro      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-# user in shell to check for functions not linked into executable thus not ours : nm -u minishell
+# use in shell to check for functions not linked into executable thus not ours : nm -u minishell
 RM = rm -f
 
 LIBFTDIR = libft

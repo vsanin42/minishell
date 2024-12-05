@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 12:46:36 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/01 17:04:22 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 // exit status 0 indicates success, other indicate error or abnormal termination
 // if no argument is provided to exit, the default exit status is that of the last executed command.
 // WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
+// exit_status must be between 0 and 255
 void	exit_builtin(t_mini *mini)
 {
 	int	exit_status;
@@ -28,7 +29,7 @@ void	exit_builtin(t_mini *mini)
 	free_cmd_list(mini);
 	free(mini->error_msg);
 	exit_status = mini->exit_status;
-	if (exit_status < 0 || exit_status > 255) // exit_status must be between 0 and 255
+	if (exit_status < 0 || exit_status > 255)
 		exit(exit_status % 256);
 	exit(exit_status);
 }

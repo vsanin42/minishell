@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_evaluator.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/29 12:48:54 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/01 17:05:36 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,5 @@ int	validate_files(t_mini *mini)
 // @returns 0 if all is OK, 1 on error
 int	cmd_evaluator(t_mini *mini)
 {
-	if (validate_files(mini) == 0)
-		return (0);
-	return (1);
+	return (validate_files(mini));
 }

@@ -6,43 +6,45 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/30 08:50:49 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/01 18:05:18 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-// A B B A
 
 // checks if command is one of builtins and executes it
-// returns 0 if any builtin was excuted succesfully, 1 if not
+// will run only if is_builtin condition is true
+// cannot call exit because it can be called also in main process
+// returns 0 if any builtin was found and executed successfully, 1 if not
 int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
+	int	result;
+
+	result = 8;
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
-		mini->exit_status = cd_builtin(mini, cmd);
+		result = cd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
-		mini->exit_status = pwd_builtin(mini, cmd);
+		result = pwd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "env", 3))
-		mini->exit_status = env_builtin(mini, cmd);
+		result = env_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
-		mini->exit_status = export_builtin(mini, cmd);
+		result = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
-		mini->exit_status = unset_builtin(mini, cmd);
+		result = unset_builtin(mini, cmd);
 	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
-	// 	mini->exit_status = echo_builtin(mini, cmd);
+	// 	result = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
 		exit_builtin(mini);
-	else
-		mini->exit_status = 0;
-	if (mini->exit_status != 0 && mini->error_msg)
+	if (result > 0 && mini->error_msg)
 		printf("%s\n", mini->error_msg);
 	free(mini->error_msg);
 	mini->error_msg = NULL;
-	return (mini->exit_status);
+	return (result);
 }
 
 // checks if command is specified by relative or absolute path
 //  if is_executable > 0 means it is executable file and we found it
-// if is_executable > 0 means we found it but it doesnt have execute permisions
+// if is_executable = 0 means we found it but it doesnt have execute permisions
 // if we get to end, is_executable_file returned < 0 meaning file was not found
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
@@ -51,14 +53,14 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 
 	path = cmd->cmd;
 	is_executable = is_executable_file(path);
-	if (is_executable > 0)
+	if (is_executable == 0)
+		return (set_executor_error_msg(mini, path, "Permission denied", NULL), 9);
+	else if (is_executable > 0)
 	{
 		if (execve(path, cmd->args, mini->env) == -1)
-			return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
+			return (set_executor_error_msg(mini, path, "Exec format error", NULL), 10);
 	}
-	else if (is_executable == 0)
-		return (set_executor_error_msg(mini, path, "Permission denied", NULL), 0);
-	return (0);
+	return (set_executor_error_msg(mini, path, "No such file or directory", NULL), 11);
 }
 
 // checks if command is shell command (=command at $PATH variable)
@@ -68,47 +70,44 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), ERROR);
+		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), 12);
 	if (execve(path, cmd->args, mini->env) == -1)
-		return (set_executor_error_msg(mini, path, "Exec format error", NULL), ERROR);
-	return (0);
+		return (set_executor_error_msg(mini, path, "Exec format error", NULL), 13);
+	return (14);
 }
 
+// we have to understand we call it command but it can also be path
+// it actually always is path to the executable file -> command
+// 1. first check builtin functions - do function for this later
+// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path containing / - absolute or relative
+// 3. means that only place left to look for are the commands at $PATH
 int	execute(t_mini *mini, t_cmd *cmd)
 {
-	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
-	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
-	// 1. first check builtin functions - do function for this later
-	if (exec_builtins(mini, mini->cmd_list) != 0)
-	{
-		return (mini->exit_status);
-	}
-	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-	if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
-	{
-		if (exec_command_by_path(mini, cmd) == ERROR)
-		{
-			return (ERROR);
-		}
-	}
-	// 3. means that only place left to look for are the shell commands
+	int	result;
+
+	if (is_builtin(mini))
+		result = exec_builtins(mini, mini->cmd_list);
+	else if (ft_strchr(cmd->cmd, '/'))
+		result = exec_command_by_path(mini, cmd);
 	else
-	{
-		if (exec_shell_command(mini, cmd) == ERROR)
-		{
-			return (ERROR);
-		}
-	}
-	return (ERROR);
+		result = exec_shell_command(mini, cmd);
+	free_cmd_list(mini);
+	//free_arr(mini->env);
+	if (result != 0 && mini->error_msg)
+		printf("%s\n", mini->error_msg);
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	printf("result1: %d\n", result);
+	return (result);
 }
 
-// check if builtin & 1 comand - not open any processes, must be done in main
+// check if builtin & 1 command - not open any processes, must be done in main
 // create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
 // and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
 // for each process set the infile and outfile to the ones from its redir struct, if there is any
-// set STDIN and STDOUT of each process to correcsponding pipe or file
+// set STDIN and STDOUT of each process to corresponding pipe or file
 // close pipes and files - the ones we need are dupped anyways so we do not need them anymore
-// execute - if the process condinues, mans if failed or it was a builtin
+// execute - if the process continues, mans if failed or it was a builtin
 int	executor(t_mini *mini)
 {
 	int		files[2];
@@ -149,13 +148,7 @@ int	executor(t_mini *mini)
 			close_all_pipes(pipes, num_of_p);
 			if (nthcmd->cmd)
 				mini->exit_status = execute(mini, nthcmd);
-			free_cmd_list(mini);
-			free_arr(mini->env);
-			if (mini->exit_status != 0 && mini->error_msg)
-				printf("%s\n", mini->error_msg);
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			//return (mini->exit_status);
+			printf("result2: %d\n", mini->exit_status);
 			exit(mini->exit_status);
 		}
 		i++;
@@ -167,7 +160,9 @@ int	executor(t_mini *mini)
 	{
 		waitpid(pids[i], &mini->exit_status, 0);
 		mini->exit_status = WIFEXITED(mini->exit_status);
+		printf("exit status: %d\n", mini->exit_status );
 		i++;
 	}
+	printf("final exit status: %d\n", mini->exit_status );
 	return (0);
 }

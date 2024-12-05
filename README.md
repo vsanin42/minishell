@@ -7,7 +7,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 
 29.11 addins by Zuzka
 - when program exits it prints exit like bash
-- strtrim whitespaces from nput at beginning of lexer
+- strtrim whitespaces from input at beginning of lexer
 - starting with norm
 -
 
@@ -21,6 +21,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - handle flags ?? if there are some, move it to shell implementation, if not use
 - sc error message shows cd and then cd again nstead of the non-existing folder
 - expand $?
+- does not properly update exit status
 
 ## test cases
 echo -nnnnnnnnnnnnnn hello
