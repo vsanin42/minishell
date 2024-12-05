@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_evaluator.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/01 17:05:36 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 14:01:53 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 // evaluate files for existance and correct permissions
 // possible cases:
-// 1. infile file does not exist
+// 1. infile does not exist
 // 2. infile exists but error checking its permissions
 // 3. infile exists but doesnt have permissions
 // 4. outfile exists but error checking its permissions
-// 5. outfile has write permission - it CAN not exist, it will be created
+// 5. outfile has write permission - it CAN not exist - then it will be created
 // @returns 0 if all good, 1 if there was some error
 int	validate_files(t_mini *mini)
 {
 	t_cmd	*cmd;
 	t_redir	*red;
+	char *temp;
 
 	cmd = mini->cmd_list;
 	while (cmd)
@@ -31,8 +32,18 @@ int	validate_files(t_mini *mini)
 		red = cmd->redir;
 		while (red)
 		{
+			temp ="minishell: ";
 			if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno == ENOENT)
-				return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
+			{
+				//write(2, "minishell: \0", 12);
+				//printf("errno: %d\n", errno);
+				temp = ft_strjoin(temp, red->file);
+				perror(temp);
+				free(temp);
+				temp = NULL;
+				return (ERROR);
+				//return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
+			}
 			else if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno != ENOENT)
 				return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
 			else if (red->type == TOKEN_REDIRIN && (is_readable_file(red->file) == 0))

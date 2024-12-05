@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 12:07:23 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 13:46:08 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ int	main(int argc, char *argv[], char *env[])
 	t_mini	mini;
 
 	(void)argv;
+	errno = 0;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);

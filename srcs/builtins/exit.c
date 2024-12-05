@@ -3,20 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/01 17:04:22 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 12:47:40 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// exits the program, optional argument status that indicates success/failure status of the shell session or script
-// exit status 0 indicates success, other indicate error or abnormal termination
-// if no argument is provided to exit, the default exit status is that of the last executed command.
-// WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
-// exit_status must be between 0 and 255
+// exits program
+// @param status(opt.) indicates success/failure status of shell session/script
+// exit status 0 indicates success, else error or abnormal termination
+// if no argument is provided, it exits with status of last executed command
+// WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE
+// EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
+// exit_status is always between 0 and 255
 void	exit_builtin(t_mini *mini)
 {
 	int	exit_status;

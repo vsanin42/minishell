@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:54 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/03 16:32:32 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 12:48:26 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,14 @@ char	*get_current_directory(void)
 	return (cwd);
 }
 
-// duplicates pwd - WORKS
-// call for type EXECUTABLE
+// duplicates pwd
 // @returns 0 on success, 1 on error
 int	pwd_builtin(t_mini *mini, t_cmd *cmd)
 {
 	char	*cwd;
 
 	(void)cmd;
-	cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+	cwd = get_current_directory();
 	if (!cwd)
 	{
 		set_executor_error_msg(mini, "pwd", "cwd not found", NULL);
