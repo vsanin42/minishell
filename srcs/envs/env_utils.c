@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/04 10:56:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/04 11:24:26 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,10 @@ int	get_env_index(char **envs, char *env_name)
 	}
 	return (-1);
 }
-
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// strncmp based on the length of ENV_NAME,
+// not the ones we iterate through inside env list
+// otherwise USER matches USERaaa when it's invalid
 char	*getenv_local(char **envs, char *env_name)
 {
 	int		i;
@@ -121,12 +124,14 @@ char	*getenv_local(char **envs, char *env_name)
 		return (NULL);
 	value = NULL;
 	i = -1;
+	name_len = ft_strlen(env_name);
 	while (envs[++i])
 	{
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (NULL);
-		name_len = ft_strlen(curr_env_name);
+		// printf("env found: %s\n", curr_env_name);
+		// printf("env to match: %s\n\n", env_name);
 		if (!ft_strncmp(curr_env_name, env_name, name_len))
 		{
 			value = ft_substr(envs[i], name_len + 1,

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/04 10:55:19 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 01:32:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_mini
 /* minishell.c */
 int		process_input(char *input, t_mini *mini); // should be void, testing
 int		show_prompt(t_mini *mini);
-void	set_termios(void);
+void	set_termios(int mode);
 
 /* builtins/~.c */
 int		is_builtin(t_mini *mini);
@@ -112,6 +112,7 @@ int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
 int		isbq(char *input); // move this later
 int		check_input(char *input);
+int		check_bad_substitution(char *input, int i);
 
 /* evaluators/cmd_evaluator.c */
 int		validate_files(t_mini *mini);
@@ -126,25 +127,25 @@ int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
 int		exec_shell_command(t_mini *mini, t_cmd *cmd);
 int		execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini);
+void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
 
 /* execution/executor_utils.c */
 void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
 
 /* execution/executor_files_pipes.c */
-int	close_files(int *infile, int *outfile);
-int	close_all_pipes(int pipes[][2], int pipe_count);
-int	open_pipes(int pipes[][2], int process_count);
-int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
-int	set_files(t_cmd *nthcmd, int *infile, int *outfile);
+int		close_files(int *infile, int *outfile);
+int		close_all_pipes(int pipes[][2], int pipe_count);
+int		open_pipes(int pipes[][2], int process_count);
+int		set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
+int		set_files(t_cmd *nthcmd, int *infile, int *outfile);
 
 /* lexer/lexer_env.c */
-
-/* lexer_env.c */
 char	*handle_word_no_env(char *res, char *text, int *i);
 char	*handle_env(t_mini *mini, char *res, char *text, int *i);
 char	*handle_env_in_braces(t_mini *mini, char *res, char *text, int *i);
 char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i);
 char	*get_env_value_to_process(t_mini *mini, char *text);
+char	*handle_question(t_mini *mini, char *res, char *text, int *i);
 
 /* lexer/lexer_quotes.c */
 int		cnc_check(char *text, int *i);
@@ -234,6 +235,7 @@ int		parser(t_mini *mini);
 
 /* signal.c */
 void	sig_handler(int sig);
+void	sigint_void(int sig);
 
 /* testing.c */
 void	print_token_list(t_mini *mini);

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/04 10:57:59 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 02:17:10 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 		mini->exit_status = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
 		mini->exit_status = unset_builtin(mini, cmd);
-	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
-	// 	mini->exit_status = echo_builtin(mini, cmd);
+	else if (!ft_strncmp(cmd->cmd, "echo", 4))
+		mini->exit_status = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
 		exit_builtin(mini);
-	else
-		mini->exit_status = 0;
+	else // return error if no builtin matched - need to free error msg???
+		return (ERROR); // mini->exit_status = 0;
 	if (mini->exit_status != 0 && mini->error_msg)
 		printf("%s\n", mini->error_msg);
 	free(mini->error_msg);
 	mini->error_msg = NULL;
-	return (mini->exit_status);
+	return (0); // no need to return exit status
 }
 
 // checks if command is specified by relative or absolute path
@@ -79,27 +79,25 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	// we have to understand we call it command if it is the first text in cmd but it can also be path (it actually always is path to the executable file - command)
 	// so we put errors: for builtins command not found, for checking path no such file or directory, for shell executables command not found
 	// 1. first check builtin functions - do function for this later
-	if (exec_builtins(mini, mini->cmd_list) != 0)
-	{
-		return (mini->exit_status);
-	}
-	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
-	if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
-	{
-		if (exec_command_by_path(mini, cmd) == ERROR)
+	if (exec_builtins(mini, mini->cmd_list) == ERROR) // if nothing matched, try these:
+	{	// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path
+		if (ft_strchr(cmd->cmd, '/')) // if contains baskslash shell interprets it as a path to specific file - absolute or relative
 		{
-			return (ERROR);
+			if (exec_command_by_path(mini, cmd) == ERROR)
+			{
+				return (ERROR);
+			}
+		}
+		// 3. means that only place left to look for are the shell commands
+		else
+		{
+			if (exec_shell_command(mini, cmd) == ERROR)
+			{
+				return (ERROR);
+			}
 		}
 	}
-	// 3. means that only place left to look for are the shell commands
-	else
-	{
-		if (exec_shell_command(mini, cmd) == ERROR)
-		{
-			return (ERROR);
-		}
-	}
-	return (ERROR);
+	return (ERROR); // why does it return error by default?
 }
 
 // check if builtin & 1 comand - not open any processes, must be done in main
@@ -113,7 +111,7 @@ int	executor(t_mini *mini)
 {
 	int		files[2];
 	int		num_of_p = get_cmd_count(mini->cmd_list);
-	int		pids[num_of_p + 1];
+	int		pids[num_of_p]; // if we don't null terminate then no +1
 	int		pipes[num_of_p - 1][2];
 	int		i;
 	t_cmd	*nthcmd;
@@ -124,6 +122,7 @@ int	executor(t_mini *mini)
 		return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
 		return (ERROR);
+	signal(SIGINT, sigint_void);
 	i = 0;
 	while (i < num_of_p)
 	{
@@ -136,6 +135,9 @@ int	executor(t_mini *mini)
 		}
 		if (pids[i] == 0)
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			set_termios(0);
 			nthcmd = get_nth_command(mini->cmd_list, i);
 			if (!nthcmd)
 			{
@@ -148,7 +150,7 @@ int	executor(t_mini *mini)
 			close_files(&files[0], &files[1]);
 			close_all_pipes(pipes, num_of_p);
 			if (nthcmd->cmd)
-				mini->exit_status = execute(mini, nthcmd);
+				execute(mini, nthcmd); // exit status already assigned
 			free_cmd_list(mini);
 			free_arr(mini->env);
 			if (mini->exit_status != 0 && mini->error_msg)
@@ -160,14 +162,30 @@ int	executor(t_mini *mini)
 		}
 		i++;
 	}
-	pids[i] = '\0';
 	close_all_pipes(pipes, num_of_p);
+	set_exit_status(num_of_p, mini, pids);
+	//printf("\nstatus: %d\n", mini->exit_status);
+	return (0);
+}
+
+void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
+{
+	int	i;
+	int	status;
+	
 	i = 0;
+	status = 0;
 	while (i < num_of_p)
 	{
-		waitpid(pids[i], &mini->exit_status, 0);
-		mini->exit_status = WIFEXITED(mini->exit_status);
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+			mini->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			mini->exit_status = WTERMSIG(status) + 128;
+			if (WTERMSIG(status) == SIGQUIT)
+				printf("Quit: 3\n");
+		}
 		i++;
 	}
-	return (0);
 }

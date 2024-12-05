@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/04 10:56:36 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/04 11:00:20 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ char	**unset_arr_element(char **env, int index, int len)
 {
 	char	**result;
 	int		i;
-	int		len;
 
 	i = 0;
 	if (index >= len)

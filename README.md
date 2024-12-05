@@ -5,11 +5,26 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still fou
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-29.11 addins by Zuzka
+# 29.11 addins by Zuzka
 - when program exits it prints exit like bash
 - strtrim whitespaces from nput at beginning of lexer
 - starting with norm
 -
+
+# 2-4.12 by Vlad
+- finished and fixed echo, -n and -nnn... handled
+- all builtins norm fixed
+- fixed an issue with $USERaaa not expanding correctly
+- signals work +-: child processes have their own signal handling along with termios reset to make the terminal print the characters - check behaviour of ctrl+\ with open cat or grep - this is one of the eval sheet checks. ctrl c, ctrl d no issues. ctrl \ in bash causes a core dump and exits - for us i guess we shouldn't manually cause any core dumps so let's keep it as a simple exit.
+TODO: more mini inside mini checks but it also works.
+- in executor once the big while loop is done: int arrays don't have a null terminator - how would they separate 0 and '\0'? - so i think we don't have to set the last element to 0. if we don't traverse it like char * - while (*str != '\0') then no need for this (pids[i] = '\0';)
+- in unset: replaced 'if (!result') with 'if (!result[*i])': i assume we need to check each strdup result not the head of the array
+- status codes: after the big executor loop added the correct conversion from 'status' received from waitpid to mini->exit_status.
+- status now expands, issues with appending extra chars persist. works with and without {}
+- invalid inputs - ${} can't start with numbers, nothing except _ allowed - done but a lot of checks are needed - input_evaluator.c
+TODO: same but for export inputs.
+TODO: exit status setting before execution: maybe set default exit status to 1 so it's always an error if something can't reach the execution phase? only change to 0 if it can reach the execution and change back to 1 if an error occurs
+- attempted to make sense in the execute() function - it was executing twice, both the builtin and from execve, still some work left there. + no reason to return exit code if it's written into mini struct anyway 
 
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token
@@ -36,6 +51,16 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 
 ## test cases
 echo -nnnnnnnnnnnnnn hello - WORKS -Vlad
+
+mini: echo ${"USER"} -> USER}
+bash: ${"USER"}: bad substitution - WORKS
+this trailing } is still sometimes present though
+
+mini: echo $'USER' -> $USER
+bash: echo $'USER' -> USER
+
+mini: echo ${?}a -> 0
+bash: echo ${?}a -> 0a
 
 # HEREDOC MAIN THINGS - VLAD
 main things:
