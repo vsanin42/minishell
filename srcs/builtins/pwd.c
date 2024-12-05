@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:54 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/25 19:45:35 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/03 16:32:32 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ char	*get_current_directory(void)
 {
 	char	*cwd;
 
-	cwd = (char*)malloc(PATH_MAX * sizeof(char)); // allocate memory for buffer where getcwd stores output
+	cwd = (char *)malloc(PATH_MAX * sizeof(char));
 	if (!cwd)
 		return (NULL);
-	if (getcwd(cwd, PATH_MAX) == NULL)	// getcwd stores current working directory in buffer that we have to allocate
+	if (getcwd(cwd, PATH_MAX) == NULL)
 	{
-		free(cwd); // free memory on failure
+		free(cwd);
 		return (NULL);
 	}
 	return (cwd);

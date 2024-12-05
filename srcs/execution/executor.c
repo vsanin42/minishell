@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/01 18:05:18 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 12:27:08 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
 		result = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
+/* <<<<<<< HEAD
 		result = unset_builtin(mini, cmd);
 	// else if (!ft_strncmp(cmd->cmd, "echo", 4))
 	// 	result = echo_builtin(mini, cmd);
@@ -40,6 +41,19 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	free(mini->error_msg);
 	mini->error_msg = NULL;
 	return (result);
+======= */
+		mini->exit_status = unset_builtin(mini, cmd);
+	else if (!ft_strncmp(cmd->cmd, "echo", 4))
+		mini->exit_status = echo_builtin(mini, cmd);
+	else if (!ft_strncmp(cmd->cmd, "exit", 4))
+		exit_builtin(mini);
+	else // return error if no builtin matched - need to free error msg???
+		return (ERROR); // mini->exit_status = 0;
+	if (mini->exit_status != 0 && mini->error_msg)
+		printf("%s\n", mini->error_msg);
+	free(mini->error_msg);
+	mini->error_msg = NULL;
+	return (0); // no need to return exit status
 }
 
 // checks if command is specified by relative or absolute path
@@ -98,7 +112,8 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	free(mini->error_msg);
 	mini->error_msg = NULL;
 	printf("result1: %d\n", result);
-	return (result);
+	mini->exit_status = result;
+	exit(mini->exit_status);
 }
 
 // check if builtin & 1 command - not open any processes, must be done in main
@@ -112,7 +127,7 @@ int	executor(t_mini *mini)
 {
 	int		files[2];
 	int		num_of_p = get_cmd_count(mini->cmd_list);
-	int		pids[num_of_p + 1];
+	int		pids[num_of_p]; // if we don't null terminate then no +1
 	int		pipes[num_of_p - 1][2];
 	int		i;
 	t_cmd	*nthcmd;
@@ -123,6 +138,7 @@ int	executor(t_mini *mini)
 		return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
 		return (ERROR);
+	signal(SIGINT, sigint_void);
 	i = 0;
 	while (i < num_of_p)
 	{
@@ -135,6 +151,9 @@ int	executor(t_mini *mini)
 		}
 		if (pids[i] == 0)
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			set_termios(0);
 			nthcmd = get_nth_command(mini->cmd_list, i);
 			if (!nthcmd)
 			{
@@ -148,21 +167,33 @@ int	executor(t_mini *mini)
 			close_all_pipes(pipes, num_of_p);
 			if (nthcmd->cmd)
 				mini->exit_status = execute(mini, nthcmd);
-			printf("result2: %d\n", mini->exit_status);
-			exit(mini->exit_status);
 		}
 		i++;
 	}
-	pids[i] = '\0';
 	close_all_pipes(pipes, num_of_p);
+	set_exit_status(num_of_p, mini, pids);
+	//printf("\nstatus: %d\n", mini->exit_status);
+	return (0);
+}
+
+void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
+{
+	int	i;
+	int	status;
+
 	i = 0;
+	status = 0;
 	while (i < num_of_p)
 	{
-		waitpid(pids[i], &mini->exit_status, 0);
-		mini->exit_status = WIFEXITED(mini->exit_status);
-		printf("exit status: %d\n", mini->exit_status );
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+			mini->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			mini->exit_status = WTERMSIG(status) + 128;
+			if (WTERMSIG(status) == SIGQUIT)
+				printf("Quit: 3\n");
+		}
 		i++;
 	}
-	printf("final exit status: %d\n", mini->exit_status );
-	return (0);
 }

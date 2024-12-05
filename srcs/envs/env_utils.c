@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 11:55:36 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/04 11:24:26 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ char	*process_local_env(t_mini *mini, char *name)
 			return (NULL);
 	}
 	return (res);
+}
+
+void	free_paths(char **paths, int *i)
+{
+	*i = -1;
+	while (paths[++(*i)])
+		free(paths[*i]);
 }
 
 // env PATH: for commands/programs - searches for executable in each path from PATH env
@@ -56,7 +63,6 @@ char	*get_path_env(t_mini *mini, char *cmd)
 	if (!paths)
 		return (NULL);
 	free(env_path);
-	i = 0;
 	while (paths[i])
 	{
 		path_without_cmd = ft_strjoin(paths[i], "/");
@@ -67,17 +73,13 @@ char	*get_path_env(t_mini *mini, char *cmd)
 			return (NULL);
 		if (access(path, F_OK) == 0)
 		{
-			i = -1;
-			while (paths[++i])
-				free(paths[i]);
+			free_paths(paths, &i);
 			return (path);
 		}
 		free(path);
 		i++;
 	}
-	i = -1;
-	while (paths[++i])
-		free(paths[i]);
+	free_paths(paths, &i);
 	free(paths);
 	return (NULL);
 }
@@ -107,7 +109,10 @@ int	get_env_index(char **envs, char *env_name)
 	}
 	return (-1);
 }
-
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// strncmp based on the length of ENV_NAME,
+// not the ones we iterate through inside env list
+// otherwise USER matches USERaaa when it's invalid
 char	*getenv_local(char **envs, char *env_name)
 {
 	int		i;
@@ -119,20 +124,22 @@ char	*getenv_local(char **envs, char *env_name)
 		return (NULL);
 	value = NULL;
 	i = -1;
+	name_len = ft_strlen(env_name);
 	while (envs[++i])
 	{
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (NULL);
-		name_len = ft_strlen(curr_env_name);
+		// printf("env found: %s\n", curr_env_name);
+		// printf("env to match: %s\n\n", env_name);
 		if (!ft_strncmp(curr_env_name, env_name, name_len))
 		{
-			value = ft_substr(envs[i], name_len + 1, (ft_strlen(envs[i]) - name_len - 1));
+			value = ft_substr(envs[i], name_len + 1,
+					(ft_strlen(envs[i]) - name_len - 1));
 			free(curr_env_name);
 			return (value);
 		}
 		free(curr_env_name);
-		curr_env_name = NULL;
 	}
 	return (NULL);
 }
