@@ -5,6 +5,12 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still fou
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+# 6.12. by Zuzka
+- fixed redirectionwhenwe have single builtin executed in parent
+- adjusted folder structure
+- changed error meeesages to use perror and return errno where possible, must test still but for now looks good
+
+
 # 2-4.12 by Vlad
 - finished and fixed echo, -n and -nnn... handled
 - all builtins norm fixed
@@ -22,7 +28,6 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - ? echo can fail and in this case returns -1 and sets errno
 - set perror in each builtin and executor like we did in cd
 - unset hh unsets also h=.. because of strncmp only comparing without trailing \0
-- changed error meeesages to use perror and return errno where possible, must test still but for now looks good 
 
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token
