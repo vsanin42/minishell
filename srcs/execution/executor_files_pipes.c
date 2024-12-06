@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_files_pipes.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 20:25:58 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 16:45:54 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
-	char	*buffer;
 	int temp_pipe[2];
 	int result;
 
@@ -115,16 +114,19 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			*infile = open(redir->file, O_RDONLY);
 			// it can go wrong? maybe set errorcode and return it
 		}
-		// else if (redir->type == TOKEN_HEREDOC)
-		// {
-		// 	if (pipe(temp_pipe) == -1)
-		// 	{
-		// 		result = errno;
-		// 		perror("minishell");
-		// 		return(result);
-		// 	}
-
-		// }
+		else if (redir->type == TOKEN_HEREDOC)
+		{
+			if (pipe(temp_pipe) == -1)
+			{
+				result = errno;
+				perror("minishell");
+				return(result);
+			}
+			write(temp_pipe[1], redir->file, ft_strlen(redir->file));
+			close(temp_pipe[1]);
+    		dup2(temp_pipe[0], STDIN_FILENO);
+    		close(temp_pipe[0]);
+		}
 		else if (redir->type == TOKEN_REDIROUT)
 		{
 			if (*outfile > STDOUT_FILENO)

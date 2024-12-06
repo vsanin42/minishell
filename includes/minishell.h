@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/05 01:32:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/06 18:32:07 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@
 # include <signal.h>
 # include <unistd.h>
 # include <termios.h>
-# include <sys/types.h> // DIR
-# include <dirent.h> // opendir, readdir, closedit
-# include <limits.h> // PATH_MAX
-# include <sys/stat.h> // S_constants
+# include <sys/types.h>
+# include <dirent.h>
+# include <limits.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"
 # include <readline/readline.h>
@@ -35,12 +35,12 @@
 
 typedef enum e_token_type
 {
-	TOKEN_TEXT, // text must stay at position 0
-	TOKEN_PIPE, // |
-	TOKEN_REDIRIN, // <
-	TOKEN_REDIROUT, // >
-	TOKEN_APPEND, // >>
-	TOKEN_HEREDOC, // <<
+	TOKEN_TEXT,
+	TOKEN_PIPE,
+	TOKEN_REDIRIN,
+	TOKEN_REDIROUT,
+	TOKEN_APPEND,
+	TOKEN_HEREDOC,
 	TOKEN_FILE
 }	t_type;
 
@@ -73,11 +73,10 @@ typedef struct s_mini
 	t_cmd			*cmd_list;
 	char			*error_msg;
 	int				exit_status;
-
 }					t_mini;
 
 /* minishell.c */
-int		process_input(char *input, t_mini *mini); // should be void, testing
+int		process_input(char *input, t_mini *mini);
 int		show_prompt(t_mini *mini);
 void	set_termios(int mode);
 
@@ -110,7 +109,7 @@ int		check_braces_alnum(char *input, int start);
 int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
-int		isbq(char *input); // move this later
+int		isbq(char *input);
 int		check_input(char *input);
 int		check_bad_substitution(char *input, int i);
 

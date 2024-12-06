@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 19:50:35 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 18:10:12 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,9 @@ int	executor(t_mini *mini)
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
 	// !!! ADD REDIRECTIONS WHEN WE HAVE SINGLE BUILTIN !!!
-	if (is_builtin(mini))
-		return (exec_builtins(mini, mini->cmd_list));
+	// let's just do this from execute in a centralized way
+	// if (is_builtin(mini))
+	// 	return (exec_builtins(mini, mini->cmd_list));
 	if (open_pipes(pipes, num_of_p) == ERROR)
 		return (ERROR);
 	signal(SIGINT, sigint_void);
@@ -196,11 +197,9 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		if (WIFEXITED(status))
 			mini->exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-		{
 			mini->exit_status = WTERMSIG(status) + 128;
-			if (WTERMSIG(status) == SIGQUIT)
-				printf("Quit: 3\n");
-		}
 		i++;
 	}
+	if (WTERMSIG(status) == SIGQUIT)
+		printf("Quit (core dumped)\n");
 }
