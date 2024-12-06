@@ -28,6 +28,7 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - ? echo can fail and in this case returns -1 and sets errno
 - set perror in each builtin and executor like we did in cd
 - unset hh unsets also h=.. because of strncmp only comparing without trailing \0
+- leaks when we call minishell in minishell - found when was in minishell, called make, and ran minishell again
 
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 15:53:49 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 18:55:55 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,11 +100,7 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
-	// char	*buffer;
-	// int temp_pipe[2];
-	// int result;
 
-	// result = 0;
 	redir = nthcmd->redir;
 	while (redir)
 	{
@@ -113,33 +109,23 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			if (*infile > STDIN_FILENO)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
-			// it can go wrong? maybe set errorcode and return it
 		}
-		// else if (redir->type == TOKEN_HEREDOC)
-		// {
-		// 	if (pipe(temp_pipe) == -1)
-		// 	{
-		// 		result = errno;
-		// 		perror("minishell");
-		// 		return(result);
-		// 	}
-
-		// }
 		else if (redir->type == TOKEN_REDIROUT)
 		{
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			printf("set outfile\n");
-			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_APPEND)
 		{
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			// it can go wrong? maybe set errorcode and return it
 		}
+		if (*infile == -1)
+			return (mini_perror());
+		if (*outfile == -1)
+			return (mini_perror());
 		redir = redir->next;
 	}
 	return (0);

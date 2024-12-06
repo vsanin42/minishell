@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:19:33 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 19:01:47 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 18:53:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	is_builtin(t_mini *mini)
 	t_cmd	*cmd;
 
 	cmd = mini->cmd_list;
-	if (cmd && !cmd->next && cmd->cmd
+	if (cmd && cmd->cmd
 		&& (!ft_strncmp(cmd->cmd, "cd", 2)
 			|| !ft_strncmp(cmd->cmd, "pwd", 3)
 			|| !ft_strncmp(cmd->cmd, "env", 3)

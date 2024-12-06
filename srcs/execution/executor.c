@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/06 16:14:45 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 18:59:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,20 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 		result = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
 		exit_builtin(mini);
-	else // return error if no builtin matched - need to free error msg???
-		return (ERROR); // result = 0;
-	// if (result != 0 && mini->error_msg)
-	// 	printf("%s\n", mini->error_msg);
-	// free(mini->error_msg);
-	// mini->error_msg = NULL;
-	return (result); // no need to return exit status
+	else
+		return (ERROR);
+	return (result);
 }
 
 int exec_builtin_in_parent(t_mini *mini, int files[2])
 {
-	int result;
+	int	result;
+	int	stdin;
+	int	stdout;
 
 	set_files(mini->cmd_list, &files[0], &files[1]);
-	int stdin = dup(STDIN_FILENO);
-	int stdout = dup(STDOUT_FILENO);
+	stdin = dup(STDIN_FILENO);
+	stdout = dup(STDOUT_FILENO);
 	dup2(files[0], STDIN_FILENO);
 	dup2(files[1], STDOUT_FILENO);
 	close_files(&files[0], &files[1]);
@@ -122,12 +120,6 @@ int	execute(t_mini *mini, t_cmd *cmd)
 		result = exec_shell_command(mini, cmd);
 	free_cmd_list(mini);
 	//free_arr(mini->env);
-	// if (result != 0 && mini->error_msg)
-	// 	printf("%s\n", mini->error_msg);
-	// free(mini->error_msg);
-	// mini->error_msg = NULL;
-	free_cmd_list(mini);
-	free_arr(mini->env);
 	exit(result);
 }
 
