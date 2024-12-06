@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/03 16:33:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/06 14:55:31 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 // gets index of env
 // shouldn't return ERROR because it = 1 and it could be confused with index
-// @returns: -2 if error in get_env_name to differentiate from ERROR
-// @returns: index from env array
+// @returns index from env array,-2 on error in get_env_name to diff from ERROR
 int	export_get_index(t_mini *mini, char **vars, int i)
 {
 	char	*env_name;

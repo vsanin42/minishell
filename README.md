@@ -5,12 +5,6 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still fou
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-# 29.11 addins by Zuzka
-- when program exits it prints exit like bash
-- strtrim whitespaces from nput at beginning of lexer
-- starting with norm
--
-
 # 2-4.12 by Vlad
 - finished and fixed echo, -n and -nnn... handled
 - all builtins norm fixed
@@ -26,7 +20,9 @@ TODO: same but for export inputs.
 TODO: exit status setting before execution: maybe set default exit status to 1 so it's always an error if something can't reach the execution phase? only change to 0 if it can reach the execution and change back to 1 if an error occurs
 - attempted to make sense in the execute() function - it was executing twice, both the builtin and from execve, still some work left there. + no reason to return exit code if it's written into mini struct anyway
 - ? echo can fail and in this case returns -1 and sets errno
-- set perror in each builtin and executor like we did in cd 
+- set perror in each builtin and executor like we did in cd
+- unset hh unsets also h=.. because of strncmp only comparing without trailing \0
+- changed error meeesages to use perror and return errno where possible, must test still but for now looks good 
 
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token
@@ -43,12 +39,12 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - check if there is actual cmd->cmd in cmd
 - before evey exit free token list, cmd list, error message, mini->env
 - add input and output redirection when calling just one builtin
-
+- in unser what/why are the falgs 1, 2 in function unset_strdup ?
 - signal handling mini inside mini
+- i think I get now why some error messages are in bash are lowercase and soe start uppercase - the uppercase ones are the perror messages from the system, the others are defined in bash i think :D :D
 
 - echo $USERaaa prints only user name, should print nothing/newline. ${USER}aaa works fine
 - signal handling of processes like cat that wait for input
-- sc error message shows cd and then cd again nstead of the non-existing folder
 - expand $?
 
 ## test cases

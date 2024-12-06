@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 19:50:21 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 14:46:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	init_mini(t_mini *mini, char **env)
 	// 	return ;
 	mini->token_list = NULL;
 	mini->cmd_list = NULL;
-	mini->error_msg = NULL;
+	//mini->error_msg = NULL;
 	mini->exit_status = 0;
 	mini->env = dup_array(env);
 }

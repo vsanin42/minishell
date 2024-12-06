@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/04 11:00:20 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/06 14:57:39 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int	unset_strdup(char **result, char **env, int *i, int flag)
 	return (0);
 }
 
-// env, 0, len=3
 // removes an array element by duplicating it and skipping said element
 // ?????????????: if (!result) in while loops - did you mean if (!result[i])?
 // changed it if it's not intended

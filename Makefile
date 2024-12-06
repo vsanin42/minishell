@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+         #
+#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/11/29 15:51:43 by zuzanapiaro      ###   ########.fr        #
+#    Updated: 2024/12/06 14:27:17 by zpiarova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,25 +38,25 @@ SRC  =  srcs/minishell.c \
 		srcs/evaluators/cmd_evaluator.c \
 		srcs/evaluators/input_evaluator.c \
 		srcs/evaluators/token_evaluator.c \
+		srcs/execution/executor.c \
+		srcs/execution/executor_utils.c \
+		srcs/execution/executor_files_pipes.c \
 		srcs/lexer/lexer_env.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
 		srcs/lexer/lexer.c \
+		srcs/parser/parser_heredoc.c \
+		srcs/parser/parser.c \
 		srcs/types/array.c \
 		srcs/types/t_cmd.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
-		srcs/execution/executor.c \
-		srcs/execution/executor_utils.c \
-		srcs/execution/executor_files_pipes.c \
-		srcs/exit.c \
-		srcs/file_permissions.c \
-		srcs/free.c \
-		srcs/parser_heredoc.c \
-		srcs/parser.c \
-		srcs/signal.c \
-		srcs/testing.c \
-		srcs/utils.c \
+		srcs/utils/exit.c \
+		srcs/utils/file_utils.c \
+		srcs/utils/free.c \
+		srcs/utils/signal.c \
+		srcs/utils/testing.c \
+		srcs/utils/utils.c \
 
 OBJ = $(SRC:.c=.o)
 

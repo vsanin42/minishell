@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:30:33 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 11:54:07 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 15:01:10 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,14 +135,14 @@ char	**remove_arr_element(char **arr, int index)
 	while (arr[i] && i < index)
 	{
 		result[i] = ft_strdup(arr[i]);
-		if (!result)
+		if (!result[i])
 			return (NULL);
 		i++;
 	}
 	while (arr[i + 1] && i < len - 1)
 	{
 		result[i] = ft_strdup(arr[i + 1]);
-		if (!result)
+		if (!result[i])
 			return (NULL);
 		i++;
 	}
