@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 14:57:39 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/07 11:29:16 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int	unset_strdup(char **result, char **env, int *i, int flag)
 }
 
 // removes an array element by duplicating it and skipping said element
-// ?????????????: if (!result) in while loops - did you mean if (!result[i])?
-// changed it if it's not intended
 // @returns allocated array without removed element
 // old array is freed in the caller
 char	**unset_arr_element(char **env, int index, int len)
@@ -57,6 +55,7 @@ char	**unset_arr_element(char **env, int index, int len)
 // unsets an env variable
 // @returns: ERROR if index was not found - same logic as export
 // @returns: 0 if successfully removed the variable and updated env list
+// no arguments = return 0 - correct bash behaviour
 int	unset_builtin(t_mini *mini, t_cmd *cmd)
 {
 	int		i;

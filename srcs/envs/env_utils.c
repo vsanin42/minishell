@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 22:40:15 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 21:46:03 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	get_env_index(char **envs, char *env_name)
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (-1);
-		if (!ft_strncmp(curr_env_name, env_name, ft_strlen(curr_env_name)))
+		if (!ft_strncmp(curr_env_name, env_name, ft_strlen(env_name)))
 		{
 			free(curr_env_name);
 			curr_env_name = NULL;

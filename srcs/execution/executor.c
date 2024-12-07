@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/07 19:10:53 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 21:48:30 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,12 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 
 	result = 0;
 	path = get_path_env(mini, cmd->cmd);
-	if (!path)
-		return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
+	if (!path) //return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
+	{
+		result = 127; 
+		printf("%s: command not found\n", cmd->cmd);
+		return (result);
+	}
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		result = errno;
@@ -206,5 +210,5 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		i++;
 	}
 	if (WTERMSIG(status) == SIGQUIT)
-		printf("Quit (core dumped)\n"); // maybe add not-dumped since idk if we are dumping core? I know bash does but us? - Z
+		printf("Quit\n");
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/07 18:58:44 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 21:45:31 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void	exit_builtin(t_mini *mini);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		export_get_index(t_mini *mini, char **vars, int i);
 int		export_add_back(t_mini *mini, char* env);
+int		export_check_env(char *env);
 int		env_builtin(t_mini *mini, t_cmd *cmd);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
 char	**unset_arr_element(char **env, int index, int len);

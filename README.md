@@ -10,6 +10,14 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - adjusted folder structure
 - changed error messages to use perror and return errno where possible, must test still but for now looks good
 
+# 6-7.12 by Vlad
+- **added:** heredoc via pipe in set_files
+- **fixed:** small sigquit issue which printed a message + newline twice
+- **fixed:** echo - has to print a newline when called with no arguments, this includes the case when can't expand an env (echo $USERRR)
+- **fixed:** ? echo - with a workaround by returning 127 (command not found) and printing the message manually - not a perfect workaround because no other place can generate 127 errno naturally based on what i've seen and tried. $? gets set to 127 too. must keep this in mind when testing other things
+- **fixed:** issue with double unsets and single exports - same reason as expanding issue, strncmp against env_name len
+- **fixed:** export formatting - env name must be alnum and _ and cannot start with a number. if it's not the case - ERROR. on top of that it has to *do nothing* if there's no '=': export a does nothing and $? is 0
+- **TODO:** env/pwd/... | grep "smth" - prints the entire output, pipes from builtin to shell don't work
 
 # 2-4.12 by Vlad
 - finished and fixed echo, -n and -nnn... handled

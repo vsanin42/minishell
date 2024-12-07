@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 14:55:31 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/07 13:59:28 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,41 @@ int	export_get_index(t_mini *mini, char **vars, int i)
 	return (index);
 }
 
+// checks if env we're attemping to add is alnum/_/doesn't start with a number
+// checks if it contains a value after =
+// @returns: 0 if OK
+// @returns: ERROR if identifier is invalid
+// @returns: -1 if found no '=' (don't do anything)
+int	export_check_env(char *env)
+{
+	int	i;
+
+	i = 0;
+	if (env[i] >= '0' && env[i] <= '9')
+		return (ERROR);
+	while (env[i] && env[i] != '=')
+	{
+		if (!ft_isalnum(env[i]) && env[i] != '_')
+			return (ERROR);
+		i++;
+	}
+	if (env[i] == '\0')
+		return (-1);
+	return (0);
+}
+
 // adds the env variable to the array and updates it
 int	export_add_back(t_mini *mini, char *env)
 {
 	char	**temp;
+	int		check_res;
 
 	temp = NULL;
+	check_res = export_check_env(env);
+	if (check_res == ERROR)
+		return (ERROR);
+	else if (check_res == -1)
+		return (0);
 	temp = add_back_array(mini->env, env);
 	if (!temp)
 		return (ERROR);

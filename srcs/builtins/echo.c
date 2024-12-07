@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:41 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 01:38:57 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/07 10:29:34 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ char	*echo_builder(char **args)
 	char	*trimmed_res;
 
 	trimmed_res = NULL;
+	if (!args[1])
+		return (NULL);
 	res = ft_strdup("");
 	if (!res)
 		return (NULL);
@@ -75,7 +77,10 @@ int	echo_builtin(t_mini *mini, t_cmd *cmd)
 	(void)mini;
 	res = echo_builder(cmd->args);
 	if (!res)
+	{
+		write(1, "\n", 1);
 		return (ERROR);
+	}
 	write(1, res, ft_strlen(res));
 	if (cmd->args[1] && echo_n_option(cmd->args))
 		write(1, "\n", 1);
