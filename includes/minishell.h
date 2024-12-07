@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/06 18:32:07 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/07 10:01:36 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ int		executor(t_mini *mini);
 void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
 
 /* execution/executor_utils.c */
-void	set_executor_error_msg(t_mini *mini, char *first, char *second, char *third);
+void	mini_error(t_mini *mini, char *first, char *second, char *third);
 
 /* execution/executor_files_pipes.c */
 int		close_files(int *infile, int *outfile);
@@ -167,6 +167,21 @@ void	init_gtl_vars(int *f, int *i, char **node, t_token **token);
 t_token	*get_token_list(t_mini *mini, char *input);
 int		lexer(char *input, t_mini *mini);
 
+/* parser/parser_heredoc.c */
+int		heredoc_dup(t_mini *mini);
+void	heredoc_handler(int sig);
+char	*heredoc_expand(t_mini *mini, char *str);
+char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini);
+char	*heredoc_readline(t_mini *mini, char *limit, int *expand_flag);
+char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini);
+int		process_heredoc(t_token *token, char *limit, t_mini *mini);
+int		parser_heredoc(t_mini *mini);
+
+/* parser/parser.c */
+char	**alloc_args(char **args, t_token *token);
+int		first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead);
+int		parser(t_mini *mini);
+
 /* types/array.c */
 char	**dup_array(char **arr);
 void	free_arr(char **arr);
@@ -200,52 +215,38 @@ t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
 void	free_token_list(t_mini *mini);
 
-/* exit.c */
+/* utils/exit.c */
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
+int		mini_perror(void);
 
-/* files.c */
+/* utils/file_utils.c */
 char	*get_current_directory(void);
 int		is_directory(const char *path);
 int		is_executable_file(const char *path);
 int		is_readable_file(const char *path);
 int		is_writable_file(const char *path);
 
-/* free.c */
+/* utils/free.c */
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 void	free_mini_without_env(t_mini *mini);
 
-/* parser_heredoc.c */
-int		heredoc_dup(t_mini *mini);
-void	heredoc_handler(int sig);
-char	*heredoc_expand(t_mini *mini, char *str);
-char	*trim_quotes_in_str(char *str, int *expand_flag, t_mini *mini);
-char	*heredoc_readline(t_mini *mini, char *limit, int *expand_flag);
-char	*make_new_limit(char *limit, int *expand_flag, t_mini *mini);
-int		process_heredoc(t_token *token, char *limit, t_mini *mini);
-int		parser_heredoc(t_mini *mini);
-
-/* parser.c */
-char	**alloc_args(char **args, t_token *token);
-int		first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead);
-int		parser(t_mini *mini);
-
-/* signal.c */
+/* utils/signal.c */
 void	sig_handler(int sig);
 void	sigint_void(int sig);
 
-/* testing.c */
+/* utils/testing.c */
 void	print_token_list(t_mini *mini);
 void	print_command_list(t_mini *mini);
 
-/* token_list.c */
+/* types/token_list.c */
 t_token	*new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 
-/* utils.c */
+/* utils/utils.c */
 int		iswhitespace(char c);
 int		is_alnum(char *str);
 char	*str_append_nl(char *s1, char *s2);

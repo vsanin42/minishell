@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:54 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/03 16:32:32 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/06 14:44:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	pwd_builtin(t_mini *mini, t_cmd *cmd)
 	cwd = get_current_directory(); // testing finding a path when we will be expecting path type
 	if (!cwd)
 	{
-		set_executor_error_msg(mini, "pwd", "cwd not found", NULL);
+		mini_error(mini, "pwd", "cwd not found", NULL);
 		return (ERROR);
 	}
 	write(1, cwd, ft_strlen(cwd));

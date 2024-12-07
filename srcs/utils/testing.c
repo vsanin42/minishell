@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   testing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/04 10:54:33 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/06 14:35:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // prints the token list in format: value	type
 void	print_token_list(t_mini *mini)

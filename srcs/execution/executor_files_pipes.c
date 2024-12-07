@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 16:45:54 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/07 10:03:00 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 	int temp_pipe[2];
 	int result;
 
-	result = 0;
 	redir = nthcmd->redir;
 	while (redir)
 	{
@@ -112,7 +111,6 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			if (*infile > STDIN_FILENO)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
-			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_HEREDOC)
 		{
@@ -132,15 +130,17 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_APPEND)
 		{
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			// it can go wrong? maybe set errorcode and return it
 		}
+		if (*infile == -1)
+			return (mini_perror());
+		if (*outfile == -1)
+			return (mini_perror());
 		redir = redir->next;
 	}
 	return (0);

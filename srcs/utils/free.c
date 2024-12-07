@@ -6,11 +6,11 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 22:05:19 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 12:46:53 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/06 14:46:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // free with auto check in case it hasn't been malloced
 // specific case when a var is malloced as initialization
@@ -43,6 +43,6 @@ void	free_mini_without_env(t_mini *mini)
 	//mini->token_list = NULL;
 	free_cmd_list(mini);
 	mini->cmd_list = NULL;
-	free(mini->error_msg);
-	mini->error_msg = NULL;
+	// free(mini->error_msg);
+	// mini->error_msg = NULL;
 }

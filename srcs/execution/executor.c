@@ -6,38 +6,55 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/06 18:10:12 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/07 10:07:27 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-// A B B A
 
 // checks if command is one of builtins and executes it
-// returns 0 if any builtin was excuted succesfully, 1 if not
+// returns 0 if any builtin was excuted succesfully, and errno if not
 int exec_builtins(t_mini *mini, t_cmd *cmd)
 {
+	int	result;
+
+	result = 0;
 	if (!ft_strncmp(cmd->cmd, "cd", 2))
-		mini->exit_status = cd_builtin(mini, cmd);
+		result = cd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
-		mini->exit_status = pwd_builtin(mini, cmd);
+		result = pwd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "env", 3))
-		mini->exit_status = env_builtin(mini, cmd);
+		result = env_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
-		mini->exit_status = export_builtin(mini, cmd);
+		result = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
-		mini->exit_status = unset_builtin(mini, cmd);
+		result = unset_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "echo", 4))
-		mini->exit_status = echo_builtin(mini, cmd);
+		result = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
 		exit_builtin(mini);
-	else // return error if no builtin matched - need to free error msg???
-		return (ERROR); // mini->exit_status = 0;
-	if (mini->exit_status != 0 && mini->error_msg)
-		printf("%s\n", mini->error_msg);
-	free(mini->error_msg);
-	mini->error_msg = NULL;
-	return (0); // no need to return exit status
+	else
+		return (ERROR);
+	return (result);
+}
+
+int exec_builtin_in_parent(t_mini *mini, int files[2])
+{
+	int	result;
+	int	stdin;
+	int	stdout;
+
+	set_files(mini->cmd_list, &files[0], &files[1]);
+	stdin = dup(STDIN_FILENO);
+	stdout = dup(STDOUT_FILENO);
+	dup2(files[0], STDIN_FILENO);
+	dup2(files[1], STDOUT_FILENO);
+	close_files(&files[0], &files[1]);
+	result = exec_builtins(mini, mini->cmd_list);
+	dup2(stdin, 0);
+	dup2(stdout, 1);
+	mini->exit_status = result;
+	return (result);
 }
 
 // checks if command is specified by relative or absolute path
@@ -57,15 +74,11 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 		result = errno;
 		return (result);
 	}
-	else
+	if (execve(path, cmd->args, mini->env) == -1)
 	{
-		if (execve(path, cmd->args, mini->env) == -1)
-		{
-			result = errno;
-			perror("minishell");
-			return (result);
-		}
-
+		result = errno;
+		perror("minishell");
+		return (result);
 	}
 	return (result);
 }
@@ -79,7 +92,7 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 	result = 0;
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (set_executor_error_msg(mini, cmd->cmd, "command not found", NULL), ERROR);
+		return (mini_error(mini, cmd->cmd, "command not found", NULL), ERROR);
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		result = errno;
@@ -107,10 +120,6 @@ int	execute(t_mini *mini, t_cmd *cmd)
 		result = exec_shell_command(mini, cmd);
 	free_cmd_list(mini);
 	//free_arr(mini->env);
-	if (result != 0 && mini->error_msg)
-		printf("%s\n", mini->error_msg);
-	free(mini->error_msg);
-	mini->error_msg = NULL;
 	exit(result);
 }
 
@@ -125,28 +134,32 @@ int	executor(t_mini *mini)
 {
 	int		files[2];
 	int		num_of_p = get_cmd_count(mini->cmd_list);
-	int		pids[num_of_p]; // if we don't null terminate then no +1
+	int		pids[num_of_p];
 	int		pipes[num_of_p - 1][2];
 	int		i;
 	t_cmd	*nthcmd;
+	int		result;
 
+	result = 0;
+	i = 0;
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
-	// !!! ADD REDIRECTIONS WHEN WE HAVE SINGLE BUILTIN !!!
-	// let's just do this from execute in a centralized way
-	// if (is_builtin(mini))
-	// 	return (exec_builtins(mini, mini->cmd_list));
-	if (open_pipes(pipes, num_of_p) == ERROR)
-		return (ERROR);
+	// why don't we want to have single builtin as a process?
+	// i think it can be better if it's done in a centralized way
+	// in the execute() function.
+	if (num_of_p == 1 && is_builtin(mini))
+		return (exec_builtin_in_parent(mini, files));
+	result = open_pipes(pipes, num_of_p);
+	if (result != 0)
+		return (result);
 	signal(SIGINT, sigint_void);
-	i = 0;
 	while (i < num_of_p)
 	{
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
 			close_all_pipes(pipes, num_of_p);
-			perror("error forking processes\n");
+			perror("minishell");
 			return (ERROR);
 		}
 		if (pids[i] == 0)
@@ -158,7 +171,7 @@ int	executor(t_mini *mini)
 			if (!nthcmd)
 			{
 				close_all_pipes(pipes, num_of_p);
-				perror("error retrieving command\n");
+				mini_error(mini, nthcmd->cmd, "command not found", NULL);
 				return (ERROR);
 			}
 			set_files(nthcmd, &files[0], &files[1]);
@@ -166,15 +179,14 @@ int	executor(t_mini *mini)
 			close_files(&files[0], &files[1]);
 			close_all_pipes(pipes, num_of_p);
 			if (nthcmd->cmd)
-				execute(mini, nthcmd); // exit status already assigned
-			free_cmd_list(mini);
-			free_arr(mini->env);
-			if (mini->exit_status != 0 && mini->error_msg)
-				printf("%s\n", mini->error_msg);
-			free(mini->error_msg);
-			mini->error_msg = NULL;
-			//return (mini->exit_status);
-			exit(mini->exit_status);
+				result = execute(mini, nthcmd);
+			// free_cmd_list(mini);
+			// free_arr(mini->env);
+			// if (mini->exit_status != 0 && mini->error_msg)
+			// 	printf("%s\n", mini->error_msg);
+			// free(mini->error_msg);
+			// mini->error_msg = NULL;
+			exit(result);
 		}
 		i++;
 	}
