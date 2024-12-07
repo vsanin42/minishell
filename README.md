@@ -24,7 +24,9 @@ TODO: more mini inside mini checks but it also works.
 - invalid inputs - ${} can't start with numbers, nothing except _ allowed - done but a lot of checks are needed - input_evaluator.c
 TODO: same but for export inputs.
 TODO: exit status setting before execution: maybe set default exit status to 1 so it's always an error if something can't reach the execution phase? only change to 0 if it can reach the execution and change back to 1 if an error occurs
-- attempted to make sense in the execute() function - it was executing twice, both the builtin and from execve, still some work left there. + no reason to return exit code if it's written into mini struct anyway 
+- attempted to make sense in the execute() function - it was executing twice, both the builtin and from execve, still some work left there. + no reason to return exit code if it's written into mini struct anyway
+- ? echo can fail and in this case returns -1 and sets errno
+- set perror in each builtin and executor like we did in cd 
 
 # TODO
 - handle heredoc << - - heredoc does not work with commands, I think because they take input from stdin and not from another token
@@ -37,8 +39,8 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 -  < iaasdas alksdj  leaks
 - when we have << at end it giver error "expected delimeter.." but it keeps the process opened and ^D does exit the innet one and the
 - two pipes after each other leak in the child process
-- sc error message shows cd and then cd again nstead of the non-existing folder 
-- check if there is actual cmd->cmd in cmd 
+- sc error message shows cd and then cd again nstead of the non-existing folder
+- check if there is actual cmd->cmd in cmd
 - before evey exit free token list, cmd list, error message, mini->env
 - add input and output redirection when calling just one builtin
 

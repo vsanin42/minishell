@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 15:51:19 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/05 23:17:25 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,18 @@ int	close_all_pipes(int pipes[][2], int pipe_count)
 int	open_pipes(int pipes[][2], int process_count)
 {
 	int	i;
+	int result;
 
 	i = 0;
+	result = 0;
 	while (i < process_count - 1)
 	{
 		if (pipe(pipes[i]) == -1)
 		{
-			printf("error creating pipes");
+			result = errno;
+			perror("minishell");
 			close_all_pipes(pipes, i);
-			return (ERROR);
+			return (result);
 		}
 		i++;
 	}
@@ -97,7 +100,11 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
+	// char	*buffer;
+	// int temp_pipe[2];
+	// int result;
 
+	// result = 0;
 	redir = nthcmd->redir;
 	while (redir)
 	{
@@ -106,8 +113,20 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			if (*infile > STDIN_FILENO)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
+			if (*infile == -1)
+				return (mini_perror());
 			// it can go wrong? maybe set errorcode and return it
 		}
+		// else if (redir->type == TOKEN_HEREDOC)
+		// {
+		// 	if (pipe(temp_pipe) == -1)
+		// 	{
+		// 		result = errno;
+		// 		perror("minishell");
+		// 		return(result);
+		// 	}
+
+		// }
 		else if (redir->type == TOKEN_REDIROUT)
 		{
 			if (*outfile > STDOUT_FILENO)

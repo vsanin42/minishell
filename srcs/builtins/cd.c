@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/03 16:34:37 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 23:18:33 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,25 @@
 // @returns ERROR: if HOME was not set
 // @returns 0: changing directory successful
 // @returns ERROR: chdir returned -1 - error changing directory
-int	cd_home_checks(char *home, t_mini *mini)
+int	cd_home_checks(t_mini *mini)
 {
+	int		result;
+	char	*home;
+
+	result = 0;
+	home = getenv_local(mini->env, "HOME");
 	if (!home)
 	{
 		set_executor_error_msg(mini, "cd", "HOME not set", NULL);
 		return (ERROR);
 	}
-	if (chdir(home) == 0)
+	if (chdir(home) == -1)
 	{
-		free(home);
-		return (0);
+		result = errno;
+		perror("minishell");
 	}
-	else
-	{
-		free(home);
-		set_executor_error_msg(mini, "cd", "Error changing directory", NULL);
-		return (ERROR);
-	}
+	free(home);
+	return(result);
 }
 
 // @returns ERROR if any check fails, otherwise 0
@@ -41,16 +42,6 @@ int	cd_checks(char **args, t_mini *mini, char *path)
 	if (get_arr_len(args) > 2)
 	{
 		set_executor_error_msg(mini, "cd", path, "too many agruments");
-		return (ERROR);
-	}
-	if (!is_directory(path))
-	{
-		set_executor_error_msg(mini, "cd", path, "Not a directory");
-		return (ERROR);
-	}
-	if (is_directory(path) < 0)
-	{
-		set_executor_error_msg(mini, "cd", path, "No such file or directory");
 		return (ERROR);
 	}
 	return (0);
@@ -62,23 +53,21 @@ int	cd_checks(char **args, t_mini *mini, char *path)
 // @returns 0 on successful change of directory, 1 on error
 int	cd_builtin(t_mini *mini, t_cmd *cmd)
 {
-	char	*home;
 	char	*path;
+	int		result;
 
+	result = 0;
 	path = cmd->args[1];
 	if (path == NULL || !ft_strncmp(path, "~", 2))
-	{
-		home = getenv_local(mini->env, "HOME");
-		return (cd_home_checks(home, mini));
-	}
+		return (cd_home_checks(mini));
 	if (!ft_strncmp(path, "-", 2))
 	{
-		chdir("..");
-		return (0);
+		if(chdir("..") == -1)
+			result = mini_perror();
 	}
 	if (cd_checks(cmd->args, mini, path) == ERROR)
 		return (ERROR);
-	if (chdir(path) == 0)
-		return (0);
-	return (ERROR);
+	if (chdir(path) == -1)
+		result = mini_perror();
+	return(result);
 }

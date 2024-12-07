@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/04 11:24:26 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/05 22:40:15 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ int	get_env_index(char **envs, char *env_name)
 	}
 	return (-1);
 }
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // strncmp based on the length of ENV_NAME,
 // not the ones we iterate through inside env list
@@ -130,8 +131,6 @@ char	*getenv_local(char **envs, char *env_name)
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (NULL);
-		// printf("env found: %s\n", curr_env_name);
-		// printf("env to match: %s\n\n", env_name);
 		if (!ft_strncmp(curr_env_name, env_name, name_len))
 		{
 			value = ft_substr(envs[i], name_len + 1,
