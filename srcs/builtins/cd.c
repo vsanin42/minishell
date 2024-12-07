@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 18:13:25 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 18:55:51 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,17 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 
 	result = 0;
 	path = cmd->args[1];
-	if (get_arr_len(cmd->args) > 2)
-	{
-		mini_error(mini, "cd", path, "too many agruments");
-		return (ERROR);
-	}
 	if (path == NULL || !ft_strncmp(path, "~\0", 2))
 		return (cd_home(mini));
 	if (!ft_strncmp(path, "-", 2))
 	{
 		if(chdir("..") == -1)
 		{
-			result = mini_perror();
+			result = mini_perror(mini);
 			return (result);
 		}
 	}
 	if (chdir(path) == -1)
-		result = mini_perror();
+		result = mini_perror(mini);
 	return(result);
 }

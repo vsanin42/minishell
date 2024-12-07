@@ -1,14 +1,14 @@
 # minishell
 
 42 project by vsanin & zpiarova - work in progress
-NUMBER OF TIMES WE CHANGED LEXER: IIIII - almost at end of project and still found a mistake here:D - whitespace(s) at end of input leaks
+NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
 # 6.12. by Zuzka
-- fixed redirectionwhenwe have single builtin executed in parent
+- fixed redirection when we have single builtin executed in parent
 - adjusted folder structure
-- changed error meeesages to use perror and return errno where possible, must test still but for now looks good
+- changed error messages to use perror and return errno where possible, must test still but for now looks good
 
 
 # 2-4.12 by Vlad
@@ -47,7 +47,11 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 - add input and output redirection when calling just one builtin
 - in unser what/why are the falgs 1, 2 in function unset_strdup ?
 - signal handling mini inside mini
-- i think I get now why some error messages are in bash are lowercase and soe start uppercase - the uppercase ones are the perror messages from the system, the others are defined in bash i think :D :D
+- i think I get now why some error messages are in bash are lowercase and some start uppercase - the uppercase ones are the perror messages from the system, the others are defined in bash i think :D :D
+- some commands prolly builtins do not return errno but 0
+- cd in pipe and then echo hi does not print hi but it should
+- heredoc echo << EOF ... EOF exits program !
+- still when we paste it leaves the 10 letters in there in white background, works fine 
 
 - echo $USERaaa prints only user name, should print nothing/newline. ${USER}aaa works fine
 - signal handling of processes like cat that wait for input

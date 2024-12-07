@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/07 18:11:08 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 18:58:44 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ int		close_files(int *infile, int *outfile);
 int		close_all_pipes(int pipes[][2], int pipe_count);
 int		open_pipes(int pipes[][2], int process_count);
 int		set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
-int		set_files(t_cmd *nthcmd, int *infile, int *outfile);
+int		set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile);
 
 /* lexer/lexer_env.c */
 char	*handle_word_no_env(char *res, char *text, int *i);
@@ -219,7 +219,7 @@ void	free_token_list(t_mini *mini);
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
-int		mini_perror(void);
+int		mini_perror(t_mini *mini);
 
 /* utils/file_utils.c */
 char	*get_current_directory(void);

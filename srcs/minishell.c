@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 18:03:18 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 19:13:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 // @returns 0 on SUCESS, 1 on ERROR
 int	process_input(char *input, t_mini *mini)
 {
-	mini->exit_status = 0;
 	if (lexer(input, mini) == ERROR)
 		return (free_token_list(mini), ERROR);
 	mini->token_list = remove_null_tokens(mini->token_list);
@@ -30,12 +29,7 @@ int	process_input(char *input, t_mini *mini)
 	free_token_list(mini);
 	//print_command_list(mini);
 	if (cmd_evaluator(mini) == 0)
-	{
-		if (executor(mini) == ERROR)
-			return (free_cmd_list(mini), ERROR);
-	}
-	else
-		return (free_cmd_list(mini), ERROR);
+		executor(mini);
 	free_cmd_list(mini);
 	return (0);
 }
@@ -93,7 +87,6 @@ void	init_mini(t_mini *mini, char **env)
 	// 	return ;
 	mini->token_list = NULL;
 	mini->cmd_list = NULL;
-	//mini->error_msg = NULL;
 	mini->exit_status = 0;
 	mini->env = dup_array(env);
 }

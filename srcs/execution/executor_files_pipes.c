@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 18:11:57 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 18:56:21 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 	return (0);
 }
 
-int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
+int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
 	int temp_pipe[2];
@@ -114,7 +114,7 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
 			if (*infile == -1)
-				return (mini_perror());
+				return (mini_perror(mini));
 			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_HEREDOC)
@@ -143,9 +143,9 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		}
 		if (*infile == -1)
-			return (mini_perror());
+			return (mini_perror(mini));
 		if (*outfile == -1)
-			return (mini_perror());
+			return (mini_perror(mini));
 		redir = redir->next;
 	}
 	return (0);

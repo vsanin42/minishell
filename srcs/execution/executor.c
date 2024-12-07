@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/07 18:06:45 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 19:10:53 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int exec_builtin_in_parent(t_mini *mini, int files[2])
 	int	stdin;
 	int	stdout;
 
-	set_files(mini->cmd_list, &files[0], &files[1]);
+	set_files(mini, mini->cmd_list, &files[0], &files[1]);
 	stdin = dup(STDIN_FILENO);
 	stdout = dup(STDOUT_FILENO);
 	dup2(files[0], STDIN_FILENO);
@@ -93,14 +93,13 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 	result = 0;
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (mini_error(mini, cmd->cmd, "command not found", NULL), ERROR);
+		return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		result = errno;
 		perror("minishell");
-		return (result);
 	}
-	return (0);
+	return (result);
 }
 
 // we have to understand we call it command but it can also be path
@@ -120,7 +119,7 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	else
 		result = exec_shell_command(mini, cmd);
 	free_cmd_list(mini);
-	//free_arr(mini->env);
+	free_arr(mini->env);
 	exit(result);
 }
 
@@ -169,26 +168,25 @@ int	executor(t_mini *mini)
 			signal(SIGQUIT, SIG_DFL);
 			set_termios(0);
 			nthcmd = get_nth_command(mini->cmd_list, i);
-			if (!nthcmd)
+			if (!nthcmd || !nthcmd->cmd)
 			{
 				close_all_pipes(pipes, num_of_p);
 				mini_error(mini, nthcmd->cmd, "command not found", NULL);
-				return (ERROR);
+				return (127);
 			}
-			set_files(nthcmd, &files[0], &files[1]);
+			set_files(mini, nthcmd, &files[0], &files[1]);
 			set_ins_outs(i, pipes, files, num_of_p);
 			close_files(&files[0], &files[1]);
 			close_all_pipes(pipes, num_of_p);
-			if (nthcmd->cmd)
-				result = execute(mini, nthcmd);
-			exit(result);
+			// if (nthcmd->cmd)
+			// 	result = execute(mini, nthcmd);
+			result = execute(mini, nthcmd);
 		}
 		i++;
 	}
 	close_all_pipes(pipes, num_of_p);
 	set_exit_status(num_of_p, mini, pids);
-	//printf("\nstatus: %d\n", mini->exit_status);
-	return (0);
+	return (mini->exit_status);
 }
 
 void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
@@ -208,5 +206,5 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		i++;
 	}
 	if (WTERMSIG(status) == SIGQUIT)
-		printf("Quit (core dumped)\n");
+		printf("Quit (core dumped)\n"); // maybe add not-dumped since idk if we are dumping core? I know bash does but us? - Z
 }
