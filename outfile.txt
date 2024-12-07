@@ -1,2 +1,0 @@
-/nfs/homes/zpiarova/core/minishell
-/nfs/homes/zpiarova/core/minishell

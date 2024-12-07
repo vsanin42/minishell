@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/06 18:59:35 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/07 10:07:27 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,9 @@ int	executor(t_mini *mini)
 	i = 0;
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
+	// why don't we want to have single builtin as a process?
+	// i think it can be better if it's done in a centralized way
+	// in the execute() function.
 	if (num_of_p == 1 && is_builtin(mini))
 		return (exec_builtin_in_parent(mini, files));
 	result = open_pipes(pipes, num_of_p);
@@ -206,11 +209,9 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		if (WIFEXITED(status))
 			mini->exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-		{
 			mini->exit_status = WTERMSIG(status) + 128;
-			if (WTERMSIG(status) == SIGQUIT)
-				printf("Quit: 3\n");
-		}
 		i++;
 	}
+	if (WTERMSIG(status) == SIGQUIT)
+		printf("Quit (core dumped)\n");
 }
