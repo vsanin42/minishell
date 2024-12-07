@@ -6,21 +6,23 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/05 23:17:25 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/07 18:11:57 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+// can closing go wrong?
 int	close_files(int *infile, int *outfile)
 {
 	if (*infile > STDIN_FILENO)
 		close(*infile);
 	if (*outfile > STDOUT_FILENO)
 		close(*outfile);
-	// can closing go wrong?
 	return (0);
 }
+
+// can closing go wrong?
 
 int	close_all_pipes(int pipes[][2], int pipe_count)
 {
@@ -100,11 +102,9 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
-	// char	*buffer;
-	// int temp_pipe[2];
-	// int result;
+	int temp_pipe[2];
+	int result;
 
-	// result = 0;
 	redir = nthcmd->redir;
 	while (redir)
 	{
@@ -117,30 +117,35 @@ int	set_files(t_cmd *nthcmd, int *infile, int *outfile)
 				return (mini_perror());
 			// it can go wrong? maybe set errorcode and return it
 		}
-		// else if (redir->type == TOKEN_HEREDOC)
-		// {
-		// 	if (pipe(temp_pipe) == -1)
-		// 	{
-		// 		result = errno;
-		// 		perror("minishell");
-		// 		return(result);
-		// 	}
-
-		// }
+		else if (redir->type == TOKEN_HEREDOC)
+		{
+			if (pipe(temp_pipe) == -1)
+			{
+				result = errno;
+				perror("minishell");
+				return(result);
+			}
+			write(temp_pipe[1], redir->file, ft_strlen(redir->file));
+			close(temp_pipe[1]);
+			dup2(temp_pipe[0], STDIN_FILENO);
+			close(temp_pipe[0]);
+		}
 		else if (redir->type == TOKEN_REDIROUT)
 		{
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			// it can go wrong? maybe set errorcode and return it
 		}
 		else if (redir->type == TOKEN_APPEND)
 		{
 			if (*outfile > STDOUT_FILENO)
 				close(*outfile);
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			// it can go wrong? maybe set errorcode and return it
 		}
+		if (*infile == -1)
+			return (mini_perror());
+		if (*outfile == -1)
+			return (mini_perror());
 		redir = redir->next;
 	}
 	return (0);
