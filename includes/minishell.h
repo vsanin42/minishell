@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/07 21:45:31 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/08 02:01:10 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int		show_prompt(t_mini *mini);
 void	set_termios(int mode);
 
 /* builtins/~.c */
-int		is_builtin(t_mini *mini);
+int		is_builtin(t_cmd *cmd);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
@@ -111,7 +111,7 @@ int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
 int		check_quotes(char *input);
 int		isbq(char *input);
-int		check_input(char *input);
+int		check_input(char *input, t_mini *mini);
 int		check_bad_substitution(char *input, int i);
 
 /* evaluators/cmd_evaluator.c */

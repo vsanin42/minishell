@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 21:47:22 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/08 02:00:46 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	show_prompt(t_mini *mini)
 		return (1);
 	}
 	add_history(input);
-	if (check_input(input) == 1)
+	if (check_input(input, mini) == 1)
 		return (free(input), 1);
 	process_input(input, mini);
 	return (1);

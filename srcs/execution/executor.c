@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/07 21:48:30 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/08 00:02:09 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,8 @@ int	execute(t_mini *mini, t_cmd *cmd)
 	int	result;
 
 	result = 0;
-	if (is_builtin(mini))
-		result = exec_builtins(mini, mini->cmd_list);
+	if (is_builtin(cmd))
+		result = exec_builtins(mini, cmd);
 	else if (ft_strchr(cmd->cmd, '/'))
 		result = exec_command_by_path(mini, cmd);
 	else
@@ -151,7 +151,7 @@ int	executor(t_mini *mini)
 	// why don't we want to have single builtin as a process?
 	// i think it can be better if it's done in a centralized way
 	// in the execute() function.
-	if (num_of_p == 1 && is_builtin(mini))
+	if (num_of_p == 1 && is_builtin(mini->cmd_list))
 		return (exec_builtin_in_parent(mini, files));
 	result = open_pipes(pipes, num_of_p);
 	if (result != 0)

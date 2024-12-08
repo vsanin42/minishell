@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/05 01:29:09 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/08 02:55:11 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,8 @@ char	*handle_question(t_mini *mini, char *res, char *text, int *i)
 	char	*oldres;
 	char	*status;
 
-	if (text[*i - 1] == '{')
-	{
-		while (text[*i] && text[*i] != '}')
-			(*i)++;
-		if (text[*i] == '}')
-			(*i)++;
-	}
-	else
+	if (text[*i] == '?' && text[*i + 1] == '}')
 		(*i)++;
-	// or simply (*i)++ once
 	oldres = res;
 	status = ft_itoa(mini->exit_status);
 	if (!status)

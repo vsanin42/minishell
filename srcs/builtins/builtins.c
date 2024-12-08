@@ -3,20 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:19:33 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/06 18:53:54 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:56:47 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	is_builtin(t_mini *mini)
+int	is_builtin(t_cmd *cmd)
 {
-	t_cmd	*cmd;
-
-	cmd = mini->cmd_list;
 	if (cmd && cmd->cmd
 		&& (!ft_strncmp(cmd->cmd, "cd", 2)
 			|| !ft_strncmp(cmd->cmd, "pwd", 3)

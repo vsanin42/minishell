@@ -11,13 +11,21 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - changed error messages to use perror and return errno where possible, must test still but for now looks good
 
 # 6-7.12 by Vlad
-- **added:** heredoc via pipe in set_files
-- **fixed:** small sigquit issue which printed a message + newline twice
-- **fixed:** echo - has to print a newline when called with no arguments, this includes the case when can't expand an env (echo $USERRR)
-- **fixed:** ? echo - with a workaround by returning 127 (command not found) and printing the message manually - not a perfect workaround because no other place can generate 127 errno naturally based on what i've seen and tried. $? gets set to 127 too. must keep this in mind when testing other things
-- **fixed:** issue with double unsets and single exports - same reason as expanding issue, strncmp against env_name len
-- **fixed:** export formatting - env name must be alnum and _ and cannot start with a number. if it's not the case - ERROR. on top of that it has to *do nothing* if there's no '=': export a does nothing and $? is 0
-- **TODO:** env/pwd/... | grep "smth" - prints the entire output, pipes from builtin to shell don't work
+- is *exit.c* in *srcs/* the same as in *srcs/utils/*? it's not compiled
+- *export* with no arguments: i read about it on slack, some people just don't implement it as it's not specified. not really sure what it even does honestly, it's just the same output as env with '*declare -x*' before each env. maybe add this later for the sake of completeness.
+- **ADDED:** heredoc via pipe in *set_files*
+- **FIXED:** small *sigquit* issue which printed a message (it's just Quit now without core dump) + newline twice when it had to be done once
+- **ADDED:** *echo* - has to print a newline when called with no arguments, this includes the case when can't expand an env (*echo $USERRR*)
+- **FIXED:** *? echo* - with a workaround by returning 127 (command not found) and printing the message manually - not a perfect workaround because no other place can generate 127 errno naturally based on what i've seen and tried. $? gets set to 127 too. must keep this in mind when testing other things
+- **FIXED:** issue with double unsets and single exports - same reason as expanding issue, strncmp against env_name len
+- **ADDED:** *export* formatting - env name must be alnum and _ and cannot start with a number. if it's not the case - ERROR. on top of that it has to *do nothing* if there's no '=': export a does nothing and $? is 0
+- **FIXED:** *env/pwd/... | grep "smth"* - prints the entire output, pipes from builtin to shell don't work - **ISSUE**: *cmd_list* passed to exec builtin instead of *nthcmd*, executing only the cmd head and not being able to progress. replaced that and is_builtin checker to match it. classic programming experience when something doesn't work cause of less than one line of code :DDDDDDDD shoutout to o1 for finding this, i was going insane debugging it...
+- **LEAK:** *pwd | grep "/"* - leak from readline/xmalloc as if the very first input wasn't freed even though we free it in lexer. happened exactly once, could not replicate, never seen again. no idea
+- **FIXED:** *input evaluator* - bad substitution should work properly
+- **FIXED:** *echo ${?}a* returns 0a like in bash, issue in expansion  
+- **TODO:** all checks in input evaluator currently work just once, need to put them in a loop to iterate through the whole input string instead
+- **TODO:** *echo $'USER'*
+- **TODO:** *check_input* exit status setting, idea to add a function specifically for printing the message + setting exit status in mini since it's being done before lexer and there's no access to errno. these are all our custom constraints, like not interpreting unclosed quotes from the subject (except for bad substitution, error code 1), so we handle these however we want
 
 # 2-4.12 by Vlad
 - finished and fixed echo, -n and -nnn... handled
@@ -30,9 +38,7 @@ TODO: more mini inside mini checks but it also works.
 - status codes: after the big executor loop added the correct conversion from 'status' received from waitpid to mini->exit_status.
 - status now expands, issues with appending extra chars persist. works with and without {}
 - invalid inputs - ${} can't start with numbers, nothing except _ allowed - done but a lot of checks are needed - input_evaluator.c
-TODO: same but for export inputs.
 TODO: exit status setting before execution: maybe set default exit status to 1 so it's always an error if something can't reach the execution phase? only change to 0 if it can reach the execution and change back to 1 if an error occurs
-- attempted to make sense in the execute() function - it was executing twice, both the builtin and from execve, still some work left there. + no reason to return exit code if it's written into mini struct anyway
 - ? echo can fail and in this case returns -1 and sets errno
 - set perror in each builtin and executor like we did in cd
 - unset hh unsets also h=.. because of strncmp only comparing without trailing \0
@@ -69,15 +75,17 @@ TODO: exit status setting before execution: maybe set default exit status to 1 s
 ## test cases
 echo -nnnnnnnnnnnnnn hello - WORKS -Vlad
 
-mini: echo ${"USER"} -> USER}
+mini: echo ${"USER"} -> USER(right brace)
 bash: ${"USER"}: bad substitution - WORKS
-this trailing } is still sometimes present though
+**more checks for input evaluator + expansion
+keep this in mind when testing expansion because it means if unchecked,
+it trims ${""} incorrectly**
 
 mini: echo $'USER' -> $USER
 bash: echo $'USER' -> USER
 
 mini: echo ${?}a -> 0
-bash: echo ${?}a -> 0a
+bash: echo ${?}a -> 0a - WORKS
 
 # HEREDOC MAIN THINGS - VLAD
 main things:

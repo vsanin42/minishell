@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:32:23 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/05 01:20:08 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/08 03:00:56 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,21 @@
 
 int	check_bad_substitution(char *input, int i)
 {
-	while (input[i] && (input[i] != '$' && input[i + 1] != '{'))
+	while (input[i] && !(input[i] == '$' && input[i + 1] == '{'))
 		i++;
 	if (input[i] != '\0')
 	{
 		i += 2;
-		if (input[i] >= '0' && input[i] <= '9')
+		if ((input[i] >= '0' && input[i] <= '9')
+			|| (!ft_isalnum(input[i]) && (input[i] != '_' && input[i] != '?')))
 			return (ERROR);
+		if (input[i] == '?' && input[i + 1] != '}')
+			return (ERROR);
+		else
+			i++;
 		while (input[i] && input[i] != '}')
 		{
-			if (!ft_isalnum(input[i]) && input[i] != '_'
-				&& (input[i] == '?' && input[i + 1] != '}'
-				&& input[i - 1] != '{'))
+			if (!ft_isalnum(input[i]) && input[i] != '_')
 				return (ERROR);
 			i++;
 		}
@@ -58,7 +61,7 @@ int	check_curly_braces(char *input)
 			while (input[j])
 			{
 				if (input[j] == '}')
-					return (2);//(check_braces_alnum(input, i + 2));
+					return (2);
 				j++;
 			}
 		}
@@ -120,7 +123,7 @@ int	isbq(char *input)
 	return (0);
 }
 
-int	check_input(char *input)
+int	check_input(char *input, t_mini *mini)
 {
 	if (isbq(input) == 1)
 	{
@@ -137,6 +140,9 @@ int	check_input(char *input)
 			return (s_error_msg("Error: unclosed quote"), 1);
 	}
 	if (check_bad_substitution(input, 0) == ERROR)
+	{	
+		mini->exit_status = 1;
 		return (s_error_msg("Error: bad substitution"), 1);
+	}
 	return (0);
 }
