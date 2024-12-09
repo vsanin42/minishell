@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 16:38:36 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:35:13 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ int	process_input(char *input, t_mini *mini)
 		return (free_token_list(mini), free_cmd_list(mini), ERROR);
 	free_token_list(mini);
 	//print_command_list(mini);
-	if (cmd_evaluator(mini) == 0)
-		executor(mini);
+	if (cmd_evaluator(mini) == 0) // if we leave it out, open cares for some edge cases but not for all - eg. it sets errno if file does not exist but not if it is directoryy when we expect file - maybe can leave out after some work
+		result = executor(mini);
 	free_cmd_list(mini);
-	return (0);
+	return (result);
 }
 
 // called in loop to show a prompt and process input
@@ -47,13 +47,14 @@ int	process_input(char *input, t_mini *mini)
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
+	int result = 0;
 
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);
-	input = readline("\033[32mminishell \033[37m> ");
+	input = readline("minishell>"); // \033[32mminishell\033[37m>
 	if (!input)
-		return (0);
+		return (-1);
 	if (input[0] == '\0')
 	{
 		free(input);
@@ -63,7 +64,7 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
-	process_input(input, mini);
+	result = process_input(input, mini);
 	return (1);
 }
 
@@ -75,7 +76,6 @@ int	show_prompt(t_mini *mini)
 void	set_termios(int mode)
 {
 	struct termios	termios;
-
 	if (tcgetattr(0, &termios) == -1)
 		exit(ERROR);
 	if (mode)
@@ -108,9 +108,13 @@ int	main(int argc, char *argv[], char *env[])
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);
+	int stdin = dup(STDIN_FILENO);
+	int stdout = dup(STDOUT_FILENO);
 	while (1)
 	{
-		if (show_prompt(&mini) == 0)
+		dup2(stdin, 0);
+		dup2(stdout, 1);
+		if (show_prompt(&mini) == -1)
 			break ;
 	}
 	write(1, "exit\n", 5);

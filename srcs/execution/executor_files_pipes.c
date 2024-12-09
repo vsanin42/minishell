@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 15:00:06 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:30:41 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 			if (*infile > STDIN_FILENO)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
-			if (*infile == -1)
-				return (mini_perror(mini, NULL));
 		}
 		else if (redir->type == TOKEN_HEREDOC)
 		{
+			// int stdin = dup(STDIN_FILENO);
+			// int stdout = dup(STDOUT_FILENO);
 			if (pipe(temp_pipe) == -1)
 			{
 				result = errno;
@@ -131,6 +131,8 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 			close(temp_pipe[1]);
 			dup2(temp_pipe[0], STDIN_FILENO);
 			close(temp_pipe[0]);
+			// dup2(stdin, 0);
+			// dup2(stdout, 1);
 		}
 		else if (redir->type == TOKEN_REDIROUT)
 		{
@@ -145,7 +147,12 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		}
 		if (*infile == -1)
-			return (mini_perror(mini, NULL));
+		{
+			result = errno;
+			perror("minishell");
+			return (result);
+		}
+			//return (mini_perror(mini, NULL));
 		if (*outfile == -1)
 			return (mini_perror(mini, NULL));
 		redir = redir->next;

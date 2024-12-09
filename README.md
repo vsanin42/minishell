@@ -10,30 +10,29 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - **FIXED:** when here is env with naem and value and we export the same name with another value, it was correctly overwriting it. but if we export the same name but with no value noe it has to ignore it and keep the env with value, even though we re-declared it without value
 - **ADDED:** export with no arguments prints declare x before each argument, prints also envs stored that do not have value
 - **FIXED:** there was still this error: unset hh unsets also h=.. because of strncmp only comparing without trailing \0 - now we compare based on the lenght of the longer one and should work, tested
-- **FIXED:** echo $USER prints thiis??? - ZDOTDIR=/nfs/homes/zpiarova = another env ??? - it was because it stops at _ and prints form there - it matches USER_ZDOTDIR=/nfs/homes/zpiarova - fixed like error above
-- **FIXED:** echo $? was printing the correct code but with ? at end - fixed
+- **FIXED:** echo $USER prints thiis??? - ZDOTDIR=/nfs/homes/zpiarova = another env ??? - it was because it matched any sequence starting with specified env name - so it matched USER_ZDOTDIR=/nfs/homes/zpiarova and printed the rest- fixed like error above
+- **FIXED:** echo $? without {} was printing the correct code but with ? at end - fixed
+- **FIXED:** i removed the color changing and escaping characters and now it does not print the additional 10 characters with white background at start of input when we copy-paste, but maybe we can put it back somehow ??
+- **FIXED:**  any builtin with heredoc exits minishell eg. pwd << EOF gets input from EOF, prints pwd, but then exits ??? other commands with heredoc are fine and also heredoc with builtins in pipes is ok - long debugging but found out we have to set stdin, stdout back to 0 and 1 after we are finished with pipes - termios was giving error code: Inappropriate ioctl for device, thats how i found out
+- but now that we dup stdin, stdout back to 0 and 1 after writing to pipe the pipe is closed and does not work anymore so commands like cat are constantly waiting for input but it is already closed - i really idk what to do, but we have to do something in executor_files_pipes.c/-> set_files -> if redir->type == TOKEN_HEREDOC - do something with file descriptors - OKAY IT IS FIXED AND WORKS FOR BOTH TYPES OF COMMANDS - I ADDED DUPLICATE OF STDIN, STDOUT IN MAIN AND SET IT BACK FOR EACH ITERATION OF SHOW_PROMPT :D :D
 
 # TODO ENV EXPANSION
-- **TODO:** *echo $'USER'*
+- **TODO:** *echo $'USER'* and others with $ and quote after it :(
 
 # TODO HEREDOC
-- **TODO:**  any builtin with heredoc exits minishell eg. pwd << EOF gets input from EOF, prints pwd, but then exits ??? other commands with heredoc are fine and also heredoc with builtins in pipes is ok, i cannot figure out why
 
 # TODO SIGNALS AND SETUP OF MINISHELL/READLINE
 - **TODO:** !!! when we run minishell in minishell and press ^C, sometimes it prints ^C correctly in line, sometimes ^C in a newline, sometimes ^C after two newlines etc - can you fix? I have no idea
-- **TODO:** also can we handle the 10 characters with white background at start of input when we copy-paste ?
 - signal handling of processes like cat that wait for input *not sure if this still has to be done, can be removed? -Zuzka*
 
 # TODO ERROR CODES AND EXIT
-- some commands prolly builtins do not return errno but 0
-- set error codes properly - implement errno && must update exit status at end of each of these functions
+- **TODO:** set error codes properly - implement errno && must update exit status at end of each of these functions - now some commands prolly builtins do not return errno but 0 or 1 or at least it is not consistent
 
 # TODO OTHERS
 - **TODO:** all checks in input evaluator currently work just once, need to put them in a loop to iterate through the whole input string instead
 - **TODO:** *check_input* exit status setting, idea to add a function specifically for printing the message + setting exit status in mini since it's being done before lexer and there's no access to errno. these are all our custom constraints, like not interpreting unclosed quotes from the subject (except for bad substitution, error code 1), so we handle these however we want
 - multiple terminals?
 - static mode ?
-- in unset what/why are the flags 1, 2 in function unset_strdup ?
 
 ## test cases
 mini: echo ${"USER"} -> USER(right brace)

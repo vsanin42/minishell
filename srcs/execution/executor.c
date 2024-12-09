@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/09 19:45:00 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:27:49 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int exec_builtin_in_parent(t_mini *mini, int files[2])
 	int	result;
 	int	stdin;
 	int	stdout;
-
 	set_files(mini, mini->cmd_list, &files[0], &files[1]);
 	stdin = dup(STDIN_FILENO);
 	stdout = dup(STDOUT_FILENO);
@@ -150,7 +149,6 @@ int	executor(t_mini *mini)
 	if (result != 0)
 		return (result);
 	signal(SIGINT, sigint_void);
-	printf("num of p: %d\n", num_of_p);
 	while (i < num_of_p)
 	{
 		pids[i] = fork();
@@ -162,12 +160,10 @@ int	executor(t_mini *mini)
 		}
 		if (pids[i] == 0)
 		{
-			printf("doing i %d\n", i);
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
 			set_termios(0);
 			nthcmd = get_nth_command(mini->cmd_list, i);
-			printf("doing cmd: %s\n", nthcmd->cmd);
 			if (!nthcmd)
 			{
 				close_all_pipes(pipes, num_of_p);
@@ -180,7 +176,7 @@ int	executor(t_mini *mini)
 			if (nthcmd->cmd)
 				result = execute(mini, nthcmd);
 			mini->exit_status = result;
-			exit(result);
+			exit(result); // have to exit here in process, not in execute function, because that runs only if there is command - but what if we run process with only files? it would never exit bc. execute function that can exit would never run 
 		}
 		i++;
 	}
