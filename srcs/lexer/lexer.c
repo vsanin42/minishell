@@ -6,39 +6,14 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/29 12:34:22 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 20:17:02 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// based on received token finds its type
-// if no token type is found, then it is text token
-// @returns type of token based on enum defined in header
-// @param value textual value of token
-t_type	get_type(char *value)
-{
-	if (ft_strlen(value) == 2)
-	{
-		if (!ft_strncmp(value, ">>", 2))
-			return (TOKEN_APPEND);
-		if (!ft_strncmp(value, "<<", 2))
-			return (TOKEN_HEREDOC);
-	}
-	else if (ft_strlen(value) == 1)
-	{
-		if (value[0] == '>')
-			return (TOKEN_REDIROUT);
-		if (value[0] == '<')
-			return (TOKEN_REDIRIN);
-		if (value[0] == '|')
-			return (TOKEN_PIPE);
-	}
-	return (TOKEN_TEXT);
-}
-
 // creates new token from value and appends it to end of token list
-// frees node_value it received, value of token is newly malloced
+// frees node_value string it received, value of token is newly malloced
 // expands envs and removes trailing quotes from start/end
 // only if the previous token is not heredoc based on hdoc flag
 // @returns 1 on success, 0 on error - BECAUSE OF NORM IN CALLER :D
@@ -48,7 +23,7 @@ int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int
 	t_token	*new_tok;
 
 	new_value = NULL;
-	new_tok = new_token(ft_strdup(node_value), get_type(node_value));
+	new_tok = init_new_token(ft_strdup(node_value), get_token_type(node_value));
 	free(node_value);
 	node_value = NULL;
 	if (!new_tok)
@@ -70,7 +45,7 @@ int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int
 	return (1);
 }
 
-// separates text characters(non-delimiters) from readline input into tokens
+// separates text characters(non-delimiters) from input into text tokens
 // called as soon as we encounter first text char that is not operator
 // runs until we are still on text characters, until encounters a delimiter
 // @param text input string
@@ -80,10 +55,11 @@ int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int
 // when encounter '/", set flag to treat other delimiters as normal characters
 // when encounter closing '/", set flag to treat delimiters as special chars
 // when encounter delim., create node value from collected text and return it
-// i is now at last el
+// i is now at last el of created string from text
 // if normal text just move to the next char by i++
 // at end decrease value to the last element of the collected string,
 // because in outer function it will be increased again
+// @returns text string from start of text until encountering delimeter
 char	*process_text(char *text, int *i, int in_sq, int in_dq)
 {
 	char	*node_value;
@@ -114,6 +90,10 @@ char	*process_text(char *text, int *i, int in_sq, int in_dq)
 }
 
 // chunk of get_token_list that gets the value of a node
+// if it is whitespace, just moves past it
+// if it is one of operators, stores it as separate token with its type
+// if its text, calls process_text function
+// @returns created node value as string, caller creates token from it+appends
 char	*create_node_value(char *input, int *i)
 {
 	char	*node_value;
@@ -131,7 +111,7 @@ char	*create_node_value(char *input, int *i)
 	return (node_value);
 }
 
-// i hate norminette
+// i hate norminette - :D :D :D :D -Zuzka
 void init_gtl_vars(int *f, int *i, char **node, t_token **token)
 {
 	*f = 0;
@@ -140,10 +120,8 @@ void init_gtl_vars(int *f, int *i, char **node, t_token **token)
 	*token = NULL;
 }
 
-// iterates over characters from strings received from readline
-// if it is whitespace, just moves past it
-// if it is one of operators, stores it as separate token with its type
-// if it is text, stores it as text until encountering delimeter
+// iterates over characters from string received from readline
+// calls get nodevalue that creates different types of tokens
 // sets flag for the next iteration to indicate that heredoc was just processed
 // and therefore don't enter the expanding/trimming functions
 // stores received value as tokens value and appends it to end of token list
@@ -166,7 +144,6 @@ t_token	*get_token_list(t_mini *mini, char *input)
 			if (!create_and_add_tok(mini, node_value, &token_list, &hdoc_flag))
 			{
 				free_token_list(mini);
-				//token_list = NULL;
 				return (NULL);
 			}
 			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
@@ -197,7 +174,6 @@ int	lexer(char *input, t_mini *mini)
 	input_trimmed_whitespaces = NULL;
 	if (!token_list)
 		return (ERROR);
-		//return (error_msg("Lexer error", mini, 0, 0));
 	mini->token_list = token_list;
 	return (0);
 }

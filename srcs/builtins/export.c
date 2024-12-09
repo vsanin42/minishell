@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 13:59:28 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 20:52:21 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ int	export_check_env(char *env)
 }
 
 // adds the env variable to the array and updates it
+// if check_res is -1 meaning there was only name, we still want to keep in in env array, just do not print with env - it is handled there
 int	export_add_back(t_mini *mini, char *env)
 {
 	char	**temp;
@@ -61,8 +62,6 @@ int	export_add_back(t_mini *mini, char *env)
 	check_res = export_check_env(env);
 	if (check_res == ERROR)
 		return (ERROR);
-	else if (check_res == -1)
-		return (0);
 	temp = add_back_array(mini->env, env);
 	if (!temp)
 		return (ERROR);
@@ -72,6 +71,9 @@ int	export_add_back(t_mini *mini, char *env)
 }
 
 // appends variable into mini->env array
+// if index is -1 it means it was just env name with no value
+// in this case we want to keep the env in array, just not print it
+// if there was env with the name anc value adn we wxport jut the same name, it does nothing
 // if index returned is -2, error occured -> ERROR (preserves behaviour)
 int	export_builtin(t_mini *mini, t_cmd *cmd)
 {
@@ -80,7 +82,11 @@ int	export_builtin(t_mini *mini, t_cmd *cmd)
 	int		index;
 
 	i = 1;
+	if (!cmd->args)
+		return (ERROR);
 	vars = cmd->args;
+	if (vars[1] == NULL)
+		return (env_builtin(mini, cmd, "declare -x "));
 	while (vars[i])
 	{
 		index = export_get_index(mini, vars, i);
@@ -88,8 +94,11 @@ int	export_builtin(t_mini *mini, t_cmd *cmd)
 			return (ERROR);
 		if (index > -1)
 		{
-			if (!change_arr_element(mini->env, vars[i], index))
-				return (ERROR);
+			if (export_check_env(vars[i]) == 0)
+			{
+				if (!change_arr_element(mini->env, vars[i], index))
+					return (ERROR);
+			}
 		}
 		else
 		{

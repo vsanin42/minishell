@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_env.c                                        :+:      :+:    :+:   */
+/*   expanding_env.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/08 02:55:11 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 20:37:07 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ char	*handle_question(t_mini *mini, char *res, char *text, int *i)
 	char	*oldres;
 	char	*status;
 
-	if (text[*i] == '?' && text[*i + 1] == '}')
+/* 	if (text[*i] == '?' && text[*i + 1] == '}')
+		(*i)++;*/
+	if (text[*i] == '?')
 		(*i)++;
 	oldres = res;
 	status = ft_itoa(mini->exit_status);
@@ -165,7 +167,7 @@ char	*quickjoin(char *res)
 // get string with or without ""/'' at  ends, quotes  in middle are non-special
 // doesnt take into consderation if it is between "/', expands always
 // thus check for whether it should be expanded must be in the calling function
-// first checks the word before encountering $
+// first stores everything word before encountering $ into string
 // if encounters $ and after it is alphanumeric character or {, checks the env
 // if encounters $ and after it isnt alnum character/{, treats it as '$' char
 // else we know we processed entire word and there is no $ and we are at end
@@ -180,7 +182,7 @@ char	*get_env_value_to_process(t_mini *mini, char *text)
 	while (text[++i])
 	{
 		res = handle_word_no_env(res, text, &i);
-		if (text[i] == '$' && (ft_isalnum(text[i + 1])
+		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '_'
 			|| text[i + 1] == '{' || text[i + 1] == '?'))
 		{
 			res = handle_env(mini, res, text, &i);

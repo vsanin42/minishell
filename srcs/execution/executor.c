@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/08 00:02:09 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 19:45:00 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
 		result = pwd_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "env", 3))
-		result = env_builtin(mini, cmd);
+		result = env_builtin(mini, cmd, NULL);
 	else if (!ft_strncmp(cmd->cmd, "export", 6))
 		result = export_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "unset", 5))
@@ -92,12 +92,8 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 
 	result = 0;
 	path = get_path_env(mini, cmd->cmd);
-	if (!path) //return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
-	{
-		result = 127; 
-		printf("%s: command not found\n", cmd->cmd);
-		return (result);
-	}
+	if (!path)
+		return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		result = errno;
@@ -124,7 +120,7 @@ int	execute(t_mini *mini, t_cmd *cmd)
 		result = exec_shell_command(mini, cmd);
 	free_cmd_list(mini);
 	free_arr(mini->env);
-	exit(result);
+	return (result);
 }
 
 // check if builtin & 1 command - not open any processes, must be done in main
@@ -133,7 +129,7 @@ int	execute(t_mini *mini, t_cmd *cmd)
 // for each process set the infile and outfile to the ones from its redir struct, if there is any
 // set STDIN and STDOUT of each process to corresponding pipe or file
 // close pipes and files - the ones we need are dupped anyways so we do not need them anymore
-// execute - if the process continues, mans if failed or it was a builtin
+// execute - if the process continues, means if failed or it was a builtin - we have to exit with proper error code
 int	executor(t_mini *mini)
 {
 	int		files[2];
@@ -148,15 +144,13 @@ int	executor(t_mini *mini)
 	i = 0;
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
-	// why don't we want to have single builtin as a process?
-	// i think it can be better if it's done in a centralized way
-	// in the execute() function.
 	if (num_of_p == 1 && is_builtin(mini->cmd_list))
 		return (exec_builtin_in_parent(mini, files));
 	result = open_pipes(pipes, num_of_p);
 	if (result != 0)
 		return (result);
 	signal(SIGINT, sigint_void);
+	printf("num of p: %d\n", num_of_p);
 	while (i < num_of_p)
 	{
 		pids[i] = fork();
@@ -168,23 +162,25 @@ int	executor(t_mini *mini)
 		}
 		if (pids[i] == 0)
 		{
+			printf("doing i %d\n", i);
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
 			set_termios(0);
 			nthcmd = get_nth_command(mini->cmd_list, i);
-			if (!nthcmd || !nthcmd->cmd)
+			printf("doing cmd: %s\n", nthcmd->cmd);
+			if (!nthcmd)
 			{
 				close_all_pipes(pipes, num_of_p);
-				mini_error(mini, nthcmd->cmd, "command not found", NULL);
-				return (127);
+				return (mini_error(mini, "command not found", NULL, NULL), 127);
 			}
 			set_files(mini, nthcmd, &files[0], &files[1]);
 			set_ins_outs(i, pipes, files, num_of_p);
 			close_files(&files[0], &files[1]);
 			close_all_pipes(pipes, num_of_p);
-			// if (nthcmd->cmd)
-			// 	result = execute(mini, nthcmd);
-			result = execute(mini, nthcmd);
+			if (nthcmd->cmd)
+				result = execute(mini, nthcmd);
+			mini->exit_status = result;
+			exit(result);
 		}
 		i++;
 	}

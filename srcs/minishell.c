@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/08 02:00:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 16:38:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,24 @@
 // @returns 0 on SUCESS, 1 on ERROR
 int	process_input(char *input, t_mini *mini)
 {
-	if (lexer(input, mini) == ERROR)
+	int	result;
+
+	result = lexer(input, mini);
+	if (result != 0)
 		return (free_token_list(mini), ERROR);
 	mini->token_list = remove_null_tokens(mini->token_list);
-	if (token_evaluator(mini) == ERROR)
+	result = token_evaluator(mini);
+	if (result != 0)
 		return (free_token_list(mini), ERROR);
-	print_token_list(mini);
-	if (parser_heredoc(mini) == ERROR)
+	//print_token_list(mini);
+	result = parser_heredoc(mini);
+	if (result != 0)
 		return (free_token_list(mini), ERROR);
-	if (parser(mini) == ERROR)
+	result = parser(mini);
+	if (result != 0)
 		return (free_token_list(mini), free_cmd_list(mini), ERROR);
 	free_token_list(mini);
-	print_command_list(mini);
+	//print_command_list(mini);
 	if (cmd_evaluator(mini) == 0)
 		executor(mini);
 	free_cmd_list(mini);

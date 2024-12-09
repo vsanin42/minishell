@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_files_pipes.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 21:46:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 15:00:06 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,17 @@ int	open_pipes(int pipes[][2], int process_count)
 	return (0);
 }
 
+// set up STDIN and STDOUT of each process
+// if there is a file sets it to file
+// else it sets it to proper ends of pipes
+// in first process, STDIN is infile or STDIN
+// in last process, STDOUT is outfile or STDOUT
 int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 {
 	if (i == 0)
 	{
 		dup2(files[0], STDIN_FILENO);
-		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe WR end - not working, still writes to pipe
+		if (num_of_p - 1 > 0)
 		{
 			if (files[1] > STDOUT_FILENO)
 				dup2(files[1], STDOUT_FILENO);
@@ -72,7 +77,6 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 				dup2(pipes[0][1], STDOUT_FILENO);
 		}
 	}
-	// set ends of pipes to middle processes
 	if (i > 0 && i < num_of_p - 1)
 	{
 		if (files[0] > STDIN_FILENO)
@@ -84,10 +88,9 @@ int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
 		else
 			dup2(pipes[i][1], STDOUT_FILENO);
 	}
-	// set up outfile - read end of last pipe
 	if (i == num_of_p - 1)
 	{
-		if (num_of_p - 1 > 0) // so if we have no pipe open when only 1 process we dont use pipe RD end - not working, still reads from pipe
+		if (num_of_p - 1 > 0)
 		{
 			if (files[0] > STDIN_FILENO)
 				dup2(files[0], STDIN_FILENO);
@@ -114,8 +117,7 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 				close(*infile);
 			*infile = open(redir->file, O_RDONLY);
 			if (*infile == -1)
-				return (mini_perror(mini));
-			// it can go wrong? maybe set errorcode and return it
+				return (mini_perror(mini, NULL));
 		}
 		else if (redir->type == TOKEN_HEREDOC)
 		{
@@ -143,9 +145,9 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		}
 		if (*infile == -1)
-			return (mini_perror(mini));
+			return (mini_perror(mini, NULL));
 		if (*outfile == -1)
-			return (mini_perror(mini));
+			return (mini_perror(mini, NULL));
 		redir = redir->next;
 	}
 	return (0);

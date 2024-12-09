@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 18:55:51 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/09 14:40:47 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // @returns ERROR: if HOME was not set
 // @returns 0: changing directory successful
 // @returns ERROR: chdir returned -1 - error changing directory
-int	cd_home(t_mini *mini)
+int	cd_home(t_mini *mini, char *path)
 {
 	int		result;
 	char	*home;
@@ -30,7 +30,8 @@ int	cd_home(t_mini *mini)
 	if (chdir(home) == -1)
 	{
 		result = errno;
-		perror("minishell");
+		mini_error(mini, "cd", path, NULL);
+		perror("");
 	}
 	free(home);
 	return(result);
@@ -47,16 +48,16 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 	result = 0;
 	path = cmd->args[1];
 	if (path == NULL || !ft_strncmp(path, "~\0", 2))
-		return (cd_home(mini));
+		return (cd_home(mini, path));
 	if (!ft_strncmp(path, "-", 2))
 	{
 		if(chdir("..") == -1)
 		{
-			result = mini_perror(mini);
+			result = mini_perror(mini, NULL);
 			return (result);
 		}
 	}
 	if (chdir(path) == -1)
-		result = mini_perror(mini);
+		result = mini_perror(mini, perror_msg("minishell", "cd", path, NULL));
 	return(result);
 }

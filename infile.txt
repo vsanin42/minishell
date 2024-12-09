@@ -1,8 +1,1 @@
-abcda
-b
-c
-d
-e
-f
-g
-a
+"$USER"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 18:12:11 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/09 15:39:05 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	exit_builtin(t_mini *mini)
 	free_arr(mini->env);
 	free_token_list(mini);
 	free_cmd_list(mini);
-	// free(mini->error_msg);
 	exit_status = mini->exit_status;
 	if (exit_status < 0 || exit_status > 255)
 		exit(exit_status % 256);

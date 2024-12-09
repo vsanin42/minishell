@@ -31,6 +31,7 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins/export.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/unset.c \
+		srcs/envs/expanding_env.c \
 		srcs/envs/env_utils.c \
 		srcs/evaluators/cmd_evaluator.c \
 		srcs/evaluators/input_evaluator.c \
@@ -38,7 +39,6 @@ SRC  =  srcs/minishell.c \
 		srcs/execution/executor.c \
 		srcs/execution/executor_utils.c \
 		srcs/execution/executor_files_pipes.c \
-		srcs/lexer/lexer_env.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
 		srcs/lexer/lexer.c \

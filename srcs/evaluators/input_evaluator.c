@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_evaluator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:32:23 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/08 03:00:56 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 15:38:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ int	check_next_quote(char *input, int i)
 int	check_quotes(char *input)
 {
 	int	i;
-	//int	j;
 	int	q_count;
 
 	i = 0;
@@ -128,21 +127,21 @@ int	check_input(char *input, t_mini *mini)
 	if (isbq(input) == 1)
 	{
 		if (check_curly_braces(input) == 1)
-			return (s_error_msg("Error: unclosed brace"), 1);
+			return (s_error_msg("minishell: unclosed brace"), 1);
 		else if (check_quotes(input) == 1)
-			return (s_error_msg("Error: unclosed quote"), 1);
+			return (s_error_msg("minishell: unclosed quote"), 1);
 	}
 	if (isbq(input) == 2)
 	{
 		if (check_curly_braces(input) == 2)
-			return (s_error_msg("Error: non-alphanumeric char between {}"), 1);
+			return (s_error_msg("minishell: bad substitution"), 1);
 		if (check_quotes(input) == 1)
-			return (s_error_msg("Error: unclosed quote"), 1);
+			return (s_error_msg("minishell: unclosed quote"), 1);
 	}
 	if (check_bad_substitution(input, 0) == ERROR)
-	{	
+	{
 		mini->exit_status = 1;
-		return (s_error_msg("Error: bad substitution"), 1);
+		return (s_error_msg("minishell: bad substitution"), 1);
 	}
 	return (0);
 }

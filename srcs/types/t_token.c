@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:43:39 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/11/29 12:22:42 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 20:17:19 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // adjusted ft_lstnew = allocates memory for t_token node and fills in values
 // @returns created node of the token list
-t_token	*new_token(char *value, t_type type)
+t_token	*init_new_token(char *value, t_type type)
 {
 	t_token	*node;
 
@@ -25,6 +25,31 @@ t_token	*new_token(char *value, t_type type)
 	node->type = type;
 	node->next = NULL;
 	return (node);
+}
+
+// based on received token finds its type
+// if no token type is found, then it is text token
+// @returns type of token based on enum defined in header
+// @param value textual value of token
+t_type	get_token_type(char *value)
+{
+	if (ft_strlen(value) == 2)
+	{
+		if (!ft_strncmp(value, ">>", 2))
+			return (TOKEN_APPEND);
+		if (!ft_strncmp(value, "<<", 2))
+			return (TOKEN_HEREDOC);
+	}
+	else if (ft_strlen(value) == 1)
+	{
+		if (value[0] == '>')
+			return (TOKEN_REDIROUT);
+		if (value[0] == '<')
+			return (TOKEN_REDIRIN);
+		if (value[0] == '|')
+			return (TOKEN_PIPE);
+	}
+	return (TOKEN_TEXT);
 }
 
 // adjusted ft_lstadd_back = appends created node to end of token list

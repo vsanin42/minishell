@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 21:46:03 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 20:55:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ char	*get_path_env(t_mini *mini, char *cmd)
 int	get_env_index(char **envs, char *env_name)
 {
 	int		i;
+	int		longer;
 	char	*curr_env_name;
 
 	if (!envs || !(*envs) || !env_name)
@@ -97,8 +98,12 @@ int	get_env_index(char **envs, char *env_name)
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (-1);
-		if (!ft_strncmp(curr_env_name, env_name, ft_strlen(env_name)))
+		longer = ft_strlen(env_name);
+		if (ft_strlen(curr_env_name) > longer)
+			longer = ft_strlen(curr_env_name);
+		if (!ft_strncmp(curr_env_name, env_name, longer))
 		{
+			printf("our env: %s, curr env: %s\n", env_name, curr_env_name);
 			free(curr_env_name);
 			curr_env_name = NULL;
 			return (i);
@@ -110,10 +115,8 @@ int	get_env_index(char **envs, char *env_name)
 	return (-1);
 }
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// strncmp based on the length of ENV_NAME,
-// not the ones we iterate through inside env list
-// otherwise USER matches USERaaa when it's invalid
+// replicates getenv function
+// @returns allocated string, must be freed !!! or NULL or error
 char	*getenv_local(char **envs, char *env_name)
 {
 	int		i;
@@ -125,16 +128,18 @@ char	*getenv_local(char **envs, char *env_name)
 		return (NULL);
 	value = NULL;
 	i = -1;
-	name_len = ft_strlen(env_name);
 	while (envs[++i])
 	{
 		curr_env_name = get_env_name(envs[i]);
 		if (!curr_env_name)
 			return (NULL);
+		name_len = ft_strlen(env_name);
+		if (ft_strlen(curr_env_name) > name_len)
+			name_len = ft_strlen(curr_env_name);
 		if (!ft_strncmp(curr_env_name, env_name, name_len))
 		{
-			value = ft_substr(envs[i], name_len + 1,
-					(ft_strlen(envs[i]) - name_len - 1));
+			value = ft_substr(envs[i], ft_strlen(env_name) + 1,
+					(ft_strlen(envs[i]) - ft_strlen(env_name) - 1));
 			free(curr_env_name);
 			return (value);
 		}

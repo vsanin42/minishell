@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/04 21:52:43 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 20:26:52 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*exp_sub(t_mini *mini, char *str)
 {
 	char	*expanded;
 
-	if (str[0] == '"' || str[0] != '\'')
+	if (/* str[0] == '"' ||  */str[0] != '\'')
 	{
 		expanded = get_env_value_to_process(mini, str);
 		free(str);
@@ -36,7 +36,5 @@ int	check_next_char(char c, char c2, int i)
 {
 	if (c == c2)
 		i += 2;
-	// if (c != c2 && c2 == '\0') -------------- checked in check_input(), at this point all quotes are surely paired
-	// 	error_msg("\nError: unclosed quote", NULL, NULL, NULL); --- this also kinda pointless because the ERROR return goes nowhere
 	return (i);
 }

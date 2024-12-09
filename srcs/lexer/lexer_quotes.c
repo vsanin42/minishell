@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/11/25 21:03:03 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/09 20:19:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,11 +146,11 @@ int	cnc_check(char *text, int *i)
 }
 
 // in text token, removes unnecessary quotes and expands envs where needed
+// @params token text token to edit
 // separates text input based on quotes as delimiters where they are special
 // check_next_char checks if we have ""/'', if yes move without saving in array
 // we expand envs when found and store them as value of that array element
 // @returns array of strings with each "word" having trailing quotes removed
-// @params token text token to edit
 char 	**process_envs_and_quotes(t_mini *mini, t_token *token)
 {
 	int		i;

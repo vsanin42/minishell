@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/07 18:55:15 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/09 16:12:37 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,17 @@ void	validator_msg(t_mini *mini, char *object, char *msg)
 	printf("minishell: %s: %s\n", object, msg);
 }
 
-int	mini_perror(t_mini *mini)
+int	mini_perror(t_mini *mini, char *msg)
 {
 	int	result;
 
 	result = errno;
 	mini->exit_status = errno; // ????? maybe wont eork as expecged ?
-	perror("minishell");
+	if (msg)
+		perror(msg);
+	else
+		perror("minishell");
+	free(msg);
 	return(result);
 }
 
@@ -130,4 +134,96 @@ void	mini_error(t_mini *mini, char *first, char *second, char *third)
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
 	free(msg);
+}
+
+// @returns error message that will be printed before perror message,must free!
+char	*perror_msg(char *first, char *second, char *third, char *fourth)
+{
+	char *msg;
+	char *old_msg;
+	char *new_part;
+
+	msg = "";
+	old_msg = NULL;
+	new_part = NULL;
+	if (first)
+	{
+		new_part = ft_strdup(first);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+		}
+	}
+	if (second)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(second);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	if (third)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(third);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	if (fourth)
+	{
+		old_msg = msg;
+		new_part = ft_strdup(": ");
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+		old_msg = msg;
+		new_part = ft_strdup(fourth);
+		if (new_part)
+		{
+			msg = ft_strjoin(msg, new_part);
+			free(new_part);
+			new_part = NULL;
+			free(old_msg);
+			old_msg = NULL;
+		}
+	}
+	return (msg);
 }

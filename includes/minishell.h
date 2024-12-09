@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/08 02:01:10 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/09 20:56:19 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		export_get_index(t_mini *mini, char **vars, int i);
 int		export_add_back(t_mini *mini, char* env);
 int		export_check_env(char *env);
-int		env_builtin(t_mini *mini, t_cmd *cmd);
+int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
 char	**unset_arr_element(char **env, int index, int len);
 int		unset_strdup(char **result, char **env, int *i, int flag);
@@ -160,7 +160,7 @@ char	*exp_sub(t_mini *mini, char *str);
 int		check_next_char(char c, char c2, int i);
 
 /* lexer/lexer.c */
-t_type	get_type(char *value);
+t_type	get_token_type(char *value);
 int		create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc);
 char	*process_text(char *text, int *i, int in_sq, int in_dq);
 char	*create_node_value(char *input, int *i); // move later
@@ -210,7 +210,7 @@ t_redir	*find_redirs(t_token *token);
 void	free_redir(t_redir *redir);
 
 /* types/t_token.c */
-t_token	*new_token(char *value, t_type type);
+t_token	*init_new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 int		get_ttokens_len(t_token	*token);
@@ -220,7 +220,8 @@ void	free_token_list(t_mini *mini);
 int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
-int		mini_perror(t_mini *mini);
+int		mini_perror(t_mini *mini, char *msg);
+char	*perror_msg(char *first, char *second, char *third, char *fourth);
 
 /* utils/file_utils.c */
 char	*get_current_directory(void);
@@ -243,7 +244,7 @@ void	print_token_list(t_mini *mini);
 void	print_command_list(t_mini *mini);
 
 /* types/token_list.c */
-t_token	*new_token(char *value, t_type type);
+t_token	*init_new_token(char *value, t_type type);
 void	add_back_token(t_token **lst, t_token *new);
 t_token	*remove_null_tokens(t_token *token);
 
