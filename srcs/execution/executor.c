@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/09 22:27:49 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:40:05 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 int exec_builtin_in_parent(t_mini *mini, int files[2])
 {
 	int	result;
-	int	stdin;
-	int	stdout;
+	int	stdin;			// this can probably go away since it is done in main function
+	int	stdout;			// this can probably go away since it is done in main function
 	set_files(mini, mini->cmd_list, &files[0], &files[1]);
 	stdin = dup(STDIN_FILENO);
 	stdout = dup(STDOUT_FILENO);
@@ -52,8 +52,8 @@ int exec_builtin_in_parent(t_mini *mini, int files[2])
 	dup2(files[1], STDOUT_FILENO);
 	close_files(&files[0], &files[1]);
 	result = exec_builtins(mini, mini->cmd_list);
-	dup2(stdin, 0);
-	dup2(stdout, 1);
+	dup2(stdin, 0);		// this can probably go away since it is done in main function
+	dup2(stdout, 1);	// this can probably go away since it is done in main function
 	mini->exit_status = result;
 	return (result);
 }
@@ -176,7 +176,7 @@ int	executor(t_mini *mini)
 			if (nthcmd->cmd)
 				result = execute(mini, nthcmd);
 			mini->exit_status = result;
-			exit(result); // have to exit here in process, not in execute function, because that runs only if there is command - but what if we run process with only files? it would never exit bc. execute function that can exit would never run 
+			exit(result); // have to exit here in process, not in execute function, because that runs only if there is command - but what if we run process with only files? it would never exit bc. execute function that can exit would never run
 		}
 		i++;
 	}
