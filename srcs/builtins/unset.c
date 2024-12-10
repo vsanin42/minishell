@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 14:35:25 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:43:32 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	unset_strdup(char **result, char **env, int *i, int flag)
 // removes an array element by duplicating it and skipping said element
 // @returns allocated array without removed element
 // old array is freed in the caller
-char	**unset_arr_element(char **env, int index, int len)
+char	**unset_arr_el(char **env, int index, int len)
 {
 	char	**result;
 	int		i;
@@ -67,14 +67,14 @@ int	unset_builtin(t_mini *mini, t_cmd *cmd)
 	vars = cmd->args;
 	while (vars[++i])
 	{
-		if (has_env_value(vars[i]) == ERROR && !ft_strchr(vars[i], '='))
+		if (!has_env_value(vars[i]) && !ft_strchr(vars[i], '='))
 		{
 			index = get_env_index_by_name(mini->env, vars[i]);
 			if (index == -1)
 				return (ERROR);
 			else
 			{
-				res = unset_arr_element(mini->env, index, get_arr_len(mini->env));
+				res = unset_arr_el(mini->env, index, get_arr_len(mini->env));
 				if (!res)
 					return (ERROR);
 				free_arr(mini->env);

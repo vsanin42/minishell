@@ -6,16 +6,16 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 15:39:05 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:52:36 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// exits the program, optional argument status that indicates success/failure status of the shell session or script
-// exit status 0 indicates success, other indicate error or abnormal termination
-// if no argument is provided to exit, the default exit status is that of the last executed command.
-// WE SHOULD PROBABLY ADD FREEING FOR GOOD PRACTICE EVEN THOUGH THE OS WILL RECLAIM MALLOCED MEMORY ANYWAYS
+// exits the program
+// exit status 0 indicates success
+// other indicate error or abnormal termination
+// default is exit status of last executed command
 // exit_status must be between 0 and 255
 void	exit_builtin(t_mini *mini)
 {

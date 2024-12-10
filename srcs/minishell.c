@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 22:35:13 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 17:04:39 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 // executes lexer->parser->executor with checks between each phase
 // @returns 0 on SUCESS, 1 on ERROR
+//print_token_list(mini);
+//print_command_list(mini);
 int	process_input(char *input, t_mini *mini)
 {
 	int	result;
@@ -25,7 +27,6 @@ int	process_input(char *input, t_mini *mini)
 	result = token_evaluator(mini);
 	if (result != 0)
 		return (free_token_list(mini), ERROR);
-	//print_token_list(mini);
 	result = parser_heredoc(mini);
 	if (result != 0)
 		return (free_token_list(mini), ERROR);
@@ -33,8 +34,8 @@ int	process_input(char *input, t_mini *mini)
 	if (result != 0)
 		return (free_token_list(mini), free_cmd_list(mini), ERROR);
 	free_token_list(mini);
-	//print_command_list(mini);
-	if (cmd_evaluator(mini) == 0) // if we leave it out, open cares for some edge cases but not for all - eg. it sets errno if file does not exist but not if it is directoryy when we expect file - maybe can leave out after some work
+	// if we leave cmd evaluator out, open cares for some edge cases but not for all - eg. it sets errno if file does not exist but not if it is directoryy when we expect file - maybe can leave out after some work
+	if (cmd_evaluator(mini) == 0)
 		result = executor(mini);
 	free_cmd_list(mini);
 	return (result);
@@ -44,15 +45,16 @@ int	process_input(char *input, t_mini *mini)
 // @returns 1 so the calling loop can continue, 0 on error so loop breaks
 // (!input) = called when ^C was pressed - no input was received
 // input[0] == '\0' - input was empty or just enter
+// \033[32mminishell\033[37m>
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
-	int result = 0;
+	int		result;
 
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);
-	input = readline("minishell>"); // \033[32mminishell\033[37m>
+	input = readline("minishell> ");
 	if (!input)
 		return (-1);
 	if (input[0] == '\0')
@@ -76,6 +78,7 @@ int	show_prompt(t_mini *mini)
 void	set_termios(int mode)
 {
 	struct termios	termios;
+
 	if (tcgetattr(0, &termios) == -1)
 		exit(ERROR);
 	if (mode)
@@ -86,11 +89,11 @@ void	set_termios(int mode)
 		exit(ERROR);
 }
 
+// mini = (t_mini *)malloc(sizeof(t_mini)); // ??? why this causes leaks
+// if (!mini)
+// 	return ;
 void	init_mini(t_mini *mini, char **env)
 {
-	// mini = (t_mini *)malloc(sizeof(t_mini)); // ??? why this causes leaks
-	// if (!mini)
-	// 	return ;
 	mini->token_list = NULL;
 	mini->cmd_list = NULL;
 	mini->exit_status = 0;
@@ -103,13 +106,15 @@ void	init_mini(t_mini *mini, char **env)
 int	main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
+	int		stdin;
+	int		stdout;
 
 	(void)argv;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);
-	int stdin = dup(STDIN_FILENO);
-	int stdout = dup(STDOUT_FILENO);
+	stdin = dup(STDIN_FILENO);
+	stdout = dup(STDOUT_FILENO);
 	while (1)
 	{
 		dup2(stdin, 0);

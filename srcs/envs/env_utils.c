@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 14:51:35 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:42:50 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ char	*extract_env_name(char *env)
 }
 
 // checks if passed in env contains also value or only name(possibly ending in =)
-// @returns 0 if has value, 1 if not
+// @returns 1 if has value, 0 if not
 int has_env_value(char *env)
 {
 	int	i;
@@ -167,8 +167,8 @@ int has_env_value(char *env)
 	while (env[i] && env[i] != '=')
 		i++;
 	if (env[i] == '\0' || (env[i] == '=' && env[i + 1] == '\0'))
-		return (ERROR);
-	return (0);
+		return (0);
+	return (1);
 }
 
 // checks whether env has valid name-only alnum or _, starting with letter or _

@@ -6,11 +6,24 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/09 20:19:51 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:34:44 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	array_char_len(char **head)
+{
+	int	i;
+
+	i = 0;
+	while (head && *head)
+	{
+		i += ft_strlen(*head);
+		head++;
+	}
+	return (i);
+}
 
 // finds end of the substring of our text token based on delimeters
 // delimeter can be quotes or end of string

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/09 16:12:37 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:02:46 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	error_msg(char *msg, t_mini *mini, char *str_to_free_1, char *str_to_free_2)
 			free_cmd_list(mini);
 		mini->token_list = NULL;
 		mini->cmd_list = NULL;
-		//free_arr(mini->env);
 	}
 	free(str_to_free_1);
 	str_to_free_1 = NULL;
@@ -55,20 +54,20 @@ int	mini_perror(t_mini *mini, char *msg)
 	int	result;
 
 	result = errno;
-	mini->exit_status = errno; // ????? maybe wont eork as expecged ?
+	mini->exit_status = errno;
 	if (msg)
 		perror(msg);
 	else
 		perror("minishell");
 	free(msg);
-	return(result);
+	return (result);
 }
 
 void	mini_error(t_mini *mini, char *first, char *second, char *third)
 {
-	char *msg;
-	char *old_msg;
-	char *new_part;
+	char	*msg;
+	char	*old_msg;
+	char	*new_part;
 
 	(void)mini;
 	msg = ft_strdup("minishell: ");

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:54 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 14:44:33 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:54:08 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	pwd_builtin(t_mini *mini, t_cmd *cmd)
 	char	*cwd;
 
 	(void)cmd;
-	cwd = get_current_directory(); // testing finding a path when we will be expecting path type
+	cwd = get_current_directory();
 	if (!cwd)
 	{
 		mini_error(mini, "pwd", "cwd not found", NULL);

@@ -46,8 +46,10 @@ SRC  =  srcs/minishell.c \
 		srcs/parser/parser.c \
 		srcs/types/array.c \
 		srcs/types/t_cmd.c \
+		srcs/types/t_cmd_utils.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
+		srcs/types/t_token_utils.c \
 		srcs/utils/exit.c \
 		srcs/utils/file_utils.c \
 		srcs/utils/free.c \

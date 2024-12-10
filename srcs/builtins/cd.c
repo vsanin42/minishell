@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 14:40:47 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:32:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	cd_home(t_mini *mini, char *path)
 		perror("");
 	}
 	free(home);
-	return(result);
+	return (result);
 }
 
 // changes directory, handles absolute, relative, no path
@@ -51,7 +51,7 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 		return (cd_home(mini, path));
 	if (!ft_strncmp(path, "-", 2))
 	{
-		if(chdir("..") == -1)
+		if (chdir("..") == -1)
 		{
 			result = mini_perror(mini, NULL);
 			return (result);
@@ -59,5 +59,5 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 	}
 	if (chdir(path) == -1)
 		result = mini_perror(mini, perror_msg("minishell", "cd", path, NULL));
-	return(result);
+	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:30:33 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 13:38:33 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 17:05:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,6 @@ void	free_arr(char **arr)
 	}
 	free(head);
 	head = NULL;
-}
-
-int	array_char_len(char **head)
-{
-	int	i;
-
-	i = 0;
-	while (head && *head)
-	{
-		i += ft_strlen(*head);
-		head++;
-	}
-	return (i);
 }
 
 int	get_arr_len(char **arr)
@@ -77,24 +64,17 @@ char	**add_back_array(char **arr, char *new_el)
 	{
 		res[j] = ft_strdup(arr[j]);
 		if (!res[j])
-		{
-			free_arr(res);
-			return (NULL);
-		}
+			return (free_arr(res), NULL);
 		j++;
 	}
 	res[i] = ft_strdup(new_el);
 	if (!res[i])
-	{
-		free_arr(res);
-		return (NULL);
-	}
+		return (free_arr(res), NULL);
 	res[i + 1] = NULL;
 	return (res);
 }
 
-// TODO: UPDATE HEAD OF ARRAY IF WE ARE EXCHANGING TEH FIRST ELEMENT OF ARRAY ?
-char **change_arr_element(char **arr, char *new_el, int	index)
+char	**change_arr_element(char **arr, char *new_el, int index)
 {
 	char	**rest_of_arr;
 	int		i;
@@ -118,41 +98,6 @@ char **change_arr_element(char **arr, char *new_el, int	index)
 	free(arr[index]);
 	arr[index] = temp;
 	return (arr);
-}
-
-// creates new array with size of arr with one element less
-// dups all elements besides element at index of original arr to new arr
-// null terminates
-// @returns newly allocated array
-char	**remove_arr_element(char **arr, int index)
-{
-	char	**result;
-	int		i;
-	int		len;
-
-	i = 0;
-	len = get_arr_len(arr);
-	if (index > len)
-		return (arr);
-	result = malloc(sizeof(char *) * len);
-	if (!result)
-		return (NULL);
-	while (arr[i] && i < index)
-	{
-		result[i] = ft_strdup(arr[i]);
-		if (!result[i])
-			return (NULL);
-		i++;
-	}
-	while (arr[i + 1] && i < len - 1)
-	{
-		result[i] = ft_strdup(arr[i + 1]);
-		if (!result[i])
-			return (NULL);
-		i++;
-	}
-	result[i] = NULL;
-	return (result);
 }
 
 // called to initialize our env array that will be stored in the mini struct

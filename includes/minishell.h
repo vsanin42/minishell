@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/10 14:29:03 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:33:39 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,6 @@ int		array_char_len(char **head);
 int		get_arr_len(char **arr);
 char	**add_back_array(char **arr, char *new_el);
 char	**change_arr_element(char **arr, char *new_el, int	index);
-char	**remove_arr_element(char **arr, int index);
 
 /* types/t_cmd.c */
 void	init_cmd_node(t_cmd *node);
@@ -233,7 +232,6 @@ int		is_writable_file(const char *path);
 /* utils/free.c */
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
-void	free_mini_without_env(t_mini *mini);
 
 /* utils/signal.c */
 void	sig_handler(int sig);
