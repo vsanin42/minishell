@@ -5,7 +5,7 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-# 9.12. by Zuzka
+# 9.12. + 10.12. by Zuzka
 - **FIXED:** exporting envs with no value, just with name ignored them, but we still have to store them and ignore them only in printing with env commandm because with export+no arguments we have to print it even thiugh it is just a name
 - **FIXED:** when here is env with naem and value and we export the same name with another value, it was correctly overwriting it. but if we export the same name but with no value noe it has to ignore it and keep the env with value, even though we re-declared it without value
 - **ADDED:** export with no arguments prints declare x before each argument, prints also envs stored that do not have value
@@ -14,12 +14,11 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - **FIXED:** echo $? without {} was printing the correct code but with ? at end - fixed
 - **FIXED:** i removed the color changing and escaping characters and now it does not print the additional 10 characters with white background at start of input when we copy-paste, but maybe we can put it back somehow ??
 - **FIXED:**  any builtin with heredoc exits minishell eg. pwd << EOF gets input from EOF, prints pwd, but then exits ??? other commands with heredoc are fine and also heredoc with builtins in pipes is ok - long debugging but found out we have to set stdin, stdout back to 0 and 1 after we are finished with pipes - termios was giving error code: Inappropriate ioctl for device, thats how i found out
-- but now that we dup stdin, stdout back to 0 and 1 after writing to pipe the pipe is closed and does not work anymore so commands like cat are constantly waiting for input but it is already closed - i really idk what to do, but we have to do something in executor_files_pipes.c/-> set_files -> if redir->type == TOKEN_HEREDOC - do something with file descriptors - OKAY IT IS FIXED AND WORKS FOR BOTH TYPES OF COMMANDS - I ADDED DUPLICATE OF STDIN, STDOUT IN MAIN AND SET IT BACK FOR EACH ITERATION OF SHOW_PROMPT :D :D
+- but now that we dup stdin, stdout back to 0 and 1 after writing to pipe the pipe is closed and does not work anymore so commands like cat are constantly waiting for input but it is already closed - i really idk what to do, but we have to do something in executor_files_pipes.c/-> set_files -> if redir->type == TOKEN_HEREDOC - do something with file descriptors - OKAY IT IS FIXED AND WORKS FOR BOTH TYPES OF COMMANDS - I ADDED DUPLICATE OF STDIN, STDOUT IN MAIN AND IT IS SET BACK TO 0 AND 1 AT BEGINNING OF EACH ITERATION OF SHOW_PROMPT :D :D
+- **FIXED:** we had small errors in export and unset where it worked with eg. C1= when there is = at end of string
 
 # TODO ENV EXPANSION
 - **TODO:** *echo $'USER'* and others with $ and quote after it :(
-
-# TODO HEREDOC
 
 # TODO SIGNALS AND SETUP OF MINISHELL/READLINE
 - **TODO:** !!! when we run minishell in minishell and press ^C, sometimes it prints ^C correctly in line, sometimes ^C in a newline, sometimes ^C after two newlines etc - can you fix? I have no idea

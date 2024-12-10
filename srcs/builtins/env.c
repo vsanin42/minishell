@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:16 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 13:42:48 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:02:41 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ int	env_builtin(t_mini *mini, t_cmd *cmd, char *prefix)
 	i = 0;
 	env_arr = mini->env;
 	if (cmd->args[1])
-		return (mini_error(mini, "env", cmd->args[1], "No such file or directory"), 127);
-	printf("cmd: %s\n", cmd->cmd);
+		return (mini_error(mini, "env", cmd->args[1],
+				"No such file or directory"), 127);
 	while (env_arr[i])
 	{
 		if (prefix)
 			write(1, prefix, ft_strlen(prefix));
-		if (ft_strchr(env_arr[i], '=') || prefix)
+		if (has_env_value(env_arr[i]) == 0 || prefix)
 		{
 			write(1, env_arr[i], ft_strlen(env_arr[i]));
 			write(1, "\n", 1);

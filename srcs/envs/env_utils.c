@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:40:19 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 20:55:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:51:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,62 +55,50 @@ char	*get_path_env(t_mini *mini, char *cmd)
 	char	*path_without_cmd;
 	char	*env_path;
 
-	i = 0;
+	i = -1;
 	env_path = getenv_local(mini->env, "PATH");
 	if (!env_path)
 		return (NULL);
 	paths = ft_split(env_path, ':');
 	if (!paths)
-		return (NULL);
-	free(env_path);
-	while (paths[i])
+		return (free(env_path), NULL);
+	while (paths[++i])
 	{
 		path_without_cmd = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(path_without_cmd, cmd);
 		free(path_without_cmd);
-		path_without_cmd = NULL;
 		if (!path)
-			return (NULL);
+			return (free(env_path), NULL);
 		if (access(path, F_OK) == 0)
-		{
-			free_paths(paths, &i);
-			return (path);
-		}
+			return (free(env_path), free_paths(paths, &i), path);
 		free(path);
-		i++;
 	}
-	free_paths(paths, &i);
-	free(paths);
-	return (NULL);
+	return (free(env_path), free_paths(paths, &i), free(paths), NULL);
 }
 
-int	get_env_index(char **envs, char *env_name)
+// takes entire env string and finds index based on name in the env array
+// @returns index if found or -1 if not found
+int	get_env_index_by_name(char **envs, char *env_name)
 {
 	int		i;
-	int		longer;
 	char	*curr_env_name;
 
 	if (!envs || !(*envs) || !env_name)
 		return (-1);
-	i = 0;
-	while (envs[i])
+	i = -1;
+	while (envs[++i])
 	{
-		curr_env_name = get_env_name(envs[i]);
+		curr_env_name = extract_env_name(envs[i]);
 		if (!curr_env_name)
 			return (-1);
-		longer = ft_strlen(env_name);
-		if (ft_strlen(curr_env_name) > longer)
-			longer = ft_strlen(curr_env_name);
-		if (!ft_strncmp(curr_env_name, env_name, longer))
+		if (!ft_strncmp(curr_env_name, env_name, ft_strlen(env_name) + 1))
 		{
-			printf("our env: %s, curr env: %s\n", env_name, curr_env_name);
 			free(curr_env_name);
 			curr_env_name = NULL;
 			return (i);
 		}
 		free(curr_env_name);
 		curr_env_name = NULL;
-		i++;
 	}
 	return (-1);
 }
@@ -122,7 +110,6 @@ char	*getenv_local(char **envs, char *env_name)
 	int		i;
 	char	*curr_env_name;
 	char	*value;
-	int		name_len;
 
 	if (!envs || !(*envs) || !env_name)
 		return (NULL);
@@ -130,13 +117,10 @@ char	*getenv_local(char **envs, char *env_name)
 	i = -1;
 	while (envs[++i])
 	{
-		curr_env_name = get_env_name(envs[i]);
+		curr_env_name = extract_env_name(envs[i]);
 		if (!curr_env_name)
 			return (NULL);
-		name_len = ft_strlen(env_name);
-		if (ft_strlen(curr_env_name) > name_len)
-			name_len = ft_strlen(curr_env_name);
-		if (!ft_strncmp(curr_env_name, env_name, name_len))
+		if (!ft_strncmp(curr_env_name, env_name, ft_strlen(env_name) + 1))
 		{
 			value = ft_substr(envs[i], ft_strlen(env_name) + 1,
 					(ft_strlen(envs[i]) - ft_strlen(env_name) - 1));
@@ -148,7 +132,10 @@ char	*getenv_local(char **envs, char *env_name)
 	return (NULL);
 }
 
-char	*get_env_name(char *env)
+// takes an env string as NAME=value and extracts the NAME
+// if no value, returns the NAME itself
+// @returns name of env variable
+char	*extract_env_name(char *env)
 {
 	int		i;
 	char	*res;
@@ -168,4 +155,36 @@ char	*get_env_name(char *env)
 	}
 	res = ft_strdup(env);
 	return (res);
+}
+
+// checks if passed in env contains also value or only name(possibly ending in =)
+// @returns 0 if has value, 1 if not
+int has_env_value(char *env)
+{
+	int	i;
+
+	i = 0;
+	while (env[i] && env[i] != '=')
+		i++;
+	if (env[i] == '\0' || (env[i] == '=' && env[i + 1] == '\0'))
+		return (ERROR);
+	return (0);
+}
+
+// checks whether env has valid name-only alnum or _, starting with letter or _
+// @returns 0 if valid name, 1 if not
+int	check_env_name(char *env)
+{
+	int	i;
+
+	i = 0;
+	if (env[i] >= '0' && env[i] <= '9')
+		return (ERROR);
+	while (env[i] && env[i] != '=')
+	{
+		if (!ft_isalnum(env[i]) && env[i] != '_')
+			return (ERROR);
+		i++;
+	}
+	return (0);
 }

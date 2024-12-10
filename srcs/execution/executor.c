@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/09 22:40:05 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:37:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,25 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	return (result);
 }
 
+// if it is only one process and is builtin, execute it in parent process
+// because it manipulates resources about process itself,in child its pointless
+// calls exec builtin funciton with the first command in the command list
+// cannot exit because it would exit the main process thus the entire program
 int exec_builtin_in_parent(t_mini *mini, int files[2])
 {
 	int	result;
-	int	stdin;			// this can probably go away since it is done in main function
-	int	stdout;			// this can probably go away since it is done in main function
+
 	set_files(mini, mini->cmd_list, &files[0], &files[1]);
-	stdin = dup(STDIN_FILENO);
-	stdout = dup(STDOUT_FILENO);
 	dup2(files[0], STDIN_FILENO);
 	dup2(files[1], STDOUT_FILENO);
 	close_files(&files[0], &files[1]);
 	result = exec_builtins(mini, mini->cmd_list);
-	dup2(stdin, 0);		// this can probably go away since it is done in main function
-	dup2(stdout, 1);	// this can probably go away since it is done in main function
 	mini->exit_status = result;
 	return (result);
 }
 
-// checks if command is specified by relative or absolute path
-//  f is_executable_file > 0 means it is executable file and we found it
+// receives a relative or absolute path and checks if it is an executable
+// if is_executable_file > 0 means it is executable file and we found it
 // if is_executable_file => 0 execve sets correct errno
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {

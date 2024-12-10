@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/09 20:56:19 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:29:03 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,6 @@ char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
 void	exit_builtin(t_mini *mini);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
-int		export_get_index(t_mini *mini, char **vars, int i);
-int		export_add_back(t_mini *mini, char* env);
-int		export_check_env(char *env);
 int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
 char	**unset_arr_element(char **env, int index, int len);
@@ -101,9 +98,12 @@ int		echo_n_option(char **args);
 /* envs/env_utils.c */
 char	*process_local_env(t_mini *mini, char *name);
 char	*get_path_env(t_mini *mini, char *cmd);
-int		get_env_index(char **envs, char *env_name);
+int		get_env_index_by_name(char **envs, char *env_name);
 char	*getenv_local(char **envs, char *env_name);
-char	*get_env_name(char *env);
+char	*extract_env_name(char *env);
+int		check_env_name(char *env);
+int		has_env_value(char *env);
+char	*extract_env_name(char *env);
 
 /* evaluators/input-evaluator.c */
 int		check_braces_alnum(char *input, int start);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:19:33 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/07 23:56:47 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/10 14:23:26 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	is_builtin(t_cmd *cmd)
 {
 	if (cmd && cmd->cmd
-		&& (!ft_strncmp(cmd->cmd, "cd", 2)
-			|| !ft_strncmp(cmd->cmd, "pwd", 3)
-			|| !ft_strncmp(cmd->cmd, "env", 3)
-			|| !ft_strncmp(cmd->cmd, "export", 6)
-			|| !ft_strncmp(cmd->cmd, "unset", 5)
-			|| !ft_strncmp(cmd->cmd, "echo", 4)
-			|| !ft_strncmp(cmd->cmd, "exit", 4)))
+		&& (!ft_strncmp(cmd->cmd, "cd", 3)
+			|| !ft_strncmp(cmd->cmd, "pwd", 4)
+			|| !ft_strncmp(cmd->cmd, "env", 4)
+			|| !ft_strncmp(cmd->cmd, "export", 7)
+			|| !ft_strncmp(cmd->cmd, "unset", 6)
+			|| !ft_strncmp(cmd->cmd, "echo", 5)
+			|| !ft_strncmp(cmd->cmd, "exit", 5)))
 		return (1);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:30:33 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/06 15:01:10 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 13:38:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ int	get_arr_len(char **arr)
 	return (i);
 }
 
+// allocates new array of size + 2 (for new el and NULL terminator)
+// duplicates all elements, appends the new one to the back
+// @returns new allocated array
 char	**add_back_array(char **arr, char *new_el)
 {
 	int		i;
@@ -95,6 +98,7 @@ char **change_arr_element(char **arr, char *new_el, int	index)
 {
 	char	**rest_of_arr;
 	int		i;
+	char	*temp;
 
 	if (!arr || !(*arr) || !new_el)
 		return (NULL);
@@ -108,10 +112,11 @@ char **change_arr_element(char **arr, char *new_el, int	index)
 	if (rest_of_arr == NULL)
 		return (NULL);
 	rest_of_arr++;
+	temp = ft_strdup(new_el);
+	if (!temp)
+		return (NULL);
 	free(arr[index]);
-	arr[index] = ft_strdup(new_el);
-	if (!arr[index])
-		return (free_arr(arr), free_arr(rest_of_arr), NULL);
+	arr[index] = temp;
 	return (arr);
 }
 
