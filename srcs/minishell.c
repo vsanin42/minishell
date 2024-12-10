@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 22:35:13 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:45:49 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,13 @@ int	process_input(char *input, t_mini *mini)
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
-	int result = 0;
+	// int 	result;
 
+	// result = 0;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);
-	input = readline("minishell>"); // \033[32mminishell\033[37m>
+	input = readline("minishell$ "); // \033[32mminishell\033[37m>
 	if (!input)
 		return (-1);
 	if (input[0] == '\0')
@@ -64,7 +65,8 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
-	result = process_input(input, mini);
+	/* result = */ process_input(input, mini);
+	// result not used
 	return (1);
 }
 
