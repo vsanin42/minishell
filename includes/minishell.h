@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/10 16:33:39 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 19:08:32 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,9 @@ int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
 int		exec_shell_command(t_mini *mini, t_cmd *cmd);
 int		execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini);
-void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
+int	set_exit_status(int num_of_p, t_mini *mini, int *pids);
 
 /* execution/executor_utils.c */
-void	mini_error(t_mini *mini, char *first, char *second, char *third);
 
 /* execution/executor_files_pipes.c */
 int		close_files(int *infile, int *outfile);
@@ -220,7 +219,8 @@ int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
 int		mini_perror(t_mini *mini, char *msg);
-char	*perror_msg(char *first, char *second, char *third, char *fourth);
+int		mini_error(t_mini *mini, char *msg, int err);
+char	*create_msg(char *first, char *second, char *third, char *fourth);
 
 /* utils/file_utils.c */
 char	*get_current_directory(void);

@@ -5,6 +5,8 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+--- CURRETNLY WORKING ON EXIT CODES -Z
+
 # 9.12. + 10.12. by Zuzka
 - **FIXED:** exporting envs with no value, just with name ignored them, but we still have to store them and ignore them only in printing with env commandm because with export+no arguments we have to print it even thiugh it is just a name
 - **FIXED:** when here is env with naem and value and we export the same name with another value, it was correctly overwriting it. but if we export the same name but with no value noe it has to ignore it and keep the env with value, even though we re-declared it without value
@@ -26,6 +28,24 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 
 # TODO ERROR CODES AND EXIT
 - **TODO:** set error codes properly - implement errno && must update exit status at end of each of these functions - now some commands prolly builtins do not return errno but 0 or 1 or at least it is not consistent
+- errno is error code based on which we can print error messages and find what went wrong in the system
+- exit status is
+
+In Bash, exit codes (also known as return codes) are integers that indicate the outcome of a command or script. They range from 0 to 255 and are used to convey whether a command was successful or encountered an error.
+POSSIBLE BASH EXIT CODES
+0: Success = The command or script executed successfully without errors.
+1: General error = A catch-all for general errors.
+2: Misuse of shell builtins = Misuse of built-in shell commands, such as an invalid syntax.
+126: Command invoked cannot execute = The command was found but could not be executed (e.g., permission denied).
+127: Command not found = The specified command does not exist.
+128: Invalid argument to exit = An exit code outside the range of 0-255 was used.
+128 + signal number: Fatal error signal = If a command is terminated by a signal, the exit code is 128 plus the signal number. For example:
+	130: Script terminated by Ctrl+C (SIGINT, signal 2).
+	137: Termination due to SIGKILL.
+	139: Segmentation fault (SIGSEGV).
+	255: Exit status out of range or special case
+Exit codes greater than 255 "wrap around" modulo 256, so 256 becomes 0, 257 becomes 1, and so on. This behavior often indicates an out-of-range or erroneous exit code.
+
 
 # TODO OTHERS
 - **TODO:** all checks in input evaluator currently work just once, need to put them in a loop to iterate through the whole input string instead

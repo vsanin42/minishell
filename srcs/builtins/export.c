@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 16:43:41 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 18:04:59 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,7 @@ int	export_builtin(t_mini *mini, t_cmd *cmd)
 		if (!env_name)
 			return (ERROR);
 		if (check_env_name(env_name) == ERROR)
-			return (mini->exit_status = 1, free(env_name), mini_error(mini,
-					mini->cmd_list->cmd, arg[i], "not a valid identifier"), 1);
+			return (free(env_name), mini_error(mini, create_msg("minishell", mini->cmd_list->cmd, arg[i], "not a valid identifier"), 1));
 		if (export_each_arg(mini, arg[i], env_name) == ERROR)
 			return (free(env_name), ERROR);
 		free(env_name);

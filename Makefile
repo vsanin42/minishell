@@ -11,7 +11,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-# use in shell to check for functions not linked into executable thus not ours : nm -u minishell
+# nm -u minishell: use in shell to check for functions not linked into executable thus not ours
 RM = rm -f
 
 LIBFTDIR = libft
@@ -50,7 +50,7 @@ SRC  =  srcs/minishell.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
 		srcs/types/t_token_utils.c \
-		srcs/utils/exit.c \
+		srcs/utils/messages.c \
 		srcs/utils/file_utils.c \
 		srcs/utils/free.c \
 		srcs/utils/signal.c \

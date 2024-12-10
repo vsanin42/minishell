@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 17:04:39 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 19:09:04 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,27 @@
 int	process_input(char *input, t_mini *mini)
 {
 	int	result;
+	// possible result codes: 0, 1, 2, 126, 127 (128+ for signals)
+	// ensure all of these functions onlt return one of these
 
 	result = lexer(input, mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
+		return (free_token_list(mini), result);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	result = token_evaluator(mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
+		return (free_token_list(mini), result);
 	result = parser_heredoc(mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
+		return (free_token_list(mini), result);
 	result = parser(mini);
 	if (result != 0)
-		return (free_token_list(mini), free_cmd_list(mini), ERROR);
+		return (free_token_list(mini), free_cmd_list(mini), result);
 	free_token_list(mini);
-	// if we leave cmd evaluator out, open cares for some edge cases but not for all - eg. it sets errno if file does not exist but not if it is directoryy when we expect file - maybe can leave out after some work
-	if (cmd_evaluator(mini) == 0)
-		result = executor(mini);
+	result = cmd_evaluator(mini);
+	if (result != 0)
+		return (free_cmd_list(mini), result);
+	result = executor(mini);
 	free_cmd_list(mini);
 	return (result);
 }
@@ -49,7 +52,6 @@ int	process_input(char *input, t_mini *mini)
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
-	int		result;
 
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
@@ -66,7 +68,7 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
-	result = process_input(input, mini);
+	mini->exit_status = process_input(input, mini);
 	return (1);
 }
 
