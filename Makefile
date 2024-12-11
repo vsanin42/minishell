@@ -37,8 +37,9 @@ SRC  =  srcs/minishell.c \
 		srcs/evaluators/input_evaluator.c \
 		srcs/evaluators/token_evaluator.c \
 		srcs/execution/executor.c \
-		srcs/execution/executor_utils.c \
-		srcs/execution/executor_files_pipes.c \
+		srcs/execution/ex_utils.c \
+		srcs/execution/ex_files_pipes.c \
+		srcs/execution/ex_stdin_stdout.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
 		srcs/lexer/lexer.c \

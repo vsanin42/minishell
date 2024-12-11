@@ -3,42 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/10 19:11:07 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 13:19:16 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// checks if command is one of builtins and executes it
-// will run only if is_builtin condition is true
-// cannot call exit because it can be called also in main process
-// returns 0 if any builtin was excuted succesfully, and errno if not
-int exec_builtins(t_mini *mini, t_cmd *cmd)
-{
-	int	result;
-
-	result = 0;
-	if (!ft_strncmp(cmd->cmd, "cd", 2))
-		result = cd_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "pwd", 3))
-		result = pwd_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "env", 3))
-		result = env_builtin(mini, cmd, NULL);
-	else if (!ft_strncmp(cmd->cmd, "export", 6))
-		result = export_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "unset", 5))
-		result = unset_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "echo", 4))
-		result = echo_builtin(mini, cmd);
-	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-		exit_builtin(mini);
-	else
-		return (ERROR);
-	return (result);
-}
 
 // if it is only one process and is builtin, execute it in parent process
 // because it manipulates resources about process itself,in child its pointless
@@ -59,129 +31,94 @@ int exec_builtin_in_parent(t_mini *mini, int files[2])
 		return (1);
 }
 
-// receives a relative or absolute path and checks if it is an executable
-// if is_executable_file > 0 means it is executable file and we found it
-// if is_executable_file => 0 execve sets correct errno
-int exec_command_by_path(t_mini *mini, t_cmd *cmd)
-{
-	char	*path;
-	int		result;
-
-	result = 0;
-	path = cmd->cmd;
-	if (is_executable_file(path) == -1)
-	{
-		perror("minishell");
-		result = errno;
-		return (result);
-	}
-	if (execve(path, cmd->args, mini->env) == -1)
-	{
-		result = errno;
-		perror("minishell");
-		return (ERROR);
-	}
-	return (ERROR);
-}
-
-// checks if command is shell command (=command at $PATH variable)
-int	exec_shell_command(t_mini *mini, t_cmd *cmd)
-{
-	char	 *path;
-	int		result;
-
-	result = 0;
-	path = get_path_env(mini, cmd->cmd);
-	if (!path)
-		return (mini_error(mini, create_msg(cmd->cmd, "command not found", NULL, NULL), 127));
-	if (execve(path, cmd->args, mini->env) == -1)
-	{
-		result = errno;
-		perror("minishell");
-	}
-	return (ERROR);
-}
-
 // we have to understand we call it command but it can also be path
 // it actually always is path to the executable file -> command
 // 1. first check builtin functions - do function for this later
-// 2. check for executables starting with path - eg. ./minishell, ../minishell, minishell/minishell ... - it is already on path containing "/" - absolute or relative
+// 2. check for executables specified by path - eg. ./minishell, ../minishell
 // 3. means that only place left to look for are the commands at $PATH
-int	execute(t_mini *mini, t_cmd *cmd)
+// free all resources at end before exit
+// @returns nothing, exits with proper exit status of command
+void	execute(t_mini *mini, t_cmd *cmd)
 {
 	int	result;
 
 	result = 0;
-	if (is_builtin(cmd))
-		result = exec_builtins(mini, cmd);
-	else if (ft_strchr(cmd->cmd, '/'))
-		result = exec_command_by_path(mini, cmd);
-	else
-		result = exec_shell_command(mini, cmd);
+	if (cmd->cmd)
+	{
+		if (is_builtin(cmd))
+			result = exec_builtins(mini, cmd);
+		else if (ft_strchr(cmd->cmd, '/'))
+			result = exec_command_by_path(mini, cmd);
+		else
+			result = exec_shell_command(mini, cmd);
+	}
 	free_cmd_list(mini);
 	free_arr(mini->env);
-	return (result);
+	exit(result);
+}
+
+// for each process set most recent infile and outfile from its redir struct
+// set STDIN and STDOUT of each process to corresponding pipe or file
+// if no file and no pipe, STDIN and STDOUT are kept as processes STDIN, STDOUT
+// close pipes and files - ones we need are dupped so we do not need them now
+// @returns nothing - execute() exits child process with proper exit status
+void exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
+{
+	t_cmd	*nthcmd;
+	int		num_of_p;
+
+	num_of_p = get_cmd_count(mini->cmd_list);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	set_termios(0);
+	nthcmd = get_nth_command(mini->cmd_list, i);
+	if (!nthcmd)
+	{
+		close_all_pipes(pipes, num_of_p);
+		exit(mini_error(mini, create_msg("minishell",
+			"command not found", NULL, NULL), 127));
+	}
+	set_files(mini, nthcmd, &files[0], &files[1]);
+	set_ins_outs(i, pipes, files, num_of_p);
+	close_files(&files[0], &files[1]);
+	close_all_pipes(pipes, num_of_p);
+	execute(mini, nthcmd);
 }
 
 // check if builtin & 1 command - not open any processes, must be done in main
-// create as many processes as commands - BUT each fork duplicates the existing process so we end up in more, thats why we are always using only the child process by: if pids[0] == 0
-// and this child process is then killed by execve command at its end so we eventually get back to parent, he again creates only one child, and again ...
-// for each process set the infile and outfile to the ones from its redir struct, if there is any
-// set STDIN and STDOUT of each process to corresponding pipe or file
-// close pipes and files - the ones we need are dupped anyways so we do not need them anymore
-// execute - if the process continues, means if failed or it was a builtin - we have to exit with proper error code
-int	executor(t_mini *mini)
+// in this case execute and return, not exit, as it would kill entire program
+// create as many processes as commands in loop
+// BUT each fork duplicates existing process so we end up in more
+// always use only the child process by if pids[0] == 0 and execve/exit at end
+// so it does not fork into its child processes
+// each command in pipeline (=process) is executed independently
+// failure of one does not prevent others from executing
+// @returns executor returns exit status of its most recent process
+int	executor(t_mini *mini, int num_of_p)
 {
 	int		files[2];
-	int		num_of_p = get_cmd_count(mini->cmd_list);
 	int		pids[num_of_p];
 	int		pipes[num_of_p - 1][2];
 	int		i;
-	t_cmd	*nthcmd;
-	int		result;
 
-	result = 0;
-	i = 0;
+	i = -1;
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
 	if (num_of_p == 1 && is_builtin(mini->cmd_list))
 		return (exec_builtin_in_parent(mini, files));
-	result = open_pipes(pipes, num_of_p);
-	if (result != 0)
-		return (result);
+	if (open_pipes(pipes, num_of_p) != 0)
+		return (ERROR);
 	signal(SIGINT, SIG_IGN);
-	while (i < num_of_p)
+	while (++i < num_of_p)
 	{
 		pids[i] = fork();
 		if (pids[i] == -1)
-		{
-			close_all_pipes(pipes, num_of_p);
-			perror("minishell");
-			return (ERROR);
-		}
+			return (close_all_pipes(pipes, num_of_p), perror("minishell"), 1);
 		if (pids[i] == 0)
-		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			set_termios(0);
-			nthcmd = get_nth_command(mini->cmd_list, i);
-			if (!nthcmd)
-			{
-				close_all_pipes(pipes, num_of_p);
-				return (mini_error(mini, create_msg("minishell", "command not found", NULL, NULL), 127));
-			}
-			set_files(mini, nthcmd, &files[0], &files[1]);
-			set_ins_outs(i, pipes, files, num_of_p);
-			close_files(&files[0], &files[1]);
-			close_all_pipes(pipes, num_of_p);
-			if (nthcmd->cmd)
-				result = execute(mini, nthcmd);
-			exit(result); // have to exit here in process, not in execute function, because that runs only if there is command - but what if we run process with only files? it would never exit bc. execute function that can exit would never run
-		}
-		i++;
+			exec_cmd(mini, pipes, files, i);
 	}
 	close_all_pipes(pipes, num_of_p);
-	return (set_exit_status(num_of_p, mini, pids));
+	return (get_exit_status(num_of_p, mini, pids));
 }
 
 void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig)
@@ -225,25 +162,3 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		else if (last_sig == SIGQUIT)
 			write(1, "Quit\n", 5);
 	}
-// int	set_exit_status(int num_of_p, t_mini *mini, int *pids)
-// {
-// 	int	i;
-// 	int	status;
-// 	int	exit_status;
-
-// 	i = 0;
-// 	status = 0;
-// 	(void)mini;
-// 	while (i < num_of_p)
-// 	{
-// 		waitpid(pids[i], &status, 0);
-// 		if (WIFEXITED(status))
-// 			exit_status = WEXITSTATUS(status);
-// 		else if (WIFSIGNALED(status))
-// 			exit_status = WTERMSIG(status) + 128;
-// 		i++;
-// 	}
-// 	if (WTERMSIG(status) == SIGQUIT)
-// 		printf("Quit\n");
-// 	return (exit_status);
-}

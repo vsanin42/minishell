@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_files_pipes.c                             :+:      :+:    :+:   */
+/*   ex_files_pipes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 12:26:35 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 13:45:57 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	close_files(int *infile, int *outfile)
 }
 
 // can closing go wrong?
-
 int	close_all_pipes(int pipes[][2], int pipe_count)
 {
 	int i;
@@ -59,54 +58,11 @@ int	open_pipes(int pipes[][2], int process_count)
 	return (0);
 }
 
-// set up STDIN and STDOUT of each process
-// if there is a file sets it to file
-// else it sets it to proper ends of pipes
-// in first process, STDIN is infile or STDIN
-// in last process, STDOUT is outfile or STDOUT
-int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
-{
-	if (i == 0)
-	{
-		dup2(files[0], STDIN_FILENO);
-		if (num_of_p - 1 > 0)
-		{
-			if (files[1] > STDOUT_FILENO)
-				dup2(files[1], STDOUT_FILENO);
-			else
-				dup2(pipes[0][1], STDOUT_FILENO);
-		}
-	}
-	if (i > 0 && i < num_of_p - 1)
-	{
-		if (files[0] > STDIN_FILENO)
-			dup2(files[0], STDIN_FILENO);
-		else
-			dup2(pipes[i - 1][0], STDIN_FILENO);
-		if (files[1] > STDOUT_FILENO)
-			dup2(files[1], STDOUT_FILENO);
-		else
-			dup2(pipes[i][1], STDOUT_FILENO);
-	}
-	if (i == num_of_p - 1)
-	{
-		if (num_of_p - 1 > 0)
-		{
-			if (files[0] > STDIN_FILENO)
-				dup2(files[0], STDIN_FILENO);
-			else
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-		}
-		dup2(files[1], STDOUT_FILENO);
-	}
-	return (0);
-}
-
 int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
-	int temp_pipe[2];
-	int result;
+	int		temp_pipe[2];
+	int		result;
 
 	redir = nthcmd->redir;
 	while (redir)
@@ -143,12 +99,7 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		}
 		if (*infile == -1)
-		{
-			result = errno;
-			perror("minishell");
-			return (result);
-		}
-			//return (mini_perror(mini, NULL));
+			return (mini_perror(mini, NULL));
 		if (*outfile == -1)
 			return (mini_perror(mini, NULL));
 		redir = redir->next;

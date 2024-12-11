@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 23:38:24 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 16:19:52 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 12:18:47 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ int	is_executable_file(const char *path)
 
 	if (lstat(path, &sb) == -1)
 		return (-1);
-	return (S_ISREG(sb.st_mode)
-		&& (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)));
+	return (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH));
 }
 
 // checks if file is a regular file and if it is readable
