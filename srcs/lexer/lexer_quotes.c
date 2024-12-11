@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/11 03:37:05 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/11 13:57:06 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,20 @@ int	find_q_helper(char q_start, char *text, int i, int *q_ign)
 			return (set_q_ign(q_ign, 0), 0);
 	}
 	return (0);
-// ISNT THIS IN ARRAY.c?
-// int	array_char_len(char **head)
-// {
-// 	int	i;
+}
 
-// 	i = 0;
-// 	while (head && *head)
-// 	{
-// 		i += ft_strlen(*head);
-// 		head++;
-// 	}
-// 	return (i);
-// }
+// ISNT THIS IN ARRAY.c?
+int	array_char_len(char **head)
+{
+	int	i;
+
+	i = 0;
+	while (head && *head)
+	{
+		i += ft_strlen(*head);
+		head++;
+	}
+	return (i);
 }
 
 // finds end of the substring of our text token based on delimeters

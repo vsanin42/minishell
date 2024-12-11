@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/11 12:57:51 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/11 13:54:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,6 @@ int		exec_shell_command(t_mini *mini, t_cmd *cmd);
 void	execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini, int num_of_p);
 int		get_exit_status(int num_of_p, t_mini *mini, int *pids);
-int		execute(t_mini *mini, t_cmd *cmd);
-int		executor(t_mini *mini);
 void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
 void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig);
 void	ses_init(int *signaled, int *i, int *status, int *last_sig);
