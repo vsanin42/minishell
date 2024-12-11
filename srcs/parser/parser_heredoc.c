@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/07 10:09:34 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/11 11:01:24 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ int	parser_heredoc(t_mini *mini)
 		{
 			limit_token = temp->next;
 			if (!limit_token)
-				return (error_msg("Error: expected delimiter after <<", mini, 0, 0)); // handle
+				return (ERROR); 
 			limit = ft_strdup(limit_token->value);
 			process_heredoc(limit_token, limit, mini);
 			//free_memo((void *)limit);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/10 19:08:32 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 12:57:51 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ void	exit_builtin(t_mini *mini);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
-char	**unset_arr_element(char **env, int index, int len);
 int		unset_strdup(char **result, char **env, int *i, int flag);
 int		echo_builtin(t_mini *mini, t_cmd *cmd);
 char	*echo_builder(char **args);
@@ -125,9 +124,9 @@ int		token_evaluator(t_mini *mini);
 int		exec_builtins(t_mini *mini, t_cmd *cmd);
 int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
 int		exec_shell_command(t_mini *mini, t_cmd *cmd);
-int		execute(t_mini *mini, t_cmd *cmd);
-int		executor(t_mini *mini);
-int	set_exit_status(int num_of_p, t_mini *mini, int *pids);
+void	execute(t_mini *mini, t_cmd *cmd);
+int		executor(t_mini *mini, int num_of_p);
+int		get_exit_status(int num_of_p, t_mini *mini, int *pids);
 
 /* execution/executor_utils.c */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 19:09:04 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 12:57:42 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	process_input(char *input, t_mini *mini)
 	result = cmd_evaluator(mini);
 	if (result != 0)
 		return (free_cmd_list(mini), result);
-	result = executor(mini);
+	result = executor(mini, get_cmd_count(mini->cmd_list));
 	free_cmd_list(mini);
 	return (result);
 }
@@ -49,6 +49,8 @@ int	process_input(char *input, t_mini *mini)
 // (!input) = called when ^C was pressed - no input was received
 // input[0] == '\0' - input was empty or just enter
 // \033[32mminishell\033[37m>
+// here we are done with the previous command because all possible exits from the command lead here
+// so we set result of process_input to mini->exit_status so next command can access it
 int	show_prompt(t_mini *mini)
 {
 	char	*input;

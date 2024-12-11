@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 15:52:36 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 13:01:32 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 // other indicate error or abnormal termination
 // default is exit status of last executed command
 // exit_status must be between 0 and 255
+// if program exits with 128, means exit was called with code over 128
 void	exit_builtin(t_mini *mini)
 {
 	int	exit_status;
