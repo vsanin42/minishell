@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/06 14:34:56 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:55:27 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,6 @@ char	**alloc_args(char **args, t_token *token)
 	return (args);
 }
 
-// this is called at the beginning of the new cmd loop at each token
-// it checks if the token is text + if the node doesn't have the cmd name yet
-// if both are correct, sets the cmd name and "if" will never be true again
-// also allocates args and sets their head
-// @returns: 0 on regular flow, ERROR on failed allocations
-int	first_entry(t_token **token, t_cmd **node, char ***args, char ***ahead)
-{
-	if ((*token)->type == TOKEN_TEXT && !(*node)->cmd)
-	{
-		(*node)->cmd = ft_strdup((*token)->value);
-		if (!((*node)->cmd))
-			return (ERROR);
-		*args = alloc_args(*args, *token);
-		if (!(*args))
-			return (free((*node)->cmd), ERROR);
-		*ahead = *args;
-	}
-	return (0);
-}
 
 // collects tokens from token list into command or commands separated by pipe
 // if no new node, free all previous nodes and return error

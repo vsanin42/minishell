@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 17:34:38 by vsanin            #+#    #+#             */
-/*   Updated: 2024/11/26 15:13:21 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:46:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 // @returns 1 if we are on operator token and have text token after it, 0 if no
 int	new_redir_condition(t_token *token)
 {
-	if 	((token->type == TOKEN_REDIRIN
-		|| token->type == TOKEN_REDIROUT
-		|| token->type == TOKEN_APPEND
-		|| token->type == TOKEN_HEREDOC)
+	if ((token->type == TOKEN_REDIRIN
+			|| token->type == TOKEN_REDIROUT
+			|| token->type == TOKEN_APPEND
+			|| token->type == TOKEN_HEREDOC)
 		&& token->next
 		&& token->next->type == TOKEN_TEXT)
 		return (1);

@@ -87,9 +87,6 @@ char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
 void	exit_builtin(t_mini *mini);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
-int		export_get_index(t_mini *mini, char **vars, int i);
-int		export_add_back(t_mini *mini, char* env);
-int		export_check_env(char *env);
 int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);
 char	**unset_arr_element(char **env, int index, int len);
@@ -101,9 +98,12 @@ int		echo_n_option(char **args);
 /* envs/env_utils.c */
 char	*process_local_env(t_mini *mini, char *name);
 char	*get_path_env(t_mini *mini, char *cmd);
-int		get_env_index(char **envs, char *env_name);
+int		get_env_index_by_name(char **envs, char *env_name);
 char	*getenv_local(char **envs, char *env_name);
-char	*get_env_name(char *env);
+char	*extract_env_name(char *env);
+int		check_env_name(char *env);
+int		has_env_value(char *env);
+char	*extract_env_name(char *env);
 
 /* evaluators/input-evaluator.c */
 int		check_braces_alnum(char *input, int start);
@@ -130,9 +130,9 @@ int		executor(t_mini *mini);
 void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
 void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig);
 void	ses_init(int *signaled, int *i, int *status, int *last_sig);
+//int	  set_exit_status(int num_of_p, t_mini *mini, int *pids);
 
 /* execution/executor_utils.c */
-void	mini_error(t_mini *mini, char *first, char *second, char *third);
 
 /* execution/executor_files_pipes.c */
 int		close_files(int *infile, int *outfile);
@@ -196,7 +196,6 @@ int		array_char_len(char **head);
 int		get_arr_len(char **arr);
 char	**add_back_array(char **arr, char *new_el);
 char	**change_arr_element(char **arr, char *new_el, int	index);
-char	**remove_arr_element(char **arr, int index);
 
 /* types/t_cmd.c */
 void	init_cmd_node(t_cmd *node);
@@ -227,7 +226,8 @@ int		error_msg(char *msg, t_mini *mini, char *str_1, char *str_2);
 void	validator_msg(t_mini *mini, char *object, char *msg);
 void	s_error_msg(char *msg);
 int		mini_perror(t_mini *mini, char *msg);
-char	*perror_msg(char *first, char *second, char *third, char *fourth);
+int		mini_error(t_mini *mini, char *msg, int err);
+char	*create_msg(char *first, char *second, char *third, char *fourth);
 
 /* utils/file_utils.c */
 char	*get_current_directory(void);
@@ -239,7 +239,6 @@ int		is_writable_file(const char *path);
 /* utils/free.c */
 void	free_memo(void *mem_seg);
 void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
-void	free_mini_without_env(t_mini *mini);
 
 /* utils/signal.c */
 void	sig_handler(int sig);

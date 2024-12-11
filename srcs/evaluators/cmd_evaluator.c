@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_evaluator.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/01 17:05:36 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/10 18:35:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,20 @@ int	validate_files(t_mini *mini)
 		while (red)
 		{
 			if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno == ENOENT)
-				return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
+				return (mini_error(mini, create_msg("minishell", red->file, "No such file or directory", NULL), ERROR));
+				//return (validator_msg(mini, red->file, "No such file or directory"), ERROR);
 			else if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1 && errno != ENOENT)
-				return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
+				return (mini_error(mini, create_msg("minishell", red->file, "Error checking file permissions", NULL), ERROR));
+				//return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
 			else if (red->type == TOKEN_REDIRIN && (is_readable_file(red->file) == 0))
-				return (validator_msg(mini, red->file, "Permission denied"), ERROR);
+				return (mini_error(mini, create_msg("minishell", red->file, "Permission denied", NULL), ERROR));
+				//return (validator_msg(mini, red->file, "Permission denied"), ERROR);
 			else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND) && is_writable_file(red->file) == -1 && errno != ENOENT)
-				return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
+				return (mini_error(mini, create_msg("minishell", red->file, "Error checking file permissions", NULL), ERROR));
+				//return (validator_msg(mini, red->file, "Error checking file permissions"), ERROR);
 			else if ((red->type == TOKEN_REDIROUT || red->type == TOKEN_APPEND)  && (is_writable_file(red->file) == 0))
-				return (validator_msg(mini, red->file, "Permission denied"), ERROR);
+				return (mini_error(mini, create_msg("minishell", red->file, "Permission denied", NULL), ERROR));
+				//return (validator_msg(mini, red->file, "Permission denied"), ERROR);
 			red = red->next;
 		}
 		cmd = cmd->next;

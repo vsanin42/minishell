@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 14:40:47 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 18:13:03 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,14 @@ int	cd_home(t_mini *mini, char *path)
 	result = 0;
 	home = getenv_local(mini->env, "HOME");
 	if (!home)
-	{
-		mini_error(mini, "cd", "HOME not set", NULL);
-		return (ERROR);
-	}
+		return (mini_error(mini, create_msg("minishell", "cd", "HOME not set", NULL), 1));
 	if (chdir(home) == -1)
 	{
 		result = errno;
-		mini_error(mini, "cd", path, NULL);
-		perror("");
+		mini_perror(mini, create_msg("minishell", "cd", path, NULL));
 	}
 	free(home);
-	return(result);
+	return (result);
 }
 
 // changes directory, handles absolute, relative, no path
@@ -51,13 +47,13 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 		return (cd_home(mini, path));
 	if (!ft_strncmp(path, "-", 2))
 	{
-		if(chdir("..") == -1)
+		if (chdir("..") == -1)
 		{
 			result = mini_perror(mini, NULL);
 			return (result);
 		}
 	}
 	if (chdir(path) == -1)
-		result = mini_perror(mini, perror_msg("minishell", "cd", path, NULL));
-	return(result);
+		result = mini_perror(mini, create_msg("minishell--", "cd", path, NULL));
+	return (result);
 }

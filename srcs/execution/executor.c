@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/10 15:25:11 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/10 19:11:07 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,27 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 	return (result);
 }
 
+// if it is only one process and is builtin, execute it in parent process
+// because it manipulates resources about process itself,in child its pointless
+// calls exec builtin funciton with the first command in the command list
+// cannot exit because it would exit the main process thus the entire program
 int exec_builtin_in_parent(t_mini *mini, int files[2])
 {
 	int	result;
-	int	stdin;			// this can probably go away since it is done in main function
-	int	stdout;			// this can probably go away since it is done in main function
+
 	set_files(mini, mini->cmd_list, &files[0], &files[1]);
-	stdin = dup(STDIN_FILENO);
-	stdout = dup(STDOUT_FILENO);
 	dup2(files[0], STDIN_FILENO);
 	dup2(files[1], STDOUT_FILENO);
 	close_files(&files[0], &files[1]);
 	result = exec_builtins(mini, mini->cmd_list);
-	dup2(stdin, 0);		// this can probably go away since it is done in main function
-	dup2(stdout, 1);	// this can probably go away since it is done in main function
-	mini->exit_status = result;
-	return (result);
+	if (result == 0)
+		return (0);
+	else
+		return (1);
 }
 
-// checks if command is specified by relative or absolute path
-//  f is_executable_file > 0 means it is executable file and we found it
+// receives a relative or absolute path and checks if it is an executable
+// if is_executable_file > 0 means it is executable file and we found it
 // if is_executable_file => 0 execve sets correct errno
 int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
@@ -78,9 +79,9 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 	{
 		result = errno;
 		perror("minishell");
-		return (result);
+		return (ERROR);
 	}
-	return (result);
+	return (ERROR);
 }
 
 // checks if command is shell command (=command at $PATH variable)
@@ -92,13 +93,13 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 	result = 0;
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (mini_error(mini, cmd->cmd, "command not found", NULL), 127);
+		return (mini_error(mini, create_msg(cmd->cmd, "command not found", NULL, NULL), 127));
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		result = errno;
 		perror("minishell");
 	}
-	return (result);
+	return (ERROR);
 }
 
 // we have to understand we call it command but it can also be path
@@ -167,7 +168,7 @@ int	executor(t_mini *mini)
 			if (!nthcmd)
 			{
 				close_all_pipes(pipes, num_of_p);
-				return (mini_error(mini, "command not found", NULL, NULL), 127);
+				return (mini_error(mini, create_msg("minishell", "command not found", NULL, NULL), 127));
 			}
 			set_files(mini, nthcmd, &files[0], &files[1]);
 			set_ins_outs(i, pipes, files, num_of_p);
@@ -175,14 +176,12 @@ int	executor(t_mini *mini)
 			close_all_pipes(pipes, num_of_p);
 			if (nthcmd->cmd)
 				result = execute(mini, nthcmd);
-			mini->exit_status = result;
 			exit(result); // have to exit here in process, not in execute function, because that runs only if there is command - but what if we run process with only files? it would never exit bc. execute function that can exit would never run
 		}
 		i++;
 	}
 	close_all_pipes(pipes, num_of_p);
-	set_exit_status(num_of_p, mini, pids);
-	return (mini->exit_status);
+	return (set_exit_status(num_of_p, mini, pids));
 }
 
 void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig)
@@ -226,4 +225,25 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 		else if (last_sig == SIGQUIT)
 			write(1, "Quit\n", 5);
 	}
+// int	set_exit_status(int num_of_p, t_mini *mini, int *pids)
+// {
+// 	int	i;
+// 	int	status;
+// 	int	exit_status;
+
+// 	i = 0;
+// 	status = 0;
+// 	(void)mini;
+// 	while (i < num_of_p)
+// 	{
+// 		waitpid(pids[i], &status, 0);
+// 		if (WIFEXITED(status))
+// 			exit_status = WEXITSTATUS(status);
+// 		else if (WIFSIGNALED(status))
+// 			exit_status = WTERMSIG(status) + 128;
+// 		i++;
+// 	}
+// 	if (WTERMSIG(status) == SIGQUIT)
+// 		printf("Quit\n");
+// 	return (exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 22:05:19 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/06 14:46:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:20:21 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,4 @@ void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4)
 	s2 = NULL;
 	s3 = NULL;
 	s4 = NULL;
-}
-
-void	free_mini_without_env(t_mini *mini)
-{
-	free_token_list(mini);
-	//mini->token_list = NULL;
-	free_cmd_list(mini);
-	mini->cmd_list = NULL;
-	// free(mini->error_msg);
-	// mini->error_msg = NULL;
 }

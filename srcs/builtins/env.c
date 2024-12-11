@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:16 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/09 13:42:48 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 18:05:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,24 @@
 int	env_builtin(t_mini *mini, t_cmd *cmd, char *prefix)
 {
 	int		i;
-	char	**env_arr;
+	char	**envs;
 
 	i = 0;
-	env_arr = mini->env;
+	envs = mini->env;
 	if (cmd->args[1])
-		return (mini_error(mini, "env", cmd->args[1], "No such file or directory"), 127);
-	printf("cmd: %s\n", cmd->cmd);
-	while (env_arr[i])
+		return (mini_error(mini, create_msg("env", cmd->args[1], "No such file or directory", NULL), 127));
+	while (envs[i])
 	{
 		if (prefix)
 			write(1, prefix, ft_strlen(prefix));
-		if (ft_strchr(env_arr[i], '=') || prefix)
+		if (has_env_value(envs[i]) || ft_strchr(envs[i], '=') || prefix)
 		{
-			write(1, env_arr[i], ft_strlen(env_arr[i]));
-			write(1, "\n", 1);
+			write(1, envs[i], ft_strlen(envs[i]));
 		}
-		env_arr++;
+		if (prefix && !has_env_value(envs[i]) && (ft_strchr(envs[i], '=')))
+			write(1, "\"\"", 2);
+		write(1, "\n", 1);
+		envs++;
 	}
 	return (0);
 }

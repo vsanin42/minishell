@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/06 14:35:17 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:21:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	print_token_list(t_mini *mini)
 	}
 }
 
-// prints the command list in format: cmd\n, arguments\n, redir\n, redir->type\n, /...new_command/
+// prints command list in format: cmd\n, arguments\n, redir\n, redir->type\n
 void	print_command_list(t_mini *mini)
 {
 	t_cmd	*temp;
@@ -49,13 +49,10 @@ void	print_command_list(t_mini *mini)
 		}
 		while (aredir)
 		{
-			printf("redir file:\t%s\n", aredir->file);
-			printf("redir type:\t%d\n", aredir->type);
+			printf("redir file:\t%s, type\t%d\n", aredir->file, aredir->type);
 			aredir = aredir->next;
 		}
 		printf("---------------------------\n");
 		temp = temp->next;
 	}
 }
-
-

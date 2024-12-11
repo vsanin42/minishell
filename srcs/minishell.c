@@ -14,28 +14,32 @@
 
 // executes lexer->parser->executor with checks between each phase
 // @returns 0 on SUCESS, 1 on ERROR
+//print_token_list(mini);
+//print_command_list(mini);
 int	process_input(char *input, t_mini *mini)
 {
 	int	result;
+	// possible result codes: 0, 1, 2, 126, 127 (128+ for signals)
+	// ensure all of these functions onlt return one of these
 
 	result = lexer(input, mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
+		return (free_token_list(mini), result);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	result = token_evaluator(mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
-	//print_token_list(mini);
+		return (free_token_list(mini), result);
 	result = parser_heredoc(mini);
 	if (result != 0)
-		return (free_token_list(mini), ERROR);
+		return (free_token_list(mini), result);
 	result = parser(mini);
 	if (result != 0)
-		return (free_token_list(mini), free_cmd_list(mini), ERROR);
+		return (free_token_list(mini), free_cmd_list(mini), result);
 	free_token_list(mini);
-	//print_command_list(mini);
-	if (cmd_evaluator(mini) == 0) // if we leave it out, open cares for some edge cases but not for all - eg. it sets errno if file does not exist but not if it is directoryy when we expect file - maybe can leave out after some work
-		result = executor(mini);
+	result = cmd_evaluator(mini);
+	if (result != 0)
+		return (free_cmd_list(mini), result);
+	result = executor(mini);
 	free_cmd_list(mini);
 	return (result);
 }
@@ -44,16 +48,15 @@ int	process_input(char *input, t_mini *mini)
 // @returns 1 so the calling loop can continue, 0 on error so loop breaks
 // (!input) = called when ^C was pressed - no input was received
 // input[0] == '\0' - input was empty or just enter
+// \033[32mminishell\033[37m>
 int	show_prompt(t_mini *mini)
 {
 	char	*input;
-	// int 	result;
 
-	// result = 0;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);
-	input = readline("minishell$ "); // \033[32mminishell \033[37m$
+	input = readline("minishell$ ");
 	if (!input)
 		return (-1);
 	if (input[0] == '\0')
@@ -65,8 +68,7 @@ int	show_prompt(t_mini *mini)
 	add_history(input);
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
-	/* result = */ process_input(input, mini);
-	// result not used
+	mini->exit_status = process_input(input, mini);
 	return (1);
 }
 
@@ -78,6 +80,7 @@ int	show_prompt(t_mini *mini)
 void	set_termios(int mode)
 {
 	struct termios	termios;
+
 	if (tcgetattr(0, &termios) == -1)
 		exit(ERROR);
 	if (mode)
@@ -88,11 +91,11 @@ void	set_termios(int mode)
 		exit(ERROR);
 }
 
+// mini = (t_mini *)malloc(sizeof(t_mini)); // ??? why this causes leaks
+// if (!mini)
+// 	return ;
 void	init_mini(t_mini *mini, char **env)
 {
-	// mini = (t_mini *)malloc(sizeof(t_mini)); // ??? why this causes leaks
-	// if (!mini)
-	// 	return ;
 	mini->token_list = NULL;
 	mini->cmd_list = NULL;
 	mini->exit_status = 0;
@@ -105,13 +108,15 @@ void	init_mini(t_mini *mini, char **env)
 int	main(int argc, char *argv[], char *env[])
 {
 	t_mini	mini;
+	int		stdin;
+	int		stdout;
 
 	(void)argv;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);
-	int stdin = dup(STDIN_FILENO);
-	int stdout = dup(STDOUT_FILENO);
+	stdin = dup(STDIN_FILENO);
+	stdout = dup(STDOUT_FILENO);
 	while (1)
 	{
 		dup2(stdin, 0);
