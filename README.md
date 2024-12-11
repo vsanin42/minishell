@@ -5,6 +5,31 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+# 10.12. by Vlad
+- tried to figure out how to color minishell prompt, found nothing nice unfortunately :( gnu readline manual suggests we can edit some config files or do something else via command line but not sure. gotta be thankful we had it green for 99% of the way!
+- **FIXED:** signals inside minishell and child processes - should be working fine, also tested and made sure that quitting via signals doesn't mess with the result error code. try *cat | ls*, end cat with ctrl c, echo $? - should be 0 because it's the exit code of the *final* pipeline command, which is *ls* which runs successfully. at the same time we need to "document" that the signal occured in one of the commands (we need this to know what to print like SIGQUIT results in ^\Quit etc.), so this was done in set_exit_status function and related ones.
+- **FIXED?** echo $'USER' - i'm almost certain we can't do this perfectly. this structure itself (ANSI-C quoting) is kinda separate - $'string' is used to manage escape chars, for example \n, \t,... don't get taken literally but get printed. we don't need to handle it based on the subject, but i also felt like it's wrong to just throw an error. so ideally we handle it nicely, just ignore the special chars, but there's a problem in how our expansion and quote trimming is setup. we're limited by the fact that our code works linearly: get_env_value_to_process assumes that we've already decided we want to expand, but what if there's a series of $"$"??? on top of that, it used to split the received text even before, so $ would be separate from 'USER', i think it's fixed. i found some workarounds, partly hard(shit)coded in an ugly way but at least something. if you want to dive deeper try these prompts and try to find a pattern in them :DDD
+
+echo $"$"$"USER"""
+$USER
+echo $"$"$"$USER"""
+$vsanin
+echo $"$USER"
+vsanin
+echo $"$"$USER""
+$vsanin
+echo $'$USER'
+$USER
+echo $'$'$USER''
+
+so what i currently got working is:
+- $'USER', $"USER" - both just USER;
+- $'$USER' - $USER
+- $"$USER" - vsanin
+past that i believe are extremely niche cases that only someone who hates us with a passion would test so 1. i hope there are no such people 2. i'm prepared to defend this by simply saying it's the nature of minishell, if someone wants to break it, they will, it cannot be perfect in the time and subject constraints that we have.
+
+- **STILL TODO: OTHERS**
+
 # 9.12. by Zuzka
 - **FIXED:** exporting envs with no value, just with name ignored them, but we still have to store them and ignore them only in printing with env commandm because with export+no arguments we have to print it even thiugh it is just a name
 - **FIXED:** when here is env with naem and value and we export the same name with another value, it was correctly overwriting it. but if we export the same name but with no value noe it has to ignore it and keep the env with value, even though we re-declared it without value
@@ -16,14 +41,9 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - **FIXED:**  any builtin with heredoc exits minishell eg. pwd << EOF gets input from EOF, prints pwd, but then exits ??? other commands with heredoc are fine and also heredoc with builtins in pipes is ok - long debugging but found out we have to set stdin, stdout back to 0 and 1 after we are finished with pipes - termios was giving error code: Inappropriate ioctl for device, thats how i found out
 - but now that we dup stdin, stdout back to 0 and 1 after writing to pipe the pipe is closed and does not work anymore so commands like cat are constantly waiting for input but it is already closed - i really idk what to do, but we have to do something in executor_files_pipes.c/-> set_files -> if redir->type == TOKEN_HEREDOC - do something with file descriptors - OKAY IT IS FIXED AND WORKS FOR BOTH TYPES OF COMMANDS - I ADDED DUPLICATE OF STDIN, STDOUT IN MAIN AND SET IT BACK FOR EACH ITERATION OF SHOW_PROMPT :D :D
 
-# TODO ENV EXPANSION
-- **TODO:** *echo $'USER'* and others with $ and quote after it :(
-
-# TODO HEREDOC
-
 # TODO SIGNALS AND SETUP OF MINISHELL/READLINE
-- **TODO:** !!! when we run minishell in minishell and press ^C, sometimes it prints ^C correctly in line, sometimes ^C in a newline, sometimes ^C after two newlines etc - can you fix? I have no idea
-- signal handling of processes like cat that wait for input *not sure if this still has to be done, can be removed? -Zuzka*
+- **TODO:** !!! when we run minishell in minishell and press ^C, sometimes it prints ^C correctly in line, sometimes ^C in a newline, sometimes ^C after two newlines etc - can you fix? I have no idea **FIXED -V**
+- signal handling of processes like cat that wait for input *not sure if this still has to be done, can be removed? -Zuzka* **yes -V**
 
 # TODO ERROR CODES AND EXIT
 - **TODO:** set error codes properly - implement errno && must update exit status at end of each of these functions - now some commands prolly builtins do not return errno but 0 or 1 or at least it is not consistent

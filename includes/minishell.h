@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/09 20:56:19 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 03:03:16 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,8 @@ int		exec_shell_command(t_mini *mini, t_cmd *cmd);
 int		execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini);
 void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
+void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig);
+void	ses_init(int *signaled, int *i, int *status, int *last_sig);
 
 /* execution/executor_utils.c */
 void	mini_error(t_mini *mini, char *first, char *second, char *third);
@@ -154,10 +156,14 @@ int		find_words(char *text);
 char	**trim_quotes_in_array(char **head);
 char	*str_from_array(char **head);
 char	**process_envs_and_quotes(t_mini *mini, t_token *token);
+void	set_q_ign(int *q_ign, int value);
+int		find_q_helper(char q_start, char *text, int i, int *q_ign);
 
 /* lexer/lexer_quotes_utils.c */
 char	*exp_sub(t_mini *mini, char *str);
 int		check_next_char(char c, char c2, int i);
+int		check_dollar_sq(char *str);
+char	*strdup_from_second(const char *str);
 
 /* lexer/lexer.c */
 t_type	get_token_type(char *value);
