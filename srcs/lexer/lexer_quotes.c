@@ -3,55 +3,88 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/10 16:34:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 03:37:05 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	array_char_len(char **head)
+void	set_q_ign(int *q_ign, int value)
 {
-	int	i;
+	*q_ign = value;
+}
 
-	i = 0;
-	while (head && *head)
+int	find_q_helper(char q_start, char *text, int i, int *q_ign)
+{
+	if (q_start)
 	{
-		i += ft_strlen(*head);
-		head++;
+		if (text[i] == q_start && !*q_ign)
+			return (1);
+		else
+			return (set_q_ign(q_ign, 0), 0);
 	}
-	return (i);
+	else if (i != 0 && text[i - 1] && text[i - 1] == '$'
+		&& (text[i] == '\'' || text[i] == '"'))
+	{
+		*q_ign = 1;
+		return (2);
+	}
+	else
+	{
+		if ((text[i] == '\'' || text[i] == '"') && !*q_ign)
+			return (1);
+		else
+			return (set_q_ign(q_ign, 0), 0);
+	}
+	return (0);
+// ISNT THIS IN ARRAY.c?
+// int	array_char_len(char **head)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (head && *head)
+// 	{
+// 		i += ft_strlen(*head);
+// 		head++;
+// 	}
+// 	return (i);
+// }
 }
 
 // finds end of the substring of our text token based on delimeters
 // delimeter can be quotes or end of string
+// q_ign = quote ignore flag used to skip past the next quote we find after $'
+// breaks the loop if helper returns 1 - found a quote or \0
+// increments past $ AND '/" if helper returns 2 - found a $ + '\" combo
+// that means that the next quote is to be ignored because it must remain
+// and be included in the whole string
 // @returns index of the delimeter in the input string
 int	find_q_or_end(char *text)
 {
 	int		i;
 	char	q_start;
+	int		q_ign;
 
+	q_ign = 0;
 	i = 0;
 	q_start = '\0';
 	if (text[i] == '\'' || text[i] == '"')
 		q_start = text[i++];
 	while (text[i])
 	{
-		if (q_start)
-		{
-			if (text[i] == q_start)
-				break ;
-		}
-		else
-		{
-			if (text[i] == '\'' || text[i] == '"')
-				break ;
-		}
+		if (find_q_helper(q_start, text, i, &q_ign) == 1)
+			break ;
+		else if (find_q_helper(q_start, text, i, &q_ign) == 2)
+			i++;
 		i++;
 	}
-	if (q_start && text[i] != '\0')
+	// not sure if q_start is important here but i havent seen any difference
+	//printf("text[i] after while break: %c\n", text[i]);
+	if (/* q_start &&  */text[i] != '\0')
 		i++;
 	return (i);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expanding_env.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/09 20:37:07 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/11 03:36:11 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,19 +179,30 @@ char	*get_env_value_to_process(t_mini *mini, char *text)
 
 	i = -1;
 	res = ft_strdup("");
+	//printf("%s\n", text);
 	while (text[++i])
 	{
 		res = handle_word_no_env(res, text, &i);
 		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '_'
 			|| text[i + 1] == '{' || text[i + 1] == '?'))
 		{
+			//printf("1\n");
 			res = handle_env(mini, res, text, &i);
 			if (!text[i])
 				break ;
+		} 
+		else if (text[i] == '$' && text[i + 1]
+			&& (text[i + 1] == '\'' || text[i + 1] == '"'))
+		{
+			//printf("2\n");
+			continue ;
 		}
 		else if (text[i] == '$' && (!text[i + 1]
-			|| ((text[i + 1] && !ft_isalnum(text[i + 1])))))
+			|| (text[i + 1] && !ft_isalnum(text[i + 1]))))
+		{
+			//printf("3\n");
 			res = quickjoin(res);
+		}
 		else
 			break ;
 	}
