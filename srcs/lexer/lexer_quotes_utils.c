@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/11 03:02:23 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/15 14:08:46 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	check_dollar_sq(char *str)
 {
 	int	i;
-	
+
 	i = 0;
 	if (str[i] == '$' && str[i + 1] == '\'')
 		i += 2;
@@ -59,7 +59,7 @@ char	*strdup_from_second(const char *str)
 char	*exp_sub(t_mini *mini, char *str)
 {
 	char	*expanded;
-	//printf("str in exp_sub: %s\n\n", str);
+
 	if (str[0] != '\'' && !check_dollar_sq(str))
 	{
 		expanded = get_env_value_to_process(mini, str);

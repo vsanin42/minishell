@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:40:14 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/10 13:15:00 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/15 13:51:00 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ void	sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\n", 1); // printf is not async-signal-safe, better use write
-		rl_on_new_line(); // tell readline that the input has moved onto \n
-		rl_replace_line("", 0); // make the input empty (removes whatever has been written so far)
-		rl_redisplay(); // display the line again
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
 }
 

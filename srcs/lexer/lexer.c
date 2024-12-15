@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/09 20:17:02 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 14:03:36 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 // expands envs and removes trailing quotes from start/end
 // only if the previous token is not heredoc based on hdoc flag
 // @returns 1 on success, 0 on error - BECAUSE OF NORM IN CALLER :D
-int	create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc)
+int	create_and_add_tok(t_mini *mini, char *val, t_token **token_list, int *hdoc)
 {
 	char	*new_value;
 	t_token	*new_tok;
 
 	new_value = NULL;
-	new_tok = init_new_token(ft_strdup(node_value), get_token_type(node_value));
-	free(node_value);
-	node_value = NULL;
+	new_tok = init_new_token(ft_strdup(val), get_token_type(val));
+	free(val);
+	val = NULL;
 	if (!new_tok)
 		return (0);
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
@@ -98,7 +98,7 @@ char	*create_node_value(char *input, int *i)
 {
 	char	*node_value;
 
-	node_value =  NULL;
+	node_value = NULL;
 	if (input[*i] == '\0')
 		return (NULL);
 	if ((input[*i] == '>' && input[*i + 1] == '>') || (input[*i] == '<'
@@ -109,15 +109,6 @@ char	*create_node_value(char *input, int *i)
 	else
 		node_value = process_text(input, i, 0, 0);
 	return (node_value);
-}
-
-// i hate norminette - :D :D :D :D -Zuzka
-void init_gtl_vars(int *f, int *i, char **node, t_token **token)
-{
-	*f = 0;
-	*i = -1;
-	*node = NULL;
-	*token = NULL;
 }
 
 // iterates over characters from string received from readline
@@ -142,10 +133,7 @@ t_token	*get_token_list(t_mini *mini, char *input)
 		if (node_value)
 		{
 			if (!create_and_add_tok(mini, node_value, &token_list, &hdoc_flag))
-			{
-				free_token_list(mini);
-				return (NULL);
-			}
+				return (free_token_list(mini), NULL);
 			if (i + 1 < ft_strlen(input) && !ft_strncmp(input + i, "<<", 2))
 			{
 				hdoc_flag = 1;

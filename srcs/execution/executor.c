@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/11 13:53:55 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/15 14:45:50 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // because it manipulates resources about process itself,in child its pointless
 // calls exec builtin funciton with the first command in the command list
 // cannot exit because it would exit the main process thus the entire program
-int exec_builtin_in_parent(t_mini *mini, int files[2])
+int	exec_builtin_in_parent(t_mini *mini, int files[2])
 {
 	int	result;
 
@@ -62,7 +62,7 @@ void	execute(t_mini *mini, t_cmd *cmd)
 // if no file and no pipe, STDIN and STDOUT are kept as processes STDIN, STDOUT
 // close pipes and files - ones we need are dupped so we do not need them now
 // @returns nothing - execute() exits child process with proper exit status
-void exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
+void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
 {
 	t_cmd	*nthcmd;
 	int		num_of_p;
@@ -76,7 +76,7 @@ void exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
 	{
 		close_all_pipes(pipes, num_of_p);
 		exit(mini_error(mini, create_msg("minishell",
-			"command not found", NULL, NULL), 127));
+					"command not found", NULL, NULL), 127));
 	}
 	set_files(mini, nthcmd, &files[0], &files[1]);
 	set_ins_outs(i, pipes, files, num_of_p);

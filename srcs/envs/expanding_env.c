@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/11 03:36:11 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/15 13:28:37 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,27 +37,6 @@ char	*handle_word_no_env(char *res, char *text, int *i)
 		res = ft_strjoin(res, to_append);
 		free_four_mallocs(to_append, oldres, NULL, NULL);
 	}
-	return (res);
-}
-
-char	*handle_question(t_mini *mini, char *res, char *text, int *i)
-{
-	char	*oldres;
-	char	*status;
-
-/* 	if (text[*i] == '?' && text[*i + 1] == '}')
-		(*i)++;*/
-	if (text[*i] == '?')
-		(*i)++;
-	oldres = res;
-	status = ft_itoa(mini->exit_status);
-	if (!status)
-		return (res);
-	res = ft_strjoin(res, status);
-	if (!res)
-		return (free(status), oldres);
-	free(oldres);
-	free(status);
 	return (res);
 }
 
@@ -152,18 +131,6 @@ char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i)
 	return (res);
 }
 
-char	*quickjoin(char *res)
-{
-	char	*oldres;
-
-	oldres = res;
-	res = ft_strjoin(res, "$");
-	if (!res)
-		return (NULL);
-	free(oldres);
-	return (res);
-}
-
 // get string with or without ""/'' at  ends, quotes  in middle are non-special
 // doesnt take into consderation if it is between "/', expands always
 // thus check for whether it should be expanded must be in the calling function
@@ -179,30 +146,22 @@ char	*get_env_value_to_process(t_mini *mini, char *text)
 
 	i = -1;
 	res = ft_strdup("");
-	//printf("%s\n", text);
 	while (text[++i])
 	{
 		res = handle_word_no_env(res, text, &i);
 		if (text[i] == '$' && (ft_isalnum(text[i + 1]) || text[i + 1] == '_'
-			|| text[i + 1] == '{' || text[i + 1] == '?'))
+				|| text[i + 1] == '{' || text[i + 1] == '?'))
 		{
-			//printf("1\n");
 			res = handle_env(mini, res, text, &i);
 			if (!text[i])
 				break ;
-		} 
+		}
 		else if (text[i] == '$' && text[i + 1]
 			&& (text[i + 1] == '\'' || text[i + 1] == '"'))
-		{
-			//printf("2\n");
 			continue ;
-		}
 		else if (text[i] == '$' && (!text[i + 1]
-			|| (text[i + 1] && !ft_isalnum(text[i + 1]))))
-		{
-			//printf("3\n");
+				|| (text[i + 1] && !ft_isalnum(text[i + 1]))))
 			res = quickjoin(res);
-		}
 		else
 			break ;
 	}

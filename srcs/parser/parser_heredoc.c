@@ -3,49 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parser_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/11 11:01:24 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/15 13:56:58 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// i hate norminette
-int	heredoc_dup(t_mini *mini)
-{
-	int	fd;
-
-	fd = dup(STDIN_FILENO);
-	if (fd < 0)
-		return (error_msg("Error opening fd", mini, 0, 0)); // handle
-	return (fd);
-}
-
-// sighandler that gets enabled during the heredoc loop
-// if ctrl+c is detected, the stdin is closed
-// it is then restored via duplicated fd in process_heredoc()
-void	heredoc_handler(int sig)
-{
-	if (sig == SIGINT)
-	{
-		close(STDIN_FILENO);
-		write(STDERR_FILENO, "\n", 1);
-	}
-}
-
-// takes the input from heredoc readline and expands the value
-// @returns: input with expanded variable regardless of quotes
-char	*heredoc_expand(t_mini *mini, char *str)
-{
-	char	*tmp;
-
-	tmp = str;
-	str = get_env_value_to_process(mini, str);
-	free(tmp);
-	return (str);
-}
 
 // trims the limiter to make sure heredoc stops when it finds
 // the limiter string without quotes just like bash
@@ -189,10 +154,9 @@ int	parser_heredoc(t_mini *mini)
 		{
 			limit_token = temp->next;
 			if (!limit_token)
-				return (ERROR); 
+				return (ERROR);
 			limit = ft_strdup(limit_token->value);
 			process_heredoc(limit_token, limit, mini);
-			//free_memo((void *)limit);
 		}
 		temp = temp->next;
 	}

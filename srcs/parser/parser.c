@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:35:40 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/10 16:55:27 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 13:51:58 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // @returns the allocates array with empty spaces for arguments
 char	**alloc_args(char **args, t_token *token)
 {
-	int len;
+	int	len;
 
 	len = get_ttokens_len(token);
 	if (!args)
@@ -31,7 +31,6 @@ char	**alloc_args(char **args, t_token *token)
 	}
 	return (args);
 }
-
 
 // collects tokens from token list into command or commands separated by pipe
 // if no new node, free all previous nodes and return error

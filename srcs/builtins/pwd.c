@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:54 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 18:03:55 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 13:08:02 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ int	pwd_builtin(t_mini *mini, t_cmd *cmd)
 	(void)cmd;
 	cwd = get_current_directory();
 	if (!cwd)
-		return (mini_error(mini, create_msg("minishell", "pwd", "cwd not found", NULL), 2));
+		return (mini_error(mini, create_msg("minishell",
+					"pwd", "cwd not found", NULL), 2));
 	write(1, cwd, ft_strlen(cwd));
 	write(1, "\n", 1);
 	free(cwd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/11 13:53:59 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/15 14:51:33 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // will run only if is_builtin condition is true
 // cannot call exit because it can be called also in main process
 // returns 0 if any builtin was executed succesfully, and errno if not
-int exec_builtins(t_mini *mini, t_cmd *cmd)
+int	exec_builtins(t_mini *mini, t_cmd *cmd)
 {
 	int	result;
 
@@ -43,7 +43,7 @@ int exec_builtins(t_mini *mini, t_cmd *cmd)
 // receives a relative or absolute path and checks if it is an executable
 // if is_executable_file > 0 means it is executable file and we found it
 // if is_executable_file => 0 execve sets correct errno
-int exec_command_by_path(t_mini *mini, t_cmd *cmd)
+int	exec_command_by_path(t_mini *mini, t_cmd *cmd)
 {
 	char	*path;
 
@@ -62,15 +62,15 @@ int exec_command_by_path(t_mini *mini, t_cmd *cmd)
 // exits with 0 or exit code collected in main process
 int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 {
-	char	 *path;
+	char	*path;
 
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
 		return (mini_error(mini, create_msg("minishell",
-			cmd->cmd, "command not found", NULL), 127));
+					cmd->cmd, "command not found", NULL), 127));
 	if (execve(path, cmd->args, mini->env) == -1)
 		return (mini_perror(mini, create_msg("minishell",
-			cmd->cmd, NULL, NULL)));
+					cmd->cmd, NULL, NULL)));
 	return (ERROR);
 }
 
@@ -97,47 +97,4 @@ int	get_exit_status(int num_of_p, t_mini *mini, int *pids)
 	if (WTERMSIG(status) == SIGQUIT)
 		write(2, "Quit\n", 5);
 	return (exit_status);
-}
-
-void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig)
-{
-	if (WIFEXITED(*status))
-		mini->exit_status = WEXITSTATUS(*status);
-	else if (WIFSIGNALED(*status))
-	{
-		mini->exit_status = WTERMSIG(*status) + 128;
-		*signaled = 1;
-		*last_sig = WTERMSIG(*status);
-	}
-}
-
-void	ses_init(int *signaled, int *i, int *status, int *last_sig)
-{
-	*signaled = 0;
-	*i = 0;
-	*status = 0;
-	*last_sig = 0;
-}
-
-void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
-{
-	int	i;
-	int	status;
-	int	signaled;
-	int	last_sig;
-
-	ses_init(&signaled, &i, &status, &last_sig);
-	while (i < num_of_p)
-	{
-		waitpid(pids[i], &status, 0);
-		ses_help(mini, &signaled, &status, &last_sig);
-		i++;
-	}
-	if (signaled)
-	{
-		if (last_sig == SIGINT)
-			write(1, "\n", 1);
-		else if (last_sig == SIGQUIT)
-			write(1, "Quit\n", 5);
-	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 18:04:59 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 13:06:48 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,9 @@ int	export_builtin(t_mini *mini, t_cmd *cmd)
 		if (!env_name)
 			return (ERROR);
 		if (check_env_name(env_name) == ERROR)
-			return (free(env_name), mini_error(mini, create_msg("minishell", mini->cmd_list->cmd, arg[i], "not a valid identifier"), 1));
+			return (free(env_name), mini_error(mini, create_msg("minishell",
+						mini->cmd_list->cmd, arg[i],
+						"not a valid identifier"), 1));
 		if (export_each_arg(mini, arg[i], env_name) == ERROR)
 			return (free(env_name), ERROR);
 		free(env_name);

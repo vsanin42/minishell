@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:16 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 18:05:33 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 13:07:41 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ int	env_builtin(t_mini *mini, t_cmd *cmd, char *prefix)
 	i = 0;
 	envs = mini->env;
 	if (cmd->args[1])
-		return (mini_error(mini, create_msg("env", cmd->args[1], "No such file or directory", NULL), 127));
+		return (mini_error(mini, create_msg("env", cmd->args[1],
+					"No such file or directory", NULL), 127));
 	while (envs[i])
 	{
 		if (prefix)

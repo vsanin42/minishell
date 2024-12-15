@@ -31,18 +31,23 @@ SRC  =  srcs/minishell.c \
 		srcs/builtins/export.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/unset.c \
-		srcs/envs/expanding_env.c \
+		srcs/envs/env_utils_2.c \
 		srcs/envs/env_utils.c \
+		srcs/envs/expanding_env.c \
+		srcs/envs/expanding_utils.c \
 		srcs/evaluators/cmd_evaluator.c \
 		srcs/evaluators/input_evaluator.c \
 		srcs/evaluators/token_evaluator.c \
 		srcs/execution/executor.c \
+		srcs/execution/ex_utils_2.c \
 		srcs/execution/ex_utils.c \
 		srcs/execution/ex_files_pipes.c \
 		srcs/execution/ex_stdin_stdout.c \
 		srcs/lexer/lexer_quotes_utils.c \
 		srcs/lexer/lexer_quotes.c \
+		srcs/lexer/lexer_utils.c \
 		srcs/lexer/lexer.c \
+		srcs/parser/heredoc_utils.c \
 		srcs/parser/parser_heredoc.c \
 		srcs/parser/parser.c \
 		srcs/types/array.c \
@@ -51,6 +56,7 @@ SRC  =  srcs/minishell.c \
 		srcs/types/t_redir.c \
 		srcs/types/t_token.c \
 		srcs/types/t_token_utils.c \
+		srcs/utils/messages_2.c \
 		srcs/utils/messages.c \
 		srcs/utils/file_utils.c \
 		srcs/utils/free.c \

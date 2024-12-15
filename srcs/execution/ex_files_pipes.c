@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_files_pipes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/11 13:45:57 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/12/15 17:46:08 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	close_files(int *infile, int *outfile)
 // can closing go wrong?
 int	close_all_pipes(int pipes[][2], int pipe_count)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < pipe_count - 1)
@@ -40,7 +40,7 @@ int	close_all_pipes(int pipes[][2], int pipe_count)
 int	open_pipes(int pipes[][2], int process_count)
 {
 	int	i;
-	int result;
+	int	result;
 
 	i = 0;
 	result = 0;
@@ -58,49 +58,40 @@ int	open_pipes(int pipes[][2], int process_count)
 	return (0);
 }
 
+void	set_files_helper(int *file, t_redir *redir, int std_fd)
+{
+	if (*file > std_fd)
+		close(*file);
+	if (redir->type == TOKEN_REDIRIN)
+		*file = open(redir->file, O_RDONLY);
+	else if (redir->type == TOKEN_REDIROUT)
+		*file = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (redir->type == TOKEN_APPEND)
+		*file = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+}
+
 int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 {
 	t_redir	*redir;
 	int		temp_pipe[2];
-	int		result;
 
 	redir = nthcmd->redir;
 	while (redir)
 	{
 		if (redir->type == TOKEN_REDIRIN)
-		{
-			if (*infile > STDIN_FILENO)
-				close(*infile);
-			*infile = open(redir->file, O_RDONLY);
-		}
+			set_files_helper(infile, redir, STDIN_FILENO);
 		else if (redir->type == TOKEN_HEREDOC)
 		{
 			if (pipe(temp_pipe) == -1)
-			{
-				result = errno;
-				perror("minishell");
-				return(result);
-			}
+				return (perror("minishell"), errno);
 			write(temp_pipe[1], redir->file, ft_strlen(redir->file));
 			close(temp_pipe[1]);
 			dup2(temp_pipe[0], STDIN_FILENO);
 			close(temp_pipe[0]);
 		}
-		else if (redir->type == TOKEN_REDIROUT)
-		{
-			if (*outfile > STDOUT_FILENO)
-				close(*outfile);
-			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		}
-		else if (redir->type == TOKEN_APPEND)
-		{
-			if (*outfile > STDOUT_FILENO)
-				close(*outfile);
-			*outfile = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		}
-		if (*infile == -1)
-			return (mini_perror(mini, NULL));
-		if (*outfile == -1)
+		else if (redir->type == TOKEN_REDIROUT || redir->type == TOKEN_APPEND)
+			set_files_helper(outfile, redir, STDOUT_FILENO);
+		if (*infile == -1 || *outfile == -1)
 			return (mini_perror(mini, NULL));
 		redir = redir->next;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 18:13:03 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/15 13:07:25 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int	cd_home(t_mini *mini, char *path)
 	result = 0;
 	home = getenv_local(mini->env, "HOME");
 	if (!home)
-		return (mini_error(mini, create_msg("minishell", "cd", "HOME not set", NULL), 1));
+		return (mini_error(mini, create_msg("minishell",
+					"cd", "HOME not set", NULL), 1));
 	if (chdir(home) == -1)
 	{
 		result = errno;

@@ -5,6 +5,14 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
+# 15.12. by Vlad
+- i don't understand env builtin, need explanation (no thought head empty)
+- norm: file separation etc, just kept some comments just in case. **TODO:** evaluators norm
+- **TODO:** lexer_quotes.c indent problem, it's always been like this and idk what it could break
+- **TODO:** pids[num_of_p] is a variable length array which is forbidden by norm. unreal :/ need to find out how to replace it and keep everything intact
+- set_files function can return errno but it's not assigned to anything in executor. issue or ok?
+- does errno have to be assigned to int result before being returned?
+
 # 10.12. by Vlad
 - tried to figure out how to color minishell prompt, found nothing nice unfortunately :( gnu readline manual suggests we can edit some config files or do something else via command line but not sure. gotta be thankful we had it green for 99% of the way!
 - **FIXED:** signals inside minishell and child processes - should be working fine, also tested and made sure that quitting via signals doesn't mess with the result error code. try *cat | ls*, end cat with ctrl c, echo $? - should be 0 because it's the exit code of the *final* pipeline command, which is *ls* which runs successfully. at the same time we need to "document" that the signal occured in one of the commands (we need this to know what to print like SIGQUIT results in ^\Quit etc.), so this was done in set_exit_status function and related ones.
