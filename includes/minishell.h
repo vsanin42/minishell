@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 04:28:15 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 15:27:10 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ typedef struct s_mini
 	t_cmd			*cmd_list;
 	char			*error_msg;
 	int				exit_status;
+	int				**pipes;
+	int				*pids;
 }					t_mini;
 
 /* minishell.c */
@@ -138,8 +140,10 @@ int		token_evaluator(t_mini *mini);
 /* execution/executor.c */
 void	execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini, int num_of_p);
-void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i);
+void	exec_cmd(t_mini *mini, int **pipes, int files[], int i);
 int		exec_builtin_in_parent(t_mini *mini, int files[2]);
+int		init_int_arrs(t_mini *mini, int num_of_p);
+void	free_int_arr(int **pipes, int *pids);
 
 /* execution/ex_utils.c */
 int		get_exit_status(int num_of_p, t_mini *mini, int *pids);
@@ -154,15 +158,15 @@ void	ses_init(int *signaled, int *i, int *status, int *last_sig);
 
 /* execution/ex_files_pipes.c */
 int		close_files(int *infile, int *outfile);
-int		close_all_pipes(int pipes[][2], int pipe_count);
-int		open_pipes(int pipes[][2], int process_count);
+int		close_all_pipes(int **pipes, int pipe_count);
+int		open_pipes(int **pipes, int process_count);
 int		set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile);
 
 /* execution/ex_stdin_stdout.c */
-void	set_first_process(int files[], int num_of_p, int pipes[][2]);
-void	set_mid_processes(int files[], int num_of_p, int pipes[][2], int i);
-void	set_last_process(int files[], int num_of_p, int pipes[][2], int i);
-int		set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p);
+void	set_first_process(int files[], int num_of_p, int **pipes);
+void	set_mid_processes(int files[], int num_of_p, int **pipes, int i);
+void	set_last_process(int files[], int num_of_p, int **pipes, int i);
+int		set_ins_outs(int i, int **pipes, int files[2], int num_of_p);
 
 /* lexer/lexer_quotes.c */
 int		find_words(char *text);

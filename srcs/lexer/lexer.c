@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 04:05:55 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 15:56:49 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	create_and_add_tok(t_mini *mini, char *val, t_token **token_list, int *hdoc)
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
 		new_value = str_from_array(process_envs_and_quotes(mini, new_tok));
+		printf("value after str from arr: %s\n", new_value);
 		if (!new_value)
 		{
 			free(new_tok);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_files_pipes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/15 17:46:08 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 14:40:48 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	close_files(int *infile, int *outfile)
 }
 
 // can closing go wrong?
-int	close_all_pipes(int pipes[][2], int pipe_count)
+int	close_all_pipes(int **pipes, int pipe_count)
 {
 	int	i;
 
@@ -37,7 +37,7 @@ int	close_all_pipes(int pipes[][2], int pipe_count)
 	return (0);
 }
 
-int	open_pipes(int pipes[][2], int process_count)
+int	open_pipes(int **pipes, int process_count)
 {
 	int	i;
 	int	result;

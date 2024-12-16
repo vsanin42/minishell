@@ -3,14 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/16 04:27:56 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 15:38:03 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	free_int_arr(int **pipes, int *pids)
+{
+	int	**head;
+
+	if (!pipes && !pids)
+		return ;
+	if (pipes)
+	{
+		head = pipes;
+		while (*pipes)
+		{
+			free(*pipes);
+			*pipes = NULL;
+			pipes++;
+		}
+		free(head);
+		head = NULL;
+	}
+	if (pids)
+	{
+		free(pids);
+		pids = NULL;
+	}
+}
 
 // if it is only one process and is builtin, execute it in parent process
 // because it manipulates resources about process itself,in child its pointless
@@ -54,6 +79,7 @@ void	execute(t_mini *mini, t_cmd *cmd)
 	}
 	free_cmd_list(mini);
 	free_arr(mini->env);
+	free_int_arr(mini->pipes, mini->pids);
 	exit(result);
 }
 
@@ -62,7 +88,7 @@ void	execute(t_mini *mini, t_cmd *cmd)
 // if no file and no pipe, STDIN and STDOUT are kept as processes STDIN, STDOUT
 // close pipes and files - ones we need are dupped so we do not need them now
 // @returns nothing - execute() exits child process with proper exit status
-void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
+void	exec_cmd(t_mini *mini, int **pipes, int files[], int i)
 {
 	t_cmd	*nthcmd;
 	int		num_of_p;
@@ -75,6 +101,7 @@ void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
 	if (!nthcmd)
 	{
 		close_all_pipes(pipes, num_of_p);
+		free_int_arr(mini->pipes, mini->pids);
 		exit(mini_error(mini, create_msg("minishell",
 					"command not found", NULL, NULL), 127));
 	}
@@ -85,6 +112,30 @@ void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
 	execute(mini, nthcmd);
 }
 
+int	init_int_arrs(t_mini *mini, int num_of_p)
+{
+	int	i;
+
+	i = 0;
+	mini->pids = (int *)malloc(sizeof(int) * num_of_p);
+	if (!mini->pids)
+		return (ERROR);
+	if (num_of_p > 1)
+	{
+		mini->pipes = (int **)malloc(sizeof(int *) * (num_of_p));
+		if (!mini->pipes)
+			return (ERROR);
+		while (i < num_of_p - 1)
+		{
+			mini->pipes[i] = (int *)malloc(sizeof(int) * 2);
+			if (!mini->pipes[i])
+				return (ERROR);
+			i++;
+		}
+		mini->pipes[i] = NULL;
+	}
+	return (0);
+}
 // check if builtin & 1 command - not open any processes, must be done in main
 // in this case execute and return, not exit, as it would kill entire program
 // create as many processes as commands in loop
@@ -97,26 +148,31 @@ void	exec_cmd(t_mini *mini, int pipes[][2], int files[], int i)
 int	executor(t_mini *mini, int num_of_p)
 {
 	int		files[2];
-	int		pids[num_of_p];
-	int		pipes[num_of_p - 1][2];
+	// int		*pids;
+	// int		**pipes;
+	// int		pids[num_of_p];
+	// int		pipes[num_of_p - 1][2];
 	int		i;
 
+	if (init_int_arrs(mini, num_of_p) == ERROR)
+		return (ERROR);
 	i = -1;
 	files[0] = STDIN_FILENO;
 	files[1] = STDOUT_FILENO;
 	if (num_of_p == 1 && is_builtin(mini->cmd_list))
 		return (exec_builtin_in_parent(mini, files));
-	if (open_pipes(pipes, num_of_p) != 0)
-		return (ERROR);
+	if (open_pipes(mini->pipes, num_of_p) != 0)
+		return (free_int_arr(mini->pipes, mini->pids), ERROR);
 	signal(SIGINT, SIG_IGN);
 	while (++i < num_of_p)
 	{
-		pids[i] = fork();
-		if (pids[i] == -1)
-			return (close_all_pipes(pipes, num_of_p), perror("minishell"), 1);
-		if (pids[i] == 0)
-			exec_cmd(mini, pipes, files, i);
+		mini->pids[i] = fork();
+		if (mini->pids[i] == -1)
+			return (close_all_pipes(mini->pipes, num_of_p), perror("minishell"), 1);
+		if (mini->pids[i] == 0)
+			exec_cmd(mini, mini->pipes, files, i);
 	}
-	close_all_pipes(pipes, num_of_p);
-	return (set_exit_status(num_of_p, mini, pids));
+	// free_int_arr(mini->pipes, mini->pids);
+	close_all_pipes(mini->pipes, num_of_p);
+	return (set_exit_status(num_of_p, mini, mini->pids));
 }

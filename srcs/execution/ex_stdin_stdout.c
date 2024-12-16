@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ex_stdin_stdout.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 13:29:11 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/15 14:42:54 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 14:44:57 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	set_first_process(int files[], int num_of_p, int pipes[][2])
+void	set_first_process(int files[], int num_of_p, int **pipes)
 {
 	dup2(files[0], STDIN_FILENO);
 	if (num_of_p - 1 > 0)
@@ -24,7 +24,7 @@ void	set_first_process(int files[], int num_of_p, int pipes[][2])
 	}
 }
 
-void	set_mid_processes(int files[], int num_of_p, int pipes[][2], int i)
+void	set_mid_processes(int files[], int num_of_p, int **pipes, int i)
 {
 	(void)num_of_p;
 	if (files[0] > STDIN_FILENO)
@@ -37,7 +37,7 @@ void	set_mid_processes(int files[], int num_of_p, int pipes[][2], int i)
 		dup2(pipes[i][1], STDOUT_FILENO);
 }
 
-void	set_last_process(int files[], int num_of_p, int pipes[][2], int i)
+void	set_last_process(int files[], int num_of_p, int **pipes, int i)
 {
 	if (num_of_p - 1 > 0)
 	{
@@ -54,7 +54,7 @@ void	set_last_process(int files[], int num_of_p, int pipes[][2], int i)
 // else it sets it to proper ends of pipes
 // in first process, STDIN is infile or STDIN
 // in last process, STDOUT is outfile or STDOUT
-int	set_ins_outs(int i, int pipes[][2], int files[2], int num_of_p)
+int	set_ins_outs(int i, int **pipes, int files[2], int num_of_p)
 {
 	if (i == 0)
 		set_first_process(files, num_of_p, pipes);

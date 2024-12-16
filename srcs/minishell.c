@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 13:14:10 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 15:27:34 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	process_input(char *input, t_mini *mini)
 	if (result != 0)
 		return (free_cmd_list(mini), result);
 	result = executor(mini, get_cmd_count(mini->cmd_list));
+	free_int_arr(mini->pipes, mini->pids);
 	free_cmd_list(mini);
 	return (result);
 }
@@ -103,6 +104,8 @@ void	init_mini(t_mini *mini, char **env)
 	mini->cmd_list = NULL;
 	mini->exit_status = 0;
 	mini->env = dup_array(env);
+	mini->pids = NULL;
+	mini->pipes = NULL;
 }
 
 // SIGINT ctrl '\'
