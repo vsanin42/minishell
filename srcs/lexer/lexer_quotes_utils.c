@@ -3,14 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 14:08:46 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:30:13 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char	**peaq_help(void)
+{
+	char	**text_array;
+
+	text_array = malloc(sizeof(char *) * 2);
+	if (!text_array)
+		return (NULL);
+	text_array[0] = ft_strdup(" "); // ft_strdup("") for echo, cd, ... ;
+	text_array[1] = NULL; // ft_strdup("''") for cat, sort, ...
+	return (text_array);
+}
 
 int	check_dollar_sq(char *str)
 {

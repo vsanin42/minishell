@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 15:27:10 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 20:27:52 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ void	execute(t_mini *mini, t_cmd *cmd);
 int		executor(t_mini *mini, int num_of_p);
 void	exec_cmd(t_mini *mini, int **pipes, int files[], int i);
 int		exec_builtin_in_parent(t_mini *mini, int files[2]);
-int		init_int_arrs(t_mini *mini, int num_of_p);
 void	free_int_arr(int **pipes, int *pids);
 
 /* execution/ex_utils.c */
@@ -150,6 +149,7 @@ int		get_exit_status(int num_of_p, t_mini *mini, int *pids);
 int		exec_builtins(t_mini *mini, t_cmd *cmd);
 int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
 int		exec_shell_command(t_mini *mini, t_cmd *cmd);
+int		init_int_arrs(t_mini *mini, int num_of_p);
 
 /* execution/ex_utils_2.c */
 int		set_exit_status(int num_of_p, t_mini *mini, int *pids);
@@ -167,19 +167,21 @@ void	set_first_process(int files[], int num_of_p, int **pipes);
 void	set_mid_processes(int files[], int num_of_p, int **pipes, int i);
 void	set_last_process(int files[], int num_of_p, int **pipes, int i);
 int		set_ins_outs(int i, int **pipes, int files[2], int num_of_p);
+void	init_fqoe(char *q_start, int *i, int *q_ign, int *dollar_quote);
 
 /* lexer/lexer_quotes.c */
 int		find_words(char *text);
 char	**trim_quotes_in_array(char **head);
 char	*str_from_array(char **head);
 char	**process_envs_and_quotes(t_mini *mini, t_token *token);
+int		check_consecutive_quotes(char *txt);
 
 /* lexer/lexer_quotes_utils.c */
 char	*exp_sub(t_mini *mini, char *str);
 int		check_next_char(char c, char c2, int i);
 int		check_dollar_sq(char *str);
 char	*strdup_from_second(const char *str);
-int		array_char_len(char **head);
+char	**peaq_help(void);
 
 /* lexer/lexer_utils.c */
 void	init_gtl_vars(int *f, int *i, char **node, t_token **token);
@@ -286,5 +288,6 @@ int		iswhitespace(char c);
 int		is_alnum(char *str);
 char	*str_append_nl(char *s1, char *s2);
 char	*str_append_space(char *s1, char *s2);
+int		array_char_len(char **head);
 
 #endif

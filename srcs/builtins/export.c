@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/15 13:06:48 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 17:36:52 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	export_each_arg(t_mini *mini, char *env, char *env_name)
 	index = get_env_index_by_name(mini->env, env_name);
 	if (index > -1)
 	{
-		if (has_env_value(env))
+		if (has_env_value(env) || ft_strchr(env, '='))
 			temp = change_arr_element(mini->env, env, index);
 	}
 	else

@@ -6,25 +6,11 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/16 16:25:59 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:47:32 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// no space for this in array.c :/
-int	array_char_len(char **head)
-{
-	int	i;
-
-	i = 0;
-	while (head && *head)
-	{
-		i += ft_strlen(*head);
-		head++;
-	}
-	return (i);
-}
 
 // finds how many words will be in array based on opening and closing quotes
 // @returns number of found "words" delimited by quotes within a string
@@ -40,18 +26,19 @@ int	find_words(char *text)
 		if (text[i] == '\'')
 		{
 			while (text[i] == '\'')
-			i++;
+				i++;
 		}
 		else if (text[i] == '"')
 		{
 			while (text[i] == '"')
-			i++;
+				i++;
 		}
 		if (text[i] != '\0')
 			count++;
 		while (text[i] != '\0' && text[i] != '\'' && text[i] != '"')
 			i++;
 	}
+	printf("count: %d\n", count);
 	return (count);
 }
 
@@ -118,7 +105,6 @@ char	*str_from_array(char **head)
 int	check_consecutive_quotes(char *txt)
 {
 	char	c;
-	//int len = ft_strlen(txt);
 
 	c = *txt;
 	if (c != '"' && c != '\'')
@@ -126,8 +112,8 @@ int	check_consecutive_quotes(char *txt)
 	while (*txt)
 	{
 		if ((*txt && *txt == '"' && *(txt + 1) && *(txt + 1) == '"')
-			||(*txt && *txt == '\'' && *(txt + 1) && *(txt + 1) == '\''))
-		{	
+			|| (*txt && *txt == '\'' && *(txt + 1) && *(txt + 1) == '\''))
+		{
 			txt += 2;
 			continue ;
 		}
@@ -152,22 +138,13 @@ char	**process_envs_and_quotes(t_mini *mini, t_token *token)
 	i = 0;
 	txt = token->value;
 	if (check_consecutive_quotes(txt) == ERROR)
-	{
-		text_array = malloc(sizeof(char *) * 2);
-		text_array[0] = ft_strdup("''"); // ft_strdup("") for echo, cd, ... ; ft_strdup("''") for cat, sort, ...
-		text_array[1] = NULL;
-		return (text_array);
-	}
+		return (peaq_help());
 	text_array = malloc(sizeof(char *) * (find_words(txt) + 1));
-	printf("find words: %d\n", find_words(txt));
 	head = text_array;
 	while (txt[i])
 	{
 		if (cnc_check(txt, &i) == 1)
-		{
-			printf("entered cnc.\n");
 			continue ;
-		}
 		*text_array = exp_sub(mini, ft_substr(txt, i, find_q_or_end(txt + i)));
 		if (*text_array == NULL)
 			return (NULL);

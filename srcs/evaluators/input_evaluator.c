@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_evaluator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:32:23 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 01:54:52 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:38:41 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ int	check_bs_base(char *input)
 			if (check_bad_substitution(input, i) == ERROR)
 				return (ERROR);
 		}
-		i++;	
+		i++;
 	}
 	return (0);
 }

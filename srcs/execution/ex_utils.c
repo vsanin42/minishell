@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/15 14:51:33 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:35:35 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,29 @@ int	get_exit_status(int num_of_p, t_mini *mini, int *pids)
 	if (WTERMSIG(status) == SIGQUIT)
 		write(2, "Quit\n", 5);
 	return (exit_status);
+}
+
+int	init_int_arrs(t_mini *mini, int num_of_p)
+{
+	int	i;
+
+	i = 0;
+	mini->pids = (int *)malloc(sizeof(int) * num_of_p);
+	if (!mini->pids)
+		return (ERROR);
+	if (num_of_p > 1)
+	{
+		mini->pipes = (int **)malloc(sizeof(int *) * (num_of_p));
+		if (!mini->pipes)
+			return (ERROR);
+		while (i < num_of_p - 1)
+		{
+			mini->pipes[i] = (int *)malloc(sizeof(int) * 2);
+			if (!mini->pipes[i])
+				return (ERROR);
+			i++;
+		}
+		mini->pipes[i] = NULL;
+	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/16 15:38:03 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:35:30 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,30 +112,6 @@ void	exec_cmd(t_mini *mini, int **pipes, int files[], int i)
 	execute(mini, nthcmd);
 }
 
-int	init_int_arrs(t_mini *mini, int num_of_p)
-{
-	int	i;
-
-	i = 0;
-	mini->pids = (int *)malloc(sizeof(int) * num_of_p);
-	if (!mini->pids)
-		return (ERROR);
-	if (num_of_p > 1)
-	{
-		mini->pipes = (int **)malloc(sizeof(int *) * (num_of_p));
-		if (!mini->pipes)
-			return (ERROR);
-		while (i < num_of_p - 1)
-		{
-			mini->pipes[i] = (int *)malloc(sizeof(int) * 2);
-			if (!mini->pipes[i])
-				return (ERROR);
-			i++;
-		}
-		mini->pipes[i] = NULL;
-	}
-	return (0);
-}
 // check if builtin & 1 command - not open any processes, must be done in main
 // in this case execute and return, not exit, as it would kill entire program
 // create as many processes as commands in loop
@@ -148,10 +124,6 @@ int	init_int_arrs(t_mini *mini, int num_of_p)
 int	executor(t_mini *mini, int num_of_p)
 {
 	int		files[2];
-	// int		*pids;
-	// int		**pipes;
-	// int		pids[num_of_p];
-	// int		pipes[num_of_p - 1][2];
 	int		i;
 
 	if (init_int_arrs(mini, num_of_p) == ERROR)
@@ -168,11 +140,11 @@ int	executor(t_mini *mini, int num_of_p)
 	{
 		mini->pids[i] = fork();
 		if (mini->pids[i] == -1)
-			return (close_all_pipes(mini->pipes, num_of_p), perror("minishell"), 1);
+			return (close_all_pipes(mini->pipes, num_of_p),
+				perror("minishell"), 1);
 		if (mini->pids[i] == 0)
 			exec_cmd(mini, mini->pipes, files, i);
 	}
-	// free_int_arr(mini->pipes, mini->pids);
 	close_all_pipes(mini->pipes, num_of_p);
 	return (set_exit_status(num_of_p, mini, mini->pids));
 }

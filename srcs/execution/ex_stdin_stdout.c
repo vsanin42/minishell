@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 13:29:11 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 14:44:57 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 20:27:41 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,13 @@ int	set_ins_outs(int i, int **pipes, int files[2], int num_of_p)
 	if (i == num_of_p - 1)
 		set_last_process(files, num_of_p, pipes, i);
 	return (0);
+}
+
+// no space in lexer files
+void	init_fqoe(char *q_start, int *i, int *q_ign, int *dollar_quote)
+{
+	*dollar_quote = 0;
+	*q_ign = 0;
+	*i = 0;
+	*q_start = '\0';
 }

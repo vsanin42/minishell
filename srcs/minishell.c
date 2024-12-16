@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 15:27:34 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 20:29:18 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,9 @@ int	process_input(char *input, t_mini *mini)
 {
 	int	result;
 	// possible result codes: 0, 1, 2, 126, 127 (128+ for signals)
-	// ensure all of these functions onlt return one of these
-
 	result = lexer(input, mini);
 	if (result != 0)
 		return (free_token_list(mini), result);
-	print_token_list(mini);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	result = token_evaluator(mini);
 	if (result != 0)
@@ -51,8 +48,10 @@ int	process_input(char *input, t_mini *mini)
 // (!input) = called when ^C was pressed - no input was received
 // input[0] == '\0' - input was empty or just enter
 // \033[32mminishell\033[37m>
-// here we are done with the previous command because all possible exits from the command lead here
-// so we set result of process_input to mini->exit_status so next command can access it
+// here we are done with the previous command
+// because all possible exits from the command lead here
+// so we set result of process_input to mini->exit_status
+// so next command can access it
 int	show_prompt(t_mini *mini)
 {
 	char	*input;

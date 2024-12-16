@@ -3,14 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:26:30 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/06 14:35:21 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/16 19:20:54 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+// no space for this in array.c :/
+int	array_char_len(char **head)
+{
+	int	i;
+
+	i = 0;
+	while (head && *head)
+	{
+		i += ft_strlen(*head);
+		head++;
+	}
+	return (i);
+}
 
 // checks if the char is a whitespace
 // @returns 0 if not whitespace, 1 if whitespace

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 14:03:13 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 13:16:59 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 20:26:54 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,23 +47,25 @@ int	find_q_or_end(char *text)
 	int		i;
 	char	q_start;
 	int		q_ign;
+	int		dollar_quote;
+	int		helper_res;
 
-	q_ign = 0;
-	i = 0;
-	q_start = '\0';
+	init_fqoe(&q_start, &i, &q_ign, &dollar_quote);
 	if (text[i] == '\'' || text[i] == '"')
 		q_start = text[i++];
 	while (text[i])
 	{
-		if (find_q_helper(q_start, text, i, &q_ign) == 1)
+		helper_res = find_q_helper(q_start, text, i, &q_ign);
+		if (helper_res == 1)
 			break ;
-		else if (find_q_helper(q_start, text, i, &q_ign) == 2)
+		else if (helper_res == 2)
+		{
 			i++;
+			dollar_quote = 1;
+		}
 		i++;
 	}
-	// not sure if q_start is important here but i havent seen any difference
-	// NVM IT IS IMPORTANT XXDDDDDD
-	if (q_start && text[i] != '\0')
+	if ((q_start && text[i] != '\0') || dollar_quote)
 		i++;
 	return (i);
 }

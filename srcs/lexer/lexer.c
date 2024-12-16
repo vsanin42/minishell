@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:33:09 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 15:56:49 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:32:27 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	create_and_add_tok(t_mini *mini, char *val, t_token **token_list, int *hdoc)
 	t_token	*new_tok;
 
 	new_value = NULL;
-	new_tok = init_new_token(ft_strdup(val), get_token_type(val)); // leaks here
+	new_tok = init_new_token(ft_strdup(val), get_token_type(val));
 	free(val);
 	val = NULL;
 	if (!new_tok)
@@ -31,7 +31,6 @@ int	create_and_add_tok(t_mini *mini, char *val, t_token **token_list, int *hdoc)
 	if (new_tok->type == TOKEN_TEXT && *hdoc == 0)
 	{
 		new_value = str_from_array(process_envs_and_quotes(mini, new_tok));
-		printf("value after str from arr: %s\n", new_value);
 		if (!new_value)
 		{
 			free(new_tok);
@@ -79,7 +78,7 @@ char	*process_text(char *text, int *i, int in_sq, int in_dq)
 		{
 			(*i)--;
 			node_value = ft_substr(text, start, *i - start + 1);
-		} // the else if below never activates bc ins(d)q is reset on top but works so whatever
+		}
 		else if ((in_dq && text[*i] == '"') || (in_sq && (text[*i] == '\'')))
 			node_value = ft_substr(text, start, *i - start + 1);
 		if (node_value)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:16 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/15 13:07:41 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 19:38:13 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,12 @@ int	env_builtin(t_mini *mini, t_cmd *cmd, char *prefix)
 		if (has_env_value(envs[i]) || ft_strchr(envs[i], '=') || prefix)
 		{
 			write(1, envs[i], ft_strlen(envs[i]));
+			if (prefix && !has_env_value(envs[i]) && (ft_strchr(envs[i], '=')))
+			{
+				write(1, "\"\"", 2);
+			}
+			write(1, "\n", 1);
 		}
-		if (prefix && !has_env_value(envs[i]) && (ft_strchr(envs[i], '=')))
-			write(1, "\"\"", 2);
-		write(1, "\n", 1);
 		envs++;
 	}
 	return (0);

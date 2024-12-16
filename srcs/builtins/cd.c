@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/15 13:07:25 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 17:07:07 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 		}
 	}
 	if (chdir(path) == -1)
-		result = mini_perror(mini, create_msg("minishell--", "cd", path, NULL));
+		result = mini_perror(mini, create_msg("minishell", "cd", path, NULL));
 	return (result);
 }
