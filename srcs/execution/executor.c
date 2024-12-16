@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/15 14:45:50 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 04:27:56 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,5 @@ int	executor(t_mini *mini, int num_of_p)
 			exec_cmd(mini, pipes, files, i);
 	}
 	close_all_pipes(pipes, num_of_p);
-	return (get_exit_status(num_of_p, mini, pids));
+	return (set_exit_status(num_of_p, mini, pids));
 }

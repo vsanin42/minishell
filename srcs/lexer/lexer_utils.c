@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 14:03:13 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 14:15:42 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 03:38:01 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ int	find_q_or_end(char *text)
 		i++;
 	}
 	// not sure if q_start is important here but i havent seen any difference
-	if (/* q_start &&  */text[i] != '\0')
+	// NVM IT IS IMPORTANT XXDDDDDD
+	if (q_start && text[i] != '\0')
 		i++;
 	return (i);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   testing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:50:38 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/10 16:21:51 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/16 01:54:24 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	print_token_list(t_mini *mini)
 		printf("type: %d\n", temp->type);
 		temp = temp->next;
 	}
+	printf("---------------------------\n");
 }
 
 // prints command list in format: cmd\n, arguments\n, redir\n, redir->type\n

@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 23:28:49 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 04:13:41 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	process_input(char *input, t_mini *mini)
 	result = lexer(input, mini);
 	if (result != 0)
 		return (free_token_list(mini), result);
+	print_token_list(mini);
 	mini->token_list = remove_null_tokens(mini->token_list);
 	result = token_evaluator(mini);
 	if (result != 0)

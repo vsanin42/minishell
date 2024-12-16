@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 16:55:24 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 04:28:15 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,14 +117,16 @@ char	*get_env_value_to_process(t_mini *mini, char *text);
 char	*handle_question(t_mini *mini, char *res, char *text, int *i);
 char	*quickjoin(char *res);
 
-/* evaluators/input-evaluator.c */
+/* evaluators/input-evaluator.c - top 3 not used*/
 int		check_braces_alnum(char *input, int start);
-int		check_curly_braces(char *input);
 int		check_next_quote(char *input, int i);
-int		check_quotes(char *input);
 int		isbq(char *input);
-int		check_input(char *input, t_mini *mini);
+
+int		check_curly_braces(char *input);
+int		check_quotes(char *input);
 int		check_bad_substitution(char *input, int i);
+int		check_bs_base(char *input);
+int		check_input(char *input, t_mini *mini);
 
 /* evaluators/cmd_evaluator.c */
 int		validate_files(t_mini *mini);
@@ -146,7 +148,7 @@ int		exec_command_by_path(t_mini *mini, t_cmd *cmd);
 int		exec_shell_command(t_mini *mini, t_cmd *cmd);
 
 /* execution/ex_utils_2.c */
-void	set_exit_status(int num_of_p, t_mini *mini, int *pids);
+int		set_exit_status(int num_of_p, t_mini *mini, int *pids);
 void	ses_help(t_mini *mini, int *signaled, int *status, int *last_sig);
 void	ses_init(int *signaled, int *i, int *status, int *last_sig);
 

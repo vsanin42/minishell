@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 14:50:42 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 14:51:37 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/16 04:31:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ses_init(int *signaled, int *i, int *status, int *last_sig)
 	*last_sig = 0;
 }
 
-void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
+int	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 {
 	int	i;
 	int	status;
@@ -49,8 +49,9 @@ void	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 	if (signaled)
 	{
 		if (last_sig == SIGINT)
-			write(1, "\n", 1);
+			write(2, "\n", 1);
 		else if (last_sig == SIGQUIT)
-			write(1, "Quit\n", 5);
+			write(2, "Quit\n", 5);
 	}
+	return (mini->exit_status);
 }

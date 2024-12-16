@@ -8,10 +8,26 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
 - norm: file separation etc, just kept some comments just in case. **TODO:** evaluators norm
-- **TODO:** lexer_quotes.c indent problem, it's always been like this and idk what it could break
-- **TODO:** pids[num_of_p] is a variable length array which is forbidden by norm. unreal :/ need to find out how to replace it and keep everything intact
+- input evaluator: unclosed quotes, braces, bad substitution - generally work, now for the whole input string and on a more solid approach
+- **TODO:** lexer_quotes.c lines 43 and 48 - indent problem, it's always been like this and idk what it could break. it essentially does nothing
+- **TODO:** pids[num_of_p] is a variable length array which is forbidden by norm. skull emoji x100  need to find out how to replace it and keep everything intact
 - set_files function can return errno but it's not assigned to anything in executor. issue or ok?
 - does errno have to be assigned to int result before being returned?
+- exectutor returns mini->exit_status and assigns it to mini->exit_status xd
+
+- minishell$ echo "" or more quotes - **LEAKS**
+- cat "": mini - nothing, doesn't even reach printing token list debugger. bash - no such file or directory. related to leaks, something is happening with empty quotes
+- signals broke again - **FIXED**
+
+- **FIXED i commented out one if condition and it broke XD**
+- minishell$ echo "'"
+- '
+- minishell$ echo a"'"
+- a"" (bash gives a') :/ 
+
+- **also FIXED**
+- echo ${}
+- bash: ${}: bad substitution
 
 # 10.12. by Vlad
 - tried to figure out how to color minishell prompt, found nothing nice unfortunately :( gnu readline manual suggests we can edit some config files or do something else via command line but not sure. gotta be thankful we had it green for 99% of the way!
