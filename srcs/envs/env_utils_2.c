@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils_2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 13:11:13 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 13:12:05 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 15:06:04 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	check_env_name(char *env)
 	int	i;
 
 	i = 0;
-	if (env[i] >= '0' && env[i] <= '9')
+	if ((env[i] >= '0' && env[i] <= '9'))
 		return (ERROR);
 	while (env[i] && env[i] != '=')
 	{

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:34 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/10 16:43:32 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:13:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	unset_builtin(t_mini *mini, t_cmd *cmd)
 		{
 			index = get_env_index_by_name(mini->env, vars[i]);
 			if (index == -1)
-				return (ERROR);
+				return (0);
 			else
 			{
 				res = unset_arr_el(mini->env, index, get_arr_len(mini->env));

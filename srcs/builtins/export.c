@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 17:36:52 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 15:09:57 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,25 +48,25 @@ int	export_each_arg(t_mini *mini, char *env, char *env_name)
 int	export_builtin(t_mini *mini, t_cmd *cmd)
 {
 	int		i;
-	char	**arg;
 	char	*env_name;
 
 	i = 1;
-	if (!cmd->args)
-		return (ERROR);
-	arg = cmd->args;
-	if (arg[1] == NULL)
+	if (cmd->args[1] == NULL)
 		return (env_builtin(mini, cmd, "declare -x "));
-	while (arg[i])
+	while (cmd->args[i])
 	{
-		env_name = extract_env_name(arg[i]);
+		if (cmd->args[i][0] == '=')
+			return (mini_error(mini, create_msg("minishell",
+						mini->cmd_list->cmd, cmd->args[i],
+						"not a valid identifier"), 1));
+		env_name = extract_env_name(cmd->args[i]);
 		if (!env_name)
-			return (ERROR);
+			return (ERROR);		
 		if (check_env_name(env_name) == ERROR)
 			return (free(env_name), mini_error(mini, create_msg("minishell",
-						mini->cmd_list->cmd, arg[i],
+						mini->cmd_list->cmd, cmd->args[i],
 						"not a valid identifier"), 1));
-		if (export_each_arg(mini, arg[i], env_name) == ERROR)
+		if (export_each_arg(mini, cmd->args[i], env_name) == ERROR)
 			return (free(env_name), ERROR);
 		free(env_name);
 		i++;

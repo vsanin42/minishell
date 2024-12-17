@@ -7,6 +7,12 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 
 - **TODO** echo $'$USER' (optional)
 
+**TODO** from tester:
+1.  echo $, echo "$", echo '$' should print dollar, other  with $ should not print anything
+2. export =, export =aaa should print not a valid identifier - DONE, tested
+3. cd cannot have multiple arguments - DONE, test
+4. env $PWD should be updated when we cd - DONE, test
+
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
 - norm: file separation etc, just kept some comments just in case. **TODO:** evaluators norm

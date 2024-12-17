@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 13:04:32 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 14:52:38 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
 		return (mini_error(mini, create_msg("minishell",
-					cmd->cmd, "command not found", NULL), 127));
+					cmd->cmd, "Not such file or directory", NULL), 127));
 	if (execve(path, cmd->args, mini->env) == -1)
 		return (mini_perror(mini, create_msg("minishell",
 					cmd->cmd, NULL, NULL)));

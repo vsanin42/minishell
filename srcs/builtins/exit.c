@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 13:17:52 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:18:57 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	exit_builtin(t_mini *mini, t_cmd *cmd)
 	{
 		if (ft_atoi(cmd->args[1]) == 0 && ft_strncmp(cmd->args[1], "0\0", 2))
 			exit_status = mini_error(mini, create_msg("minishell", cmd->cmd,
-						cmd->args[1], "numeric argument required"), 1);
+						cmd->args[1], "numeric argument required"), 2);
 		else
 			exit_status = ft_atoi(cmd->args[1]);
 	}

@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 17:07:07 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 16:00:49 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	update_pwd_env(char  **env)
+{
+	char	*cwd;
+	char	*new_el;
+	int		index;
+
+	index = get_env_index_by_name(env, "PWD");
+	cwd = get_current_directory();
+	if (!cwd)
+		return ;
+	new_el = ft_strjoin("PWD=", cwd);
+	free(cwd);
+	if (!new_el)
+		return ;
+	change_arr_element(env, new_el, index);
+	free(new_el);
+}
 
 // @returns ERROR: if HOME was not set
 // @returns 0: changing directory successful
@@ -46,6 +64,9 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 	path = cmd->args[1];
 	if (path == NULL || !ft_strncmp(path, "~\0", 2))
 		return (cd_home(mini, path));
+	if (get_arr_len(cmd->args) > 2)
+		return (mini_error(mini, create_msg("minishell", cmd->cmd,
+					"too many argments", NULL), 1));
 	if (!ft_strncmp(path, "-", 2))
 	{
 		if (chdir("..") == -1)
@@ -55,6 +76,9 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 		}
 	}
 	if (chdir(path) == -1)
+	{
 		result = mini_perror(mini, create_msg("minishell", "cd", path, NULL));
-	return (result);
+		return (result);
+	}
+	return (update_pwd_env(mini->env), result);
 }
