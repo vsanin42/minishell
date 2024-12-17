@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 09:51:55 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 15:09:57 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:56:02 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	export_builtin(t_mini *mini, t_cmd *cmd)
 						"not a valid identifier"), 1));
 		env_name = extract_env_name(cmd->args[i]);
 		if (!env_name)
-			return (ERROR);		
+			return (ERROR);
 		if (check_env_name(env_name) == ERROR)
 			return (free(env_name), mini_error(mini, create_msg("minishell",
 						mini->cmd_list->cmd, cmd->args[i],

@@ -12,6 +12,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 2. export =, export =aaa should print not a valid identifier - DONE, tested
 3. cd cannot have multiple arguments - DONE, test
 4. env $PWD should be updated when we cd - DONE, test
+5. echo -n -n -n should take all the options as one, not first as options and others as arguments 
 
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
@@ -722,7 +723,7 @@ bash exit code: 0
 mini error = ( No such file or directory)
 
 bash error = ()
-61: echo <"./test_files/infile" "bonjour       42" 
+61: echo <"./test_files/infile" 
 mini output:
 bash output: (bonjour 42)
 mini exit code:

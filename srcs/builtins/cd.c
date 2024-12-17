@@ -6,13 +6,13 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 16:00:49 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:55:33 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	update_pwd_env(char  **env)
+void	update_pwd_env(char **env)
 {
 	char	*cwd;
 	char	*new_el;

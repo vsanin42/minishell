@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 15:41:26 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 14:53:11 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:53:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,13 @@ void	exec_cmd(t_mini *mini, int **pipes, int files[], int i)
 	{
 		close_all_pipes(pipes, num_of_p);
 		free_int_arr(mini->pipes, mini->pids);
-		exit(mini_error(mini, create_msg("minishell",
-					"command not found", NULL, NULL), 127));
+		exit(mini_error(mini, create_msg("mini", "no cmd", NULL, NULL), 127));
+	}
+	if (cmd_evaluator(mini, nthcmd) == ERROR)
+	{
+		close_all_pipes(pipes, num_of_p);
+		free_int_arr(mini->pipes, mini->pids);
+		exit (1);
 	}
 	set_files(mini, nthcmd, &files[0], &files[1]);
 	set_ins_outs(i, pipes, files, num_of_p);

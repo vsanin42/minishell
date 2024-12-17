@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 14:06:05 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:54:44 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,21 +49,17 @@ int	validate_files(t_mini *mini, t_redir *red, char *err)
 
 // checks all received parameters and only if OK program continues to execution
 // @returns 0 if all is OK, 1 on error
-int	cmd_evaluator(t_mini *mini)
+int	cmd_evaluator(t_mini *mini, t_cmd *cmd)
 {
-	t_cmd	*cmd;
 	t_redir	*red;
 	char	*err;
 
-	cmd = mini->cmd_list;
 	err = NULL;
-	red = NULL;
-	while (cmd)
-	{
-		red = cmd->redir;
-		if (validate_files(mini, red, err) == ERROR)
-			return (ERROR);
-		cmd = cmd->next;
-	}
+	if (!cmd)
+		return (ERROR);
+	red = cmd->redir;
+	if (validate_files(mini, red, err) == ERROR)
+		return (ERROR);
+	cmd = cmd->next;
 	return (0);
 }

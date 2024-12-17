@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/17 15:53:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:55:45 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	set_termios(int mode);
 
 /* builtins/~.c */
 int		is_builtin(t_cmd *cmd);
-void	update_pwd_env(char  **env);
+void	update_pwd_env(char **env);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
@@ -133,7 +133,7 @@ int		check_input(char *input, t_mini *mini);
 
 /* evaluators/cmd_evaluator.c */
 int		validate_files(t_mini *mini, t_redir *red, char *err);
-int		cmd_evaluator(t_mini *mini);
+int		cmd_evaluator(t_mini *mini, t_cmd *cmd);
 
 /* evaluators/token_evaluator.c */
 int		token_evaluator(t_mini *mini);

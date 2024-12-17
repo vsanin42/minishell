@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 14:10:01 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:50:47 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,6 @@ int	process_input(char *input, t_mini *mini)
 	if (result != 0)
 		return (free_token_list(mini), free_cmd_list(mini), result);
 	free_token_list(mini);
-	result = cmd_evaluator(mini);
-	if (result != 0)
-		return (free_cmd_list(mini), result);
 	result = executor(mini, get_cmd_count(mini->cmd_list));
 	free_int_arr(mini->pipes, mini->pids);
 	free_cmd_list(mini);
