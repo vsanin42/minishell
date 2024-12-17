@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 20:27:52 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 12:58:04 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int		is_builtin(t_cmd *cmd);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
-void	exit_builtin(t_mini *mini);
+void	exit_builtin(t_mini *mini, t_cmd *cmd);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);

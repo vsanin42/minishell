@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/16 19:35:35 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 13:04:32 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	exec_builtins(t_mini *mini, t_cmd *cmd)
 	else if (!ft_strncmp(cmd->cmd, "echo", 4))
 		result = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-		exit_builtin(mini);
+		exit_builtin(mini, cmd);
 	else
 		return (ERROR);
 	return (result);

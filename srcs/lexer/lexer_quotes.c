@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/16 19:47:32 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 12:39:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int	find_words(char *text)
 		while (text[i] != '\0' && text[i] != '\'' && text[i] != '"')
 			i++;
 	}
-	printf("count: %d\n", count);
 	return (count);
 }
 
