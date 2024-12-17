@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 15:18:57 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:22:50 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 // default is exit status of last executed command
 // exit_status must be between 0 and 255
 // if program exits with 128, means exit was called with code over 128
-void	exit_builtin(t_mini *mini, t_cmd *cmd)
+int	exit_builtin(t_mini *mini, t_cmd *cmd)
 {
 	int	exit_status;
 
@@ -34,8 +34,8 @@ void	exit_builtin(t_mini *mini, t_cmd *cmd)
 			exit_status = ft_atoi(cmd->args[1]);
 	}
 	else if (get_arr_len(cmd->args) >= 2)
-		exit_status = mini_error(mini, create_msg("minishell", cmd->cmd,
-					"too many arguments", NULL), 1);
+		return (mini_error(mini, create_msg("minishell", cmd->cmd,
+					"too many arguments", NULL), 1));
 	else
 		exit_status = 0;
 	free_arr(mini->env);
@@ -44,4 +44,5 @@ void	exit_builtin(t_mini *mini, t_cmd *cmd)
 	if (exit_status < 0 || exit_status > 255)
 		exit(exit_status % 256);
 	exit(exit_status);
+	return(exit_status);
 }

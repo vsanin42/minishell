@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/17 17:55:45 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:21:16 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	update_pwd_env(char **env);
 int		cd_builtin(t_mini *mini, t_cmd *cmd);
 char	*get_current_directory(void);
 int		pwd_builtin(t_mini *mini, t_cmd *cmd);
-void	exit_builtin(t_mini *mini, t_cmd *cmd);
+int		exit_builtin(t_mini *mini, t_cmd *cmd);
 int		export_builtin(t_mini *mini, t_cmd *cmd);
 int		env_builtin(t_mini *mini, t_cmd *cmd, char *prefix);
 int		unset_builtin(t_mini *mini, t_cmd *cmd);

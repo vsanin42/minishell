@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 19:49:09 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:21:49 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	exec_builtins(t_mini *mini, t_cmd *cmd)
 	else if (!ft_strncmp(cmd->cmd, "echo", 4))
 		result = echo_builtin(mini, cmd);
 	else if (!ft_strncmp(cmd->cmd, "exit", 4))
-		exit_builtin(mini, cmd);
+		result = exit_builtin(mini, cmd);
 	else
 		return (ERROR);
 	return (result);

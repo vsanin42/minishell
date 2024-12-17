@@ -5,15 +5,11 @@ NUMBER OF TIMES WE CHANGED LEXER: IIIII
 NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
-- **TODO** echo $'$USER' (optional)
-
 **TODO** from tester:
 1.  echo $, echo "$", echo '$' should print dollar, other  with $ should not print anything
-2. export =, export =aaa should print not a valid identifier - DONE, tested
-3. cd cannot have multiple arguments - DONE, test
-4. env $PWD should be updated when we cd - DONE, test
-5. echo -n -n -n should take all the options as one, not first as options and others as arguments 
-6. in cmd evaluator we only check for file itself, not if it is on any path ? if it is outfile we also have to check if it does not exist in cmd_evaluator becasue it can  be in a directory that does not exist ad then we do not want to create it - DONE, tested 
+2. echo -n -n -n should take all the options as one, not first as options and others as arguments 
+3. remove_null_token check if can be improved ----- optional
+4. ctrl c - exit status change? ----- optional
 
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
@@ -1579,3 +1575,1600 @@ mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
+
+# TEST CASES
+
+**1 - 52: builtins**
+
+- echo
+```bash
+1. echo hello world
+mini output:	hello world
+bash output:	hello world
+mini exit code:	0
+bash exit code:	0
+mini error: 	n/a
+bash error: 	n/a
+result: 		OK
+```
+
+```bash
+2. echo "hello world"
+mini output:	hello world
+bash output:	hello world
+mini exit code:	0
+bash exit code:	0
+mini error: 	n/a
+bash error: 	n/a
+result: 		OK
+```
+
+```bash
+3. echo 'hello world'
+mini output:	hello world
+bash output:	hello world
+mini exit code:	0
+bash exit code:	0
+mini error: 	n/a
+bash error: 	n/a
+result: 		OK
+```
+
+```bash
+4. echo hello'world'
+mini output:	helloworld
+bash output:	helloworld
+mini exit code:	0
+bash exit code:	0
+mini error: 	n/a
+bash error: 	n/a
+result: 		OK
+```
+
+```bash
+5. echo hello""world
+mini output:	helloworld
+bash output:	helloworld
+mini exit code:	0
+bash exit code:	0
+mini error: 	n/a
+bash error: 	n/a
+result: 		OK
+```
+
+```bash
+6. echo ''
+mini output: 	newline
+bash output: 	newline
+mini exit code: 0
+bash exit code: 0
+mini error: 	n/a
+bash error: 	n/a
+result:			OK
+```
+
+```bash
+7. echo "$HOME"
+mini output:	/home/vsanin
+bash output:	/home/vsanin
+mini exit code: 0
+bash exit code: 0
+mini error: 	n/a
+bash error: 	n/a
+result:			OK
+```
+
+```bash
+8. echo '$HOME'
+mini output:	$HOME
+bash output:	$HOME
+mini exit code: 0
+bash exit code: 0
+mini error: 	n/a
+bash error: 	n/a
+result:			OK
+```
+
+```bash
+9. echo "aspas ->'"
+mini output: 	aspas ->'
+bash output: 	aspas ->'
+mini exit code: 0
+bash exit code: 0
+mini error: 	n/a
+bash error: 	n/a
+result:			OK
+```
+
+```bash
+10. echo "aspas -> ' "
+mini output: 	aspas -> '
+bash output: 	aspas -> '
+mini exit code: 0
+bash exit code: 0
+mini error: 	n/a
+bash error: 	n/a
+result:			OK
+```
+
+```bash
+11. echo 'aspas ->"'
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result: 		OK
+```
+
+```bash
+12. echo 'aspas -> " '
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result: 		OK
+```
+
+```bash
+13. echo "> >> < * ? [ ] | ; [ ] || && ( ) & # $  <<" - NOT IMPLEMENTED WILDCARDS
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:
+```
+
+```bash
+14. echo '> >> < * ? [ ] | ; [ ] || && ( ) & # $  <<' - NOT IMPLEMENTED WILDCARDS
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:
+```
+
+```bash
+15. echo "exit_code ->$? user ->$USER home -> $HOME"
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+16. echo 'exit_code ->$? user ->$USER home -> $HOME'
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+17. echo "$"
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			*******KO*******
+```
+
+```bash
+18. echo '$'
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+19. echo $
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+20. echo $?
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+21. echo $?HELLO
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+- pwd
+```bash
+22. pwd
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+23. pwd a
+mini output:
+bash output:
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+- export
+```bash
+24: export hello 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+25: export HELLO=123 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+26: export A- 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+27: export HELLO=123 A 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+28: export HELLO="123 A-" 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+29: export hello world 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+30: export HELLO-=123 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+31: export = 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			FIXED
+```
+
+```bash
+32: export 123 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+- unset
+```bash
+33: unset 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+34: unset HELLO 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			*******KO******* IF DOESNT EXIT - EXIT 1 instead of 0 - FIXED
+```
+
+```bash
+35: unset HELLO1 HELLO2 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+36: unset HOME 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+37: unset PATH 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK on its own
+```
+
+```bash
+38: unset SHELL
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK on its own, shoudl be impossible after path but it works - KO
+```
+
+- cd
+```bash
+39: cd $PWD 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+40: cd $PWD hi 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			KO - CHANGE PWD ENV WHEN MOVING - FIXED
+```
+
+```bash
+41: cd 123123 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+- exit
+```bash
+42: exit 123
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+43: exit 298
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+44: exit +100 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+45: exit "+100" 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+46: exit +"100" 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+47: exit -100 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+48: exit "-100" 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+49: exit -"100" 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK
+```
+
+```bash
+50: exit hello 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK but wrong error code - FIXED
+```
+
+```bash
+51: exit 42 world 
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			KO - exits minishell - FIXED
+```
+
+```bash
+52:  
+mini exit code:
+bash exit code:
+mini error:
+bash error:
+result:			OK? idk ok
+```
+
+53: env | sort | grep -v SHLVL | grep -v ^_ 
+mini output:
+bash output: (CHROME_DESKTOP=code-url-handler.desktop COLORTERM=truecolor DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/101639/bus DESKTOP_SESSION=ubuntu DISPLAY=:0 DOCKER_HOST=unix:///run/user/101639/docker.sock FT_HOOK_NAME=login-user FT_HOOK_PATHNAME=login-user.d GDK_BACKEND=x11 GDMSESSION=ubuntu GIO_LAUNCHED_DESKTOP_FILE_PID=60740 GIO_LAUNCHED_DESKTOP_FILE=/usr/share/applications/code.desktop GIT_ASKPASS=/usr/share/code/resources/app/extensions/git/dist/askpass.sh GJS_DEBUG_OUTPUT=stderr GJS_DEBUG_TOPICS=JS ERROR;JS LOG GNOME_DESKTOP_SESSION_ID=this-is-deprecated GPG_AGENT_INFO=/run/user/101639/gnupg/S.gpg-agent:0:1 GTK_IM_MODULE=ibus GTK_MODULES=gail:atk-bridge HOME=/home/vsanin INVOCATION_ID=1a4534ac967d44ad96f042d24f4a0cea JOURNAL_STREAM=8:338906 KRB5CCNAME=FILE:/tmp/krb5cc_101639_0svDOf LANG=en_US.UTF-8 LIBVIRT_DEFAULT_URI=qemu:///system LOGNAME=vsanin MANAGERPID=58900 OLDPWD=/home/vsanin/42Core/minishell ORIGINAL_XDG_CURRENT_DESKTOP=ubuntu:GNOME PATH=/home/vsanin/bin:/home/vsanin/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin PWD=/home/vsanin/42Core/minishell/minishell_tester QT_ACCESSIBILITY=1 QT_IM_MODULE=ibus SESSION_MANAGER=local/c2r7s6.42prague.com:@/tmp/.ICE-unix/59475,unix/c2r7s6.42prague.com:/tmp/.ICE-unix/59475 SHELL=/bin/zsh SSH_AGENT_LAUNCHER=gnome-keyring SSH_AUTH_SOCK=/run/user/101639/keyring/ssh SYSTEMD_EXEC_PID=59494 TERM_PROGRAM_VERSION=1.93.0 TERM_PROGRAM=vscode TERM=xterm-256color USER=vsanin USER_ZDOTDIR=/home/vsanin VSCODE_GIT_ASKPASS_EXTRA_ARGS= VSCODE_GIT_ASKPASS_MAIN=/usr/share/code/resources/app/extensions/git/dist/askpass-main.js VSCODE_GIT_ASKPASS_NODE=/usr/share/code/code VSCODE_GIT_IPC_HANDLE=/run/user/101639/vscode-git-ff06acad39.sock VSCODE_INJECTION=1 XAUTHORITY=/home/vsanin/.Xauthority XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg XDG_CURRENT_DESKTOP=Unity XDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/home/vsanin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop XDG_GREETER_DATA_DIR=/var/lib/lightdm-data/vsanin XDG_MENU_PREFIX=gnome- XDG_RUNTIME_DIR=/run/user/101639 XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0 XDG_SESSION_CLASS=user XDG_SESSION_DESKTOP=ubuntu XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0 XDG_SESSION_TYPE=x11 XMODIFIERS=@im=ibus ZDOTDIR=/home/vsanin)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+54: cat ./test_files/infile_big | grep oi 
+mini output:
+bash output: (was going to happen next. First, she tried to look down and make out disappointment it was empty: she did not like to drop the jar for fear not going to do _that_ in a hurry. “No, I’ll look first,” she said, “and see whether it’s marked ‘_poison_’ or not”; for she had read bottle marked “poison,” it is almost certain to disagree with you, However, this bottle was _not_ marked “poison,” so Alice ventured to brightened up at the thought that she was now the right size for going waited for a few minutes to see if she was going to shrink any further: said Alice to herself, “in my going out altogether, like a candle. I After a while, finding that nothing more happened, she decided on going Rabbit came near her, she began, in a low, timid voice, “If you please, to repeat it, but her voice sounded hoarse and strange, and the words now about two feet high, and was going on shrinking rapidly: she soon dropped it hastily, just in time to avoid shrinking away altogether. “Not like cats!” cried the Mouse, in a shrill, passionate voice. “Would trembling voice, “Let us get to the shore, and then I’ll tell you my “What I was going to say,” said the Dodo in an offended tone, “was, “But who is to give the prizes?” quite a chorus of voices asked. “Why, _she_, of course,” said the Dodo, pointing to Alice with one The next thing was to eat the comfits: this caused some noise and the others all joined in chorus, “Yes, please do!” but the Mouse only doesn’t suit my throat!” and a Canary called out in a trembling voice doing out here? Run home this moment, and fetch me a pair of gloves and at once in the direction it pointed to, without trying to explain the “How queer it seems,” Alice said to herself, “to be going messages for gloves, and was just going to leave the room, when her eye fell upon a she heard a voice outside, and stopped to listen. “Mary Ann! Mary Ann!” said the voice. “Fetch me my gloves this moment!” Next came an angry voice—the Rabbit’s—“Pat! Pat! Where are you?” And then a voice she had never heard before, “Sure then I’m here! Digging rumbling of little cartwheels, and the sound of a good many voices all then the Rabbit’s voice along—“Catch him, you by the hedge!” then silence, and then another confusion of voices—“Hold up his head—Brandy Last came a little feeble, squeaking voice, (“That’s Bill,” thought “We must burn the house down!” said the Rabbit’s voice; and Alice addressed her in a languid, sleepy voice. came different!” Alice replied in a very melancholy voice. By the use of this ointment—one shilling the box— going to dive in among the leaves, which she found to be nothing but Pigeon, raising its voice to a shriek, “and just as I was thinking I going to be, from one minute to another! However, I’ve got back to my are; secondly, because they’re making such a noise inside, no one could noise going on within—a constant howling and sneezing, and every now “Oh, _please_ mind what you’re doing!” cried Alice, jumping up and down (In which the cook and the baby joined): ear and left foot, so as to prevent its undoing itself,) she carried it No, there were no tears. “If you’re going to turn into a pig, my dear,” eyes, “Of course, of course; just what I was going to remark myself.” quarrelled last March—just before _he_ went mad, you know—” (pointing hoarse, feeble voice: “I heard every word you fellows were saying.” The Dormouse had closed its eyes by this time, and was going off into a neither of the others took the least notice of her going, though she voice, “Why the fact is, you see, Miss, this here ought to have been a you see, Miss, we’re doing our best, afore she comes, to—” At this “And who are _these?_” said the Queen, pointing to the three gardeners “Get up!” said the Queen, in a shrill, loud voice, and the three turning to the rose-tree, she went on, “What _have_ you been doing “May it please your Majesty,” said Two, in a very humble tone, going “Come on, then!” roared the Queen, and Alice joined the procession, “It’s—it’s a very fine day!” said a timid voice at her side. She was “Get to your places!” shouted the Queen in a voice of thunder, and had got its neck nicely straightened out, and was going to give the going to begin again, it was very provoking to find that the hedgehog “How do you like the Queen?” said the Cat in a low voice. “Who _are_ you talking to?” said the King, going up to Alice, and Alice thought she might as well go back, and see how the game was going on, as she heard the Queen’s voice in the distance, screaming with a large crowd collected round it: there was a dispute going on between thing before, and he wasn’t going to begin at _his_ time of life. startled when she heard her voice close to her ear. “You’re thinking “The game’s going on rather better now,” she said, by way of keeping up But here, to Alice’s great surprise, the Duchess’s voice died away, “A fine day, your Majesty!” the Duchess began in a low, weak voice. about half no time! Take your choice!” The Duchess took her choice, and was gone in a moment. As they walked off together, Alice heard the King say in a low voice, sea. The master was an old Turtle—we used to call him Tortoise—” “Why did you call him Tortoise, if he wasn’t one?” Alice asked. “We called him Tortoise because he taught us,” said the Mock Turtle Fainting in Coils.” two sobs choked his voice. “Same as if he had a bone in his throat,” the back. At last the Mock Turtle recovered his voice, and, with tears “Change lobsters again!” yelled the Gryphon at the top of its voice. Turtle, suddenly dropping his voice; and the two creatures, who had “There’s a porpoise close behind us, and he’s treading on my tail. They are waiting on the shingle—will you come and join the dance? Will you, won’t you, will you, won’t you, will you join the dance? Will you, won’t you, will you, won’t you, won’t you join the dance? Said he thanked the whiting kindly, but he would not join the dance. Would not, could not, would not, could not, would not join the dance. Would not, could not, would not, could not, could not join the dance. Then turn not pale, beloved snail, but come and join the dance. Will you, won’t you, will you, won’t you, will you join the dance? Will you, won’t you, will you, won’t you, won’t you join the dance?” “Boots and shoes under the sea,” the Gryphon went on in a deep voice, running on the song, “I’d have said to the porpoise, ‘Keep back, wise fish would go anywhere without a porpoise.” and told me he was going a journey, I should say ‘With what porpoise?’” Alice a little timidly: “but it’s no use going back to yesterday, “Stand up and repeat ‘’_Tis the voice of the sluggard_,’” said the “’Tis the voice of the Lobster; I heard him declare, His voice has a timid and tremulous sound.] wrong, and she went on in a trembling voice:— The Mock Turtle sighed deeply, and began, in a voice sometimes choked they doing?” Alice whispered to the Gryphon. “They can’t have anything “Stupid things!” Alice began in a loud, indignant voice, but she “I’m a poor man, your Majesty,” the Hatter began, in a trembling voice, The King looked anxiously at the White Rabbit, who said in a low voice, nearly out of sight, he said in a deep voice, “What are tarts made of?” “Treacle,” said a sleepy voice behind her. little voice, the name “Alice!” “The trial cannot proceed,” said the King in a very grave voice, “until verdict,” he said to the jury, in a low, trembling voice. “Why, there they are!” said the King triumphantly, pointing to the “Off with her head!” the Queen shouted at the top of her voice. Nobody looking up into hers—she could hear the very tones of her voice, and shared their never-ending meal, and the shrill voice of the Queen cries to the voice of the shepherd boy—and the sneeze of the baby, the shriek of the Gryphon, and all the other queer noises, would change unenforceability of any provision of this agreement shall not void the)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+55: cat minishell.h | grep ");"$ 
+mini exit code::bash exit code = 1
+56: export GHOST=123 | env | grep GHOST 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ()
+
+———————————— redirects
+57: grep hi <./test_files/infile 
+mini output:
+bash output: (hi)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+58: grep hi "<infile" <         ./test_files/infile 
+mini exit code::bash exit code = 2
+59: echo hi < ./test_files/infile bye bye 
+mini output:
+bash output: (hi bye bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+60: grep hi <./test_files/infile_big <./test_files/infile 
+mini output:
+bash output: (hi)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+61: echo <"./test_files/infile" "bonjour       42" 
+mini output:
+bash output: (bonjour 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+62: cat <"./test_files/file name with spaces" 
+mini output:
+bash output: (😈 😈 😈 This will break your minishell 😈 😈 😈)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+63: cat <./test_files/infile_big ./test_files/infile 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+64: cat <"1""2""3""4""5" 
+mini exit code::bash exit code = 1
+65: echo <"./test_files/infile" <missing <"./test_files/infile" 
+mini exit code::bash exit code = 1
+66: echo <missing <"./test_files/infile" <missing 
+mini exit code::bash exit code = 1
+67: cat <"./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+68: echo <"./test_files/infile_big" | cat <"./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+69: echo <"./test_files/infile_big" | cat "./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+70: echo <"./test_files/infile_big" | echo <"./test_files/infile" 
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+71: echo hi | cat <"./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+72: echo hi | cat "./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+73: cat <"./test_files/infile" | echo hi 
+mini output:
+bash output: (hi)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ( Broken pipe)
+74: cat <"./test_files/infile" | grep hello 
+mini output:
+bash output: (hello)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+75: cat <"./test_files/infile_big" | echo hi 
+mini output:
+bash output: (hi)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ( Broken pipe)
+76: cat <missing 
+mini exit code::bash exit code = 1
+77: cat <missing | cat 
+mini exit code::bash exit code = 0
+78: cat <missing | echo oi 
+mini output:
+bash output: (oi)
+mini exit code::bash exit code = 0
+79: cat <missing | cat <"./test_files/infile" 
+mini output:
+bash output: (hi hello world 42)
+mini exit code::bash exit code = 0
+80: echo <123 <456 hi | echo 42 
+mini output:
+bash output: (42)
+mini exit code::bash exit code = 0
+81: ls >./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+82: ls >         ./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+83: echo hi >         ./outfiles/outfile01 bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+84: ls >./outfiles/outfile01 >./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+85: ls >./outfiles/outfile01 >./test_files/invalid_permission 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+86: ls >"./outfiles/outfile with spaces" 
+Only in ./bash_outfiles: outfile with spaces
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+87: ls >"./outfiles/outfile""1""2""3""4""5" 
+Only in ./bash_outfiles: outfile12345
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+88: ls >"./outfiles/outfile01" >./test_files/invalid_permission >"./outfiles/outfile02" 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+89: ls >./test_files/invalid_permission >"./outfiles/outfile01" >./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+90: cat <"./test_files/infile" >"./outfiles/outfile01" 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+hello
+world
+42
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+91: echo hi >./outfiles/outfile01 | echo bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+92: echo hi >./outfiles/outfile01 >./outfiles/outfile02 | echo bye 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+93: echo hi | echo >./outfiles/outfile01 bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+94: echo hi | echo bye >./outfiles/outfile01 >./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+95: echo hi >./outfiles/outfile01 | echo bye >./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ()
+96: echo hi >./outfiles/outfile01 >./test_files/invalid_permission | echo bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+97: echo hi >./test_files/invalid_permission | echo bye 
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+98: echo hi >./test_files/invalid_permission >./outfiles/outfile01 | echo bye 
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+
+bash error = ( Permission denied)
+99: echo hi | echo bye >./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+
+
+``` bash
+100: echo hi | >./outfiles/outfile01 echo bye >./test_files/invalid_permission 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				OK
+```
+
+``` bash
+101: echo hi | echo bye >./test_files/invalid_permission >./outfiles/outfile01 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				OK
+```
+
+``` bash
+102: cat <"./test_files/infile" >./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				OK
+```
+
+``` bash
+103: cat >./test_files/invalid_permission <"./test_files/infile" 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				OK
+```
+
+``` bash
+104: cat <missing >./outfiles/outfile01 
+mini exit code:
+bash exit code: 1
+result				OK
+```
+
+``` bash
+105: cat >./outfiles/outfile01 <missing 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+result				OK
+```
+
+``` bash
+106: cat <missing >./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+result				OK
+```
+
+``` bash
+107: cat >./test_files/invalid_permission <missing 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				OK;
+```
+
+``` bash
+108: cat >./outfiles/outfile01 <missing >./test_files/invalid_permission 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+result				OK;
+```
+
+``` bash
+109: ls >>./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result				OK
+```
+
+``` bash
+110: ls >>      ./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result				OK
+```
+
+``` bash
+111: ls >>./outfiles/outfile01 >./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result				OK
+```
+
+``` bash
+112: ls >./outfiles/outfile01 >>./outfiles/outfile01 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result				OK
+```
+
+``` bash
+113: ls >./outfiles/outfile01 >>./outfiles/outfile01 >./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+114: ls >>./outfiles/outfile01 >>./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bash_outfiles
+bash.supp
+bonus
+bonus_bonus
+builtins
+extras
+local.supp
+loop.out
+manual_tests
+mini_outfiles
+os_specific
+outfiles
+pipes
+README.md
+redirects
+syntax
+tester
+test_files
+wildcards
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+115: ls >>./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+116: ls >>./test_files/invalid_permission >>./outfiles/outfile01 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+117: ls >>./outfiles/outfile01 >>./test_files/invalid_permission 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+118: ls >./outfiles/outfile01 >>./test_files/invalid_permission >>./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+119: ls <missing >>./test_files/invalid_permission >>./outfiles/outfile02 
+mini exit code:
+bash exit code: 1
+result:				OK
+```
+
+``` bash
+120: ls >>./test_files/invalid_permission >>./outfiles/outfile02 <missing 
+mini exit code: 1
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK 
+```
+
+``` bash
+121: echo hi >>./outfiles/outfile01 | echo bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+mini output: bye
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+122: echo hi >>./outfiles/outfile01 >>./outfiles/outfile02 | echo bye 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+mini output:
+bash output: (bye)
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+123: echo hi | echo >>./outfiles/outfile01 bye 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				FIXED
+```
+
+``` bash
+124: echo hi | echo bye >>./outfiles/outfile01 >>./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+125: echo hi >>./outfiles/outfile01 | echo bye >>./outfiles/outfile02 
+Only in ./bash_outfiles: outfile01
+Only in ./bash_outfiles: outfile02
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+hi
+bye
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+126: echo hi >>./test_files/invalid_permission | echo bye 
+mini output:
+bash output: (bye)
+mini exit code: 1
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				*****KO***** - doesnt print bye when it should ******************************************
+```
+
+``` bash
+127: echo hi >>./test_files/invalid_permission >./outfiles/outfile01 | echo bye ******************************************
+mini output:
+bash output: (bye)
+mini exit code: 1
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result				*****KO***** - same as above
+```
+
+``` bash
+128: echo hi | echo bye >>./test_files/invalid_permission 
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+129: echo hi | echo >>./outfiles/outfile01 bye >./test_files/invalid_permission 
+Only in ./bash_outfiles: outfile01
+mini outfiles:
+cat: './mini_outfiles/*': No such file or directory
+bash outfiles:
+mini exit code:
+bash exit code: 1
+mini error = ( No such file or directory)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+130: cat <minishell.h>./outfiles/outfile 
+mini exit code:
+bash exit code: 1 with minishell.h, 0 with includes/minishell.h
+result				OK
+```
+
+``` bash
+131: cat <minishell.h|ls ********************************************************
+mini output:
+bash output: (bash_outfiles bash.supp bonus bonus_bonus builtins extras local.supp loop.out manual_tests mini_outfiles os_specific outfiles pipes README.md redirects syntax tester test_files wildcards)
+mini exit code:
+bash exit code: 0
+result				*****KO***** - doesn't execute ls after invalid file, OK with valid file
+```
+
+———————————— extras
+
+``` bash
+132: 
+mini exit code:
+bash exit code: 0
+mini error = ( No such file or directory)
+bash error = ()
+result:				OK
+```
+
+``` bash
+133: $PWD 
+mini exit code: 126
+bash exit code: 126
+mini error = ( minishell: /home/vsanin/42Core/minishell: Permission denied)
+bash error = ( Is a directory)
+result:				*****KO*****
+```
+
+``` bash
+134: $EMPTY 
+mini exit code: 1
+bash exit code: 0
+mini error = ()
+bash error = ()
+result:				*****KO*****
+```
+
+``` bash
+135: $EMPTY echo hi 
+mini output: (hi)
+bash output: (hi)
+mini exit code: 0
+bash exit code: 0
+mini error = ()
+bash error = ()
+result:				OK
+```
+
+``` bash
+136: ./test_files/invalid_permission /// echo a > out.txt with no write perms
+mini exit code: 126 /// 1
+bash exit code: 126 /// 1
+mini error = ( permission denied)
+bash error = ( Permission denied)
+result:				OK
+```
+
+``` bash
+137: ./missing.out 
+mini exit code: 1 - minishell: ./missing.out: No such file or directory
+bash exit code: 127
+result:				*****KO***** fixed?
+
+``` bash
+138: missing.out 
+mini exit code: 127
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result: 			OK
+
+```
+
+``` bash
+139: "aaa" 
+mini exit code: 127
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
+
+``` bash
+140: test_files 
+mini exit code: 127
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
+
+``` bash
+141: ./test_files 
+mini exit code:
+bash exit code: 126
+mini error = ( permission denied)
+bash error = ( Is a directory)
+result: 			*****KO*****
+```
+
+``` bash
+142: /test_files 
+mini exit code: 1 - minishell: /test_files: No such file or directory *****FIX***** fixed?
+bash exit code: 127
+
+``` bash
+143: minishell.h 
+mini exit code:
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
+
+``` bash
+144: $ 
+mini exit code:
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
+
+``` bash
+145: $? 
+mini exit code:
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
+
+``` bash
+146: README.md 
+mini exit code:
+bash exit code: 127
+mini error = ( No such file or directory)
+bash error = ( command not found)
+result:				OK
+```
