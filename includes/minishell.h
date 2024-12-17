@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/17 12:58:04 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 14:11:32 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int		check_bs_base(char *input);
 int		check_input(char *input, t_mini *mini);
 
 /* evaluators/cmd_evaluator.c */
-int		validate_files(t_mini *mini);
+int		validate_files(t_mini *mini, t_redir *red, char *err);
 int		cmd_evaluator(t_mini *mini);
 
 /* evaluators/token_evaluator.c */
@@ -191,7 +191,8 @@ void	set_q_ign(int *q_ign, int value);
 int		find_q_helper(char q_start, char *text, int i, int *q_ign);
 
 /* lexer/lexer.c */
-int		create_and_add_tok(t_mini *mini, char *node_value, t_token **token_list, int *hdoc);
+int		create_and_add_tok(t_mini *mini, char *node_value,
+			t_token **token_list, int *hdoc);
 char	*process_text(char *text, int *i, int in_sq, int in_dq);
 char	*create_node_value(char *input, int *i);
 t_token	*get_token_list(t_mini *mini, char *input);
@@ -219,7 +220,7 @@ char	**dup_array(char **arr);
 void	free_arr(char **arr);
 int		get_arr_len(char **arr);
 char	**add_back_array(char **arr, char *new_el);
-char	**change_arr_element(char **arr, char *new_el, int	index);
+char	**change_arr_element(char **arr, char *new_el, int index);
 
 /* types/t_cmd.c */
 void	init_cmd_node(t_cmd *node);
@@ -261,7 +262,6 @@ void	free_four_mallocs(char *s1, char *s2, char *s3, char *s4);
 
 /* utils/messages_2.c */
 void	s_error_msg(char *msg);
-void	validator_msg(t_mini *mini, char *object, char *msg);
 int		mini_perror(t_mini *mini, char *msg);
 int		mini_error(t_mini *mini, char *msg, int err);
 

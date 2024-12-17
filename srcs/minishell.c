@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/16 20:29:18 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 14:10:01 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 // executes lexer->parser->executor with checks between each phase
 // @returns 0 on SUCESS, 1 on ERROR
-//print_token_list(mini);
-//print_command_list(mini);
+// print_token_list(mini);
+// print_command_list(mini);
+// possible result codes: 0, 1, 2, 126, 127 (128+ for signals)
 int	process_input(char *input, t_mini *mini)
 {
 	int	result;
-	// possible result codes: 0, 1, 2, 126, 127 (128+ for signals)
+
 	result = lexer(input, mini);
 	if (result != 0)
 		return (free_token_list(mini), result);
@@ -56,6 +57,8 @@ int	show_prompt(t_mini *mini)
 {
 	char	*input;
 
+	mini->pids = NULL;
+	mini->pipes = NULL;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);

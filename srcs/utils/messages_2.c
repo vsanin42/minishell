@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   messages_2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 13:31:36 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 13:32:29 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/17 14:08:11 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,12 @@ void	s_error_msg(char *msg)
 	printf("%s\n", msg);
 }
 
-void	validator_msg(t_mini *mini, char *object, char *msg)
-{
-	(void)mini;
-	printf("minishell: %s: %s\n", object, msg);
-}
-
 int	mini_perror(t_mini *mini, char *msg)
 {
 	int	result;
 
 	(void)mini;
 	result = errno;
-	//mini->exit_status = errno;
 	if (msg)
 		perror(msg);
 	else
