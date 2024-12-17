@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 14:52:38 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:49:09 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ int	exec_command_by_path(t_mini *mini, t_cmd *cmd)
 	char	*path;
 
 	path = cmd->cmd;
+	if (is_directory(path) > 0)
+		return (mini_error(mini, create_msg("minishell",
+					path, "Is a directory", NULL), 126));
+	else if (is_executable_file(path) < 0)
+		return (mini_error(mini, create_msg("minishell",
+					path, "No such file or directory", NULL), 127));
 	if (execve(path, cmd->args, mini->env) == -1)
 	{
 		mini_perror(mini, create_msg("minishell", path, NULL, NULL));
@@ -66,8 +72,8 @@ int	exec_shell_command(t_mini *mini, t_cmd *cmd)
 
 	path = get_path_env(mini, cmd->cmd);
 	if (!path)
-		return (mini_error(mini, create_msg("minishell",
-					cmd->cmd, "Not such file or directory", NULL), 127));
+		return (mini_error(mini, create_msg(cmd->cmd,
+					"command not found", NULL, NULL), 127));
 	if (execve(path, cmd->args, mini->env) == -1)
 		return (mini_perror(mini, create_msg("minishell",
 					cmd->cmd, NULL, NULL)));

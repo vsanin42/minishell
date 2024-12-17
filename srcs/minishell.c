@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 17:50:47 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:41:12 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	process_input(char *input, t_mini *mini)
 	if (result != 0)
 		return (free_token_list(mini), result);
 	mini->token_list = remove_null_tokens(mini->token_list);
+	if (mini->token_list == NULL)
+		return (0);
 	result = token_evaluator(mini);
 	if (result != 0)
 		return (free_token_list(mini), result);

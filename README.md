@@ -13,7 +13,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 3. cd cannot have multiple arguments - DONE, test
 4. env $PWD should be updated when we cd - DONE, test
 5. echo -n -n -n should take all the options as one, not first as options and others as arguments 
-6. in cmd evaluator we only check for file itself, not if it is on any path ? if it is outfile we also have to check if it does not exist in cmd_evaluator becasue it can  be in a directory that does not exist ad then we do not want to create it 
+6. in cmd evaluator we only check for file itself, not if it is on any path ? if it is outfile we also have to check if it does not exist in cmd_evaluator becasue it can  be in a directory that does not exist ad then we do not want to create it - DONE, tested 
 
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
@@ -1136,6 +1136,7 @@ mini exit code:
 bash exit code: 1
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 100: ❌ echo hi | >./outfiles/outfile01 echo bye >./test_files/invalid_permission 
 Only in ./bash_outfiles: outfile01
 mini outfiles:
@@ -1145,24 +1146,29 @@ mini exit code:
 bash exit code: 1
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 101: ❌ echo hi | echo bye >./test_files/invalid_permission >./outfiles/outfile01 
 mini exit code:
 bash exit code: 1
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 102: ❌ cat <"./test_files/infile" >./test_files/invalid_permission 
 mini exit code:
 bash exit code: 1
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 103: ❌ cat >./test_files/invalid_permission <"./test_files/infile" 
 mini exit code:
 bash exit code: 1
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 104: ❌ cat <missing >./outfiles/outfile01 
 mini exit code:
 bash exit code: 1
+
 Test 105: ❌ cat >./outfiles/outfile01 <missing 
 Only in ./bash_outfiles: outfile01
 mini outfiles:
@@ -1491,16 +1497,19 @@ mini exit code:
 bash exit code: 0
 mini error = ( No such file or directory)
 bash error = ()
+
 Test 133: ❌ $PWD 
 mini exit code:
 bash exit code: 126
 mini error = ( No such file or directory)
 bash error = ( Is a directory)
+
 Test 134: ❌ $EMPTY 
 mini exit code:
 bash exit code: 0
 mini error = ( No such file or directory)
 bash error = ()
+
 Test 135: ❌ $EMPTY echo hi 
 mini output:
 bash output: (hi)
@@ -1508,52 +1517,63 @@ mini exit code:
 bash exit code: 0
 mini error = ( No such file or directory)
 bash error = ()
+
 Test 136: ❌ ./test_files/invalid_permission 
 mini exit code:
 bash exit code: 126
 mini error = ( No such file or directory)
 bash error = ( Permission denied)
+
 Test 137: ❌ ./missing.out 
 mini exit code:
 bash exit code: 127
+
 Test 138: ❌ missing.out 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 139: ❌ "aaa" 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 140: ❌ test_files 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 141: ❌ ./test_files 
 mini exit code:
 bash exit code: 126
 mini error = ( No such file or directory)
 bash error = ( Is a directory)
+
 Test 142: ❌ /test_files 
 mini exit code:
 bash exit code: 127
+
 Test 143: ❌ minishell.h 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 144: ❌ $ 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 145: ❌ $? 
 mini exit code:
 bash exit code: 127
 mini error = ( No such file or directory)
 bash error = ( command not found)
+
 Test 146: ❌ README.md 
 mini exit code:
 bash exit code: 127
