@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:40:47 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 17:54:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:11:59 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ int	validate_files(t_mini *mini, t_redir *red, char *err)
 {
 	while (red)
 	{
-		if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1
-			&& errno == ENOENT)
+		if (red->type == TOKEN_REDIRIN && is_readable_file(red->file) == -1)
+			err = "No such file or directory";
+		else if (red->type == TOKEN_REDIROUT
+			&& is_writable_file(red->file) == -1 && errno == ENOENT)
 			err = "No such file or directory";
 		else if (red->type == TOKEN_REDIRIN
 			&& is_readable_file(red->file) == -1 && errno != ENOENT)

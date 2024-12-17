@@ -13,6 +13,7 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 3. cd cannot have multiple arguments - DONE, test
 4. env $PWD should be updated when we cd - DONE, test
 5. echo -n -n -n should take all the options as one, not first as options and others as arguments 
+6. in cmd evaluator we only check for file itself, not if it is on any path ? if it is outfile we also have to check if it does not exist in cmd_evaluator becasue it can  be in a directory that does not exist ad then we do not want to create it 
 
 # 15.12. by Vlad
 - i don't understand env builtin, need explanation (no thought head empty)
@@ -831,14 +832,17 @@ mini exit code::bash exit code = 0
 mini output:
 bash output: (oi)
 mini exit code::bash exit code = 0
+
 79: cat <missing | cat <"./test_files/infile" 
 mini output:
 bash output: (hi hello world 42)
 mini exit code::bash exit code = 0
+
 80: echo <123 <456 hi | echo 42 
 mini output:
 bash output: (42)
 mini exit code::bash exit code = 0
+
 81: ls >./outfiles/outfile01 
 Only in ./bash_outfiles: outfile01
 mini outfiles:
