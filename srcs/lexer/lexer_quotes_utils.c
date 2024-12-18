@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 19:30:13 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:31:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ char	**peaq_help(void)
 	text_array = malloc(sizeof(char *) * 2);
 	if (!text_array)
 		return (NULL);
-	text_array[0] = ft_strdup(" "); // ft_strdup("") for echo, cd, ... ;
-	text_array[1] = NULL; // ft_strdup("''") for cat, sort, ...
+	text_array[0] = ft_strdup(" ");
+	text_array[1] = NULL;
 	return (text_array);
 }
 

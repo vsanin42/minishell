@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 13:31:36 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/17 19:06:02 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:03:52 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 
 void	s_error_msg(char *msg)
 {
-	printf("%s\n", msg);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "\n", 1);
 }
 
+// prints msg and perror after
+// ! msg must be allocated, will be freed
+// returns errno as result
 int	mini_perror(t_mini *mini, char *msg)
 {
 	int	result;
@@ -39,8 +43,8 @@ int	mini_error(t_mini *mini, char *msg, int err)
 	(void)mini;
 	if (msg)
 	{
-		write(2, msg, ft_strlen(msg));
-		write(2, "\n", 1);
+		write(STDERR_FILENO, msg, ft_strlen(msg));
+		write(STDERR_FILENO, "\n", 1);
 		free(msg);
 	}
 	return (err);

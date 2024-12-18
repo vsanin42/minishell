@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:22:18 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 17:55:33 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:28:35 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	cd_home(t_mini *mini, char *path)
 		mini_perror(mini, create_msg("minishell", "cd", path, NULL));
 	}
 	free(home);
+	if (path && !ft_strncmp(path, "-\0", 2))
+		return (pwd_builtin(mini, NULL));
 	return (result);
 }
 
@@ -62,12 +64,13 @@ int	cd_builtin(t_mini *mini, t_cmd *cmd)
 
 	result = 0;
 	path = cmd->args[1];
-	if (path == NULL || !ft_strncmp(path, "~\0", 2))
+	if (path == NULL || !ft_strncmp(path, "~\0", 2)
+		|| !ft_strncmp(path, "-\0", 2))
 		return (cd_home(mini, path));
 	if (get_arr_len(cmd->args) > 2)
 		return (mini_error(mini, create_msg("minishell", cmd->cmd,
 					"too many argments", NULL), 1));
-	if (!ft_strncmp(path, "-", 2))
+	if (!ft_strncmp(path, "-\0", 2))
 	{
 		if (chdir("..") == -1)
 		{

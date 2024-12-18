@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:02:34 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 20:21:49 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:03:42 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	get_exit_status(int num_of_p, t_mini *mini, int *pids)
 		i++;
 	}
 	if (WTERMSIG(status) == SIGQUIT)
-		write(2, "Quit\n", 5);
+		write(STDERR_FILENO, "Quit\n", 5);
 	return (exit_status);
 }
 

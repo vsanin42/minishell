@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expanding_env.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/15 13:28:37 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:32:19 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i)
 	env = NULL;
 	oldres = NULL;
 	to_append = NULL;
-	while ((++len >= 0) && text[*i] && ft_isalnum(text[*i]))
+	while ((++len >= 0) && text[*i] && (ft_isalnum(text[*i])
+			|| text[*i] == '_'))
 		(*i)++;
 	if (len)
 	{

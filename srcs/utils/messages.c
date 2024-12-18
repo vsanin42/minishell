@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   messages.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 14:34:44 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 13:48:43 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:03:58 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int	error_msg(char *msg, t_mini *mini, char *str_1, char *str_2)
 	str_1 = NULL;
 	free(str_2);
 	str_2 = NULL;
-	write(2, msg, ft_strlen(msg));
-	write(2, "\n", 1);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "\n", 1);
 	return (ERROR);
 }
 

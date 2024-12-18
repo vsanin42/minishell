@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_utils_2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 14:50:42 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 04:31:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:03:40 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ int	set_exit_status(int num_of_p, t_mini *mini, int *pids)
 	if (signaled)
 	{
 		if (last_sig == SIGINT)
-			write(2, "\n", 1);
+			write(STDERR_FILENO, "\n", 1);
 		else if (last_sig == SIGQUIT)
-			write(2, "Quit\n", 5);
+			write(STDERR_FILENO, "Quit\n", 5);
 	}
 	return (mini->exit_status);
 }

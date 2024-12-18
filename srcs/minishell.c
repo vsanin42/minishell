@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 19:41:12 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:30:07 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,13 @@ int	show_prompt(t_mini *mini)
 	{
 		free(input);
 		input = NULL;
-		return (1);
+		return (ERROR);
 	}
 	add_history(input);
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
 	mini->exit_status = process_input(input, mini);
-	return (1);
+	return (mini->exit_status);
 }
 
 // terminal config editing to revent '^\' from being printed
@@ -119,6 +119,7 @@ int	main(int argc, char *argv[], char *env[])
 	int		stdout;
 
 	(void)argv;
+	(void)argc;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);
