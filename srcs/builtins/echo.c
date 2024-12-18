@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:41 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/18 12:22:20 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 15:37:55 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char	*echo_builder(char **args)
 		res = str_append_space(res, *tmp);
 		tmp++;
 	}
-	trimmed_res = ft_strtrim(res, " ");
+	trimmed_res = ft_strdup(res);
 	free(res);
 	return (trimmed_res);
 }

@@ -3,10 +3,13 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+         #
+#    By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/24 18:03:05 by vsanin            #+#    #+#              #
-#    Updated: 2024/12/01 17:45:18 by zuzanapiaro      ###   ########.fr        #
+#    Created: 2024/12/18 15:06:10 by vsanin            #+#    #+#              #
+#    Updated: 2024/12/18 15:06:13 by vsanin           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = minishell
 
 CC = cc
