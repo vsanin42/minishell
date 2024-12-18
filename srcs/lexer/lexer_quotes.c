@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:57:06 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/12/17 12:39:51 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 14:33:32 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,8 @@ char	**process_envs_and_quotes(t_mini *mini, t_token *token)
 			return (NULL);
 		text_array++;
 		i += find_q_or_end(txt + i);
+		if (i > ft_strlen(txt))
+			break ;
 	}
 	*text_array = NULL;
 	return (trim_quotes_in_array(head));

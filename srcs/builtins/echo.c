@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:23:41 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/07 10:29:34 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 12:22:20 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 // valid: any number of 'n' after '-' (at least 1)
 // invalid: anything other than 'n' after '-'
 // @returns 0 if option is valid - don't print newline
-int	echo_n_option(char **args)
+int	echo_n_option(char **args, int i)
 {
 	char	*str;
 
-	str = args[1];
+	str = args[i];
 	if (*str == '-')
 	{
 		str++;
@@ -35,6 +35,19 @@ int	echo_n_option(char **args)
 		return (0);
 	}
 	return (ERROR);
+}
+
+int	echo_skip_n(char **tmp)
+{
+	int	i;
+
+	i = 0;
+	if (!tmp || !*tmp)
+		return (ERROR);
+	if (echo_n_option(tmp, i) == ERROR)
+		return (ERROR);
+	else
+		return (0);
 }
 
 // fills a result string with all arguments
@@ -52,10 +65,8 @@ char	*echo_builder(char **args)
 	res = ft_strdup("");
 	if (!res)
 		return (NULL);
-	tmp = args;
-	if (args[1] && !echo_n_option(args))
-		tmp += 2;
-	else
+	tmp = args + 1;
+	while (!echo_skip_n(tmp))
 		tmp++;
 	while (*tmp)
 	{
@@ -82,7 +93,7 @@ int	echo_builtin(t_mini *mini, t_cmd *cmd)
 		return (ERROR);
 	}
 	write(1, res, ft_strlen(res));
-	if (cmd->args[1] && echo_n_option(cmd->args))
+	if (cmd->args[1] && echo_n_option(cmd->args, 1))
 		write(1, "\n", 1);
 	free(res);
 	return (0);

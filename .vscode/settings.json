@@ -6,5 +6,6 @@
 		"readline.h": "c",
 		"minishell.h": "c",
 		"functional": "c"
-	}
+	},
+	"update.mode": "manual"
 }

@@ -6,6 +6,12 @@ NUMBER OF TIMES WE CHANGED PARSER: I
 - tester: https://github.com/LucasKuhn/minishell_tester
 
 **TODO** from tester:
+
+1.  echo $, echo "$", echo '$' should print dollar, other  with $ should not print anything ----- FIXED
+2. echo -n -n -n should take all the options as one, not first as options and others as arguments ----- FIXED
+3. remove_null_token check if can be improved ----- optional
+4. ctrl c - exit status change? ----- FIXED
+
 1.  echo $, echo "$", echo '$' should print dollar, other  with $ should not print anything
 - also echo "$""$" should print $$, prints nothing
 2. echo -n -n -n should take all the options as one, not first as options and others as arguments 
