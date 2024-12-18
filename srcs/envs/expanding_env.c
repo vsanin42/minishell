@@ -114,7 +114,8 @@ char	*handle_env_without_braces(t_mini *mini, char *res, char *text, int *i)
 	env = NULL;
 	oldres = NULL;
 	to_append = NULL;
-	while ((++len >= 0) && text[*i] && ft_isalnum(text[*i]))
+	while ((++len >= 0) && text[*i] && (ft_isalnum(text[*i])
+			|| text[*i] == '_'))
 		(*i)++;
 	if (len)
 	{

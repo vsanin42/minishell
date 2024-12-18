@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 13:54:34 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 13:55:19 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:32:45 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	heredoc_dup(t_mini *mini)
 
 	fd = dup(STDIN_FILENO);
 	if (fd < 0)
-		return (error_msg("Error opening fd", mini, 0, 0)); // handle
+		return (error_msg("minishell: Error opening fd", mini, 0, 0));
 	return (fd);
 }
 

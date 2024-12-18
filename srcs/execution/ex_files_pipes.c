@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 15:50:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 19:05:48 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/18 11:23:02 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ int	set_files(t_mini *mini, t_cmd *nthcmd, int *infile, int *outfile)
 		{
 			if (pipe(temp_pipe) == -1)
 				return (perror("minishell"), errno);
+			*infile = temp_pipe[1];
 			write(temp_pipe[1], redir->file, ft_strlen(redir->file));
 			close(temp_pipe[1]);
 			dup2(temp_pipe[0], STDIN_FILENO);

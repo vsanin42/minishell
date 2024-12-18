@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vsanin <vsanin@student.42prague.com>       +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 15:55:45 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/15 13:56:58 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:32:07 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	*heredoc_readline(t_mini *mini, char *limit, int *expand_flag)
 			input = heredoc_expand(mini, input);
 		res = str_append_nl(res, input);
 		if (!res)
-			return (free(input), NULL); // null or break?
+			return (free(input), NULL);
 		free(input);
 		input = readline("> ");
 	}
@@ -128,7 +128,7 @@ int	process_heredoc(t_token *token, char *limit, t_mini *mini)
 	if (errno == EBADF)
 	{
 		if (dup2(fd, STDIN_FILENO) == -1)
-			s_error_msg("Bad file descriptor"); // handle
+			s_error_msg("minishell: Bad file descriptor");
 		close(fd);
 		return (ERROR);
 	}

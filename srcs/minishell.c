@@ -80,7 +80,7 @@ int	show_prompt(t_mini *mini)
 	if (check_input(input, mini) == 1)
 		return (free(input), 1);
 	mini->exit_status = process_input(input, mini);
-	return (1);
+	return (mini->exit_status);
 }
 
 // terminal config editing to revent '^\' from being printed
@@ -126,6 +126,7 @@ int	main(int argc, char *argv[], char *env[])
 
 	g_sig = 0;
 	(void)argv;
+	(void)argc;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
 	init_mini(&mini, env);
