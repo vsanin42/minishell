@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 18:04:35 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/17 20:21:16 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 12:54:48 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 # include <errno.h>
 
 # include "../includes/minishell.h"
+
+extern int	g_sig;
 
 typedef enum e_token_type
 {
@@ -95,7 +97,8 @@ int		unset_builtin(t_mini *mini, t_cmd *cmd);
 int		unset_strdup(char **result, char **env, int *i, int flag);
 int		echo_builtin(t_mini *mini, t_cmd *cmd);
 char	*echo_builder(char **args);
-int		echo_n_option(char **args);
+int		echo_n_option(char **args, int i);
+int		echo_skip_n(char **tmp);
 
 /* envs/env_utils_2.c */
 void	free_paths(char **paths, int *i);

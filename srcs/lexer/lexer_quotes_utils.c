@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 12:22:25 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 19:30:13 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:49:30 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,14 @@ char	*exp_sub(t_mini *mini, char *str)
 
 	if (str[0] != '\'' && !check_dollar_sq(str))
 	{
-		expanded = get_env_value_to_process(mini, str);
-		free(str);
-		str = NULL;
+		if (!ft_strncmp(str, "\"$\"\0", 4))
+			expanded = str;
+		else
+		{
+			expanded = get_env_value_to_process(mini, str);
+			free(str);
+			str = NULL;
+		}
 	}
 	else if (check_dollar_sq(str))
 	{

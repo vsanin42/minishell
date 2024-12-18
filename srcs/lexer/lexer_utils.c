@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 14:03:13 by vsanin            #+#    #+#             */
-/*   Updated: 2024/12/16 20:26:54 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 14:31:18 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	find_q_or_end(char *text)
 	init_fqoe(&q_start, &i, &q_ign, &dollar_quote);
 	if (text[i] == '\'' || text[i] == '"')
 		q_start = text[i++];
-	while (text[i])
+	while (i < ft_strlen(text) && text[i])
 	{
 		helper_res = find_q_helper(q_start, text, i, &q_ign);
 		if (helper_res == 1)
@@ -84,8 +84,11 @@ int	find_q_helper(char q_start, char *text, int i, int *q_ign)
 		else
 			return (set_q_ign(q_ign, 0), 0);
 	}
-	else if (i != 0 && text[i - 1] && text[i - 1] == '$'
-		&& (text[i] == '\'' || text[i] == '"'))
+	else if (i != 0 && text[i - 1] && text[i - 1] == text[0]
+		&& text[i - 1] == '$' && (text[i] == '\'' || text[i] == '"')
+		&& text[i + 1] && text[i + 1] == '$'
+		&& text[i + 2] && text[i + 2] != '$'
+		&& text[i + 2] != '\'' && text[i + 2] != '"')
 	{
 		*q_ign = 1;
 		return (2);

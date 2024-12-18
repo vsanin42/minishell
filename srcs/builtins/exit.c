@@ -6,7 +6,7 @@
 /*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 19:24:05 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 20:22:50 by vsanin           ###   ########.fr       */
+/*   Updated: 2024/12/18 13:04:11 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,5 @@ int	exit_builtin(t_mini *mini, t_cmd *cmd)
 	if (exit_status < 0 || exit_status > 255)
 		exit(exit_status % 256);
 	exit(exit_status);
-	return(exit_status);
+	return (exit_status);
 }

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsanin <vsanin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:52:10 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/12/17 19:41:12 by zpiarova         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:03:51 by vsanin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	g_sig = 0;
 
 // executes lexer->parser->executor with checks between each phase
 // @returns 0 on SUCESS, 1 on ERROR
@@ -62,12 +64,16 @@ int	show_prompt(t_mini *mini)
 	signal(SIGQUIT, SIG_IGN);
 	set_termios(1);
 	input = readline("minishell$ ");
+	if (g_sig == SIGINT)
+	{
+		mini->exit_status = g_sig + 128;
+		g_sig = 0;
+	}
 	if (!input)
 		return (-1);
 	if (input[0] == '\0')
 	{
 		free(input);
-		input = NULL;
 		return (1);
 	}
 	add_history(input);
@@ -118,6 +124,7 @@ int	main(int argc, char *argv[], char *env[])
 	int		stdin;
 	int		stdout;
 
+	g_sig = 0;
 	(void)argv;
 	if (argc != 1)
 		return (s_error_msg("Too many arguments. Use: ./minishell"), ERROR);
